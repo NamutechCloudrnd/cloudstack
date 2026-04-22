@@ -138,7 +138,7 @@ const vueConfig = {
     port: 5050,
     proxy: {
       '/client': {
-        target: process.env.CS_URL || 'http://localhost:8080',
+        target: process.env.CS_URL || 'http://localhost:9090',
         secure: false,
         ws: false,
         changeOrigin: true,
@@ -166,8 +166,8 @@ const vueConfig = {
 
   pluginOptions: {
     i18n: {
-      locale: 'en',
-      fallbackLocale: 'en',
+      locale: 'ko',
+      fallbackLocale: 'ko',
       localeDir: 'locales',
       enableInSFC: true
     }

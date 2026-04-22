@@ -25,11 +25,11 @@
 @error-height: 256px;
 
 @logo-background-color: #ffffff;
-@navigation-background-color: #ffffff;
+@navigation-background-color: #333333;
 @project-nav-background-color: #001529;
 @project-nav-text-color: rgba(255, 255, 255, 0.65);
-@navigation-text-color:  rgba(0, 0, 0, 0.65);
-@primary-color: #1890ff;
+@navigation-text-color:  rgba(255, 255, 255, 0.65);
+@primary-color: #81d742;
 @primary-color-light: tint(@primary-color, 90);
 @link-color: @primary-color;
 @link-hover-color: #40a9ff;
@@ -108,6 +108,37 @@ a {
   .ant-menu-submenu > .ant-menu {
     background: @navigation-background-color;
   }
+
+  .ant-menu-vertical .ant-menu-item,
+  .ant-menu-vertical-left .ant-menu-item,
+  .ant-menu-vertical-right .ant-menu-item,
+  .ant-menu-inline .ant-menu-item,
+  .ant-menu-vertical .ant-menu-submenu-title,
+  .ant-menu-vertical-left .ant-menu-submenu-title,
+  .ant-menu-vertical-right .ant-menu-submenu-title,
+  .ant-menu-inline .ant-menu-submenu-title {
+    color: @navigation-text-color;
+  }
+
+  .ant-menu-item a {
+    color: @navigation-text-color;
+  }
+
+  .ant-menu-item-selected a,
+  .ant-menu-item-selected a:hover {
+    color: @primary-color;
+  }
+
+  .ant-menu-submenu-vertical > .ant-menu-submenu-title .ant-menu-submenu-arrow::before,
+  .ant-menu-submenu-vertical-left > .ant-menu-submenu-title .ant-menu-submenu-arrow::before,
+  .ant-menu-submenu-vertical-right > .ant-menu-submenu-title .ant-menu-submenu-arrow::before,
+  .ant-menu-submenu-inline > .ant-menu-submenu-title .ant-menu-submenu-arrow::before,
+  .ant-menu-submenu-vertical > .ant-menu-submenu-title .ant-menu-submenu-arrow::after,
+  .ant-menu-submenu-vertical-left > .ant-menu-submenu-title .ant-menu-submenu-arrow::after,
+  .ant-menu-submenu-vertical-right > .ant-menu-submenu-title .ant-menu-submenu-arrow::after,
+  .ant-menu-submenu-inline > .ant-menu-submenu-title .ant-menu-submenu-arrow::after {
+    background-color: @navigation-text-color;
+  }
 }
 
 .sider.light .ant-menu-light {
@@ -123,8 +154,28 @@ a {
   background: @navigation-background-color;
 }
 
-.ant-menu-item > a
-{
+.ant-menu-submenu-popup.ant-menu-light {
+  .ant-menu {
+    background: @navigation-background-color;
+  }
+
+  .ant-menu-item,
+  .ant-menu-submenu-title {
+    color: @navigation-text-color;
+  }
+
+  .ant-menu-item a {
+    color: @navigation-text-color;
+  }
+
+  .ant-menu-item-selected,
+  .ant-menu-item-selected a,
+  .ant-menu-item-selected a:hover {
+    color: @primary-color;
+  }
+}
+
+.ant-menu-item a {
   color: @navigation-text-color;
 }
 

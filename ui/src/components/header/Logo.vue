@@ -16,7 +16,7 @@
 // under the License.
 
 <template>
-  <div v-if="collapsed && $config.minilogo">
+  <div v-if="collapsed && $config.minilogo" style="padding: 0 8px;">
     <img
       :style="{
         width: $config.theme['@mini-logo-width'],
