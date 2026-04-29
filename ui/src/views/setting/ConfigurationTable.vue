@@ -29,7 +29,8 @@
 
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'name'">
-          <b> {{record.displaytext }} </b> {{ ' (' + record.name + ')' }} <br/> {{ record.description }}
+          <!-- <b> {{record.displaytext }} </b> {{ ' (' + record.name + ')' }} <br/> {{ record.description }} -->
+           <b> {{record.displaytext }} </b> {{ ' (' + $t(record.name) + ')' }} <br/> {{ record.description }}
         </template>
         <template v-if="column.key === 'value'">
           <ConfigurationValue

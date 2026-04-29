@@ -49,7 +49,9 @@ export default {
   },
   created () {
     this.selectedProjectId = this.$store.getters?.project?.id || this.defaultOption.id
-    this.$store.dispatch('ToggleTheme', this.selectedProjectId ? 'dark' : 'light')
+    // this.$store.dispatch('ToggleTheme', this.selectedProjectId ? 'dark' : 'light')
+    // 기본 테마를 dark로 고정
+    this.$store.dispatch('ToggleTheme', 'dark')
   },
   computed: {
     isDisabled () {
@@ -86,7 +88,7 @@ export default {
     changeProject (project) {
       this.$store.dispatch('ProjectView', project.id)
       this.$store.dispatch('SetProject', project)
-      this.$store.dispatch('ToggleTheme', project.id ? 'dark' : 'light')
+      // this.$store.dispatch('ToggleTheme', project.id ? 'dark' : 'light')
       this.$message.success(`${this.$t('message.switch.to')} "${project.displaytext || project.name}"`)
       if (this.$route.name !== 'dashboard') {
         this.$router.push({ name: 'dashboard' })

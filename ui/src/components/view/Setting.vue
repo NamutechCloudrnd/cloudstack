@@ -42,10 +42,10 @@
           :checked="colorPick"></setting-item>
       </a-radio-group>
 
-      <a-divider style="margin-top: 45px;" />
+      <!-- <a-divider style="margin-top: 45px;" /> -->
     </setting-item>
 
-    <setting-item
+    <!-- <setting-item
       v-if="!projectView"
       :title="$t('label.theme.navigation.setting')"
       view-type="item">
@@ -76,7 +76,7 @@
           </div>
         </a-list-item>
       </a-list>
-    </setting-item>
+    </setting-item> -->
 
     <setting-item
       v-if="projectView"
