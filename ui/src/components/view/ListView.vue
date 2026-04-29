@@ -1575,7 +1575,7 @@ export default {
     },
     isTranslatableEventType (text) {
       const translatableTypes = ['USER.LOGIN', 'USER.LOGOUT', 'ROUTER.HEALTH.CHECKS', 'FIREWALL.CLOSE', 'ALERT.SERVICE.DOMAINROUTER']
-      return translatableTypes.includes(text) || text.startsWith('PROJECT.') || text.startsWith('ZONE.') || text.startsWith('POD.') || text.startsWith('ALERT.') || text.startsWith('USER.')
+      return translatableTypes.includes(text) || text.startsWith('PROJECT.') || text.startsWith('ZONE.') || text.startsWith('POD.') || text.startsWith('ALERT.') || text.startsWith('USER.') || text.startsWith('CA.') || text.startsWith('VOLUME.') || text.startsWith('FIREWALL.') || text.startsWith('TRAFFIC.') || text.startsWith('VLAN.') || text.startsWith('PHYSICAL.') || text.startsWith('SERVICE.') || text.startsWith('NETWORK.') || text.startsWith('CONFIGURATION.') || text.startsWith('REGISTER.')
     }
   }
 }
