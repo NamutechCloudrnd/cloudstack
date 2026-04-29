@@ -24,14 +24,15 @@
 </template>
 
 <script>
-import enUS from 'ant-design-vue/lib/locale-provider/en_US'
+// import enUS from 'ant-design-vue/lib/locale-provider/en_US'
+import koKR from 'ant-design-vue/lib/locale-provider/ko_KR'
 import { AppDeviceEnquire } from '@/utils/mixin'
 
 export default {
   mixins: [AppDeviceEnquire],
   data () {
     return {
-      locale: enUS,
+      locale: koKR,
       configs: {}
     }
   },
