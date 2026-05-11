@@ -8,15 +8,15 @@
     }
   ],
   "docBase": "http://docs.cloudstack.apache.org/en/latest",
-  "appTitle": "CloudStack",
-  "footer": "Licensed under the <a href='http://www.apache.org/licenses/' target='_blank'>Apache License</a>, Version 2.0.",
-  "loginTitle": "CloudStack",
-  "loginFavicon": "assets/logo.png",
+  "appTitle": "namuVirt",
+  "footer": "",
+  "loginTitle": "namuVirt",
+  "loginFavicon": "assets/logo.svg",
   "loginFooter": "",
   "resetPasswordFooter": "",
-  "logo": "assets/logo.png",
+  "logo": "assets/logo.svg",
   "minilogo": "assets/mini-logo.png",
-  "banner": "assets/banner.png",
+  "banner": "assets/banner.svg",
   "favicon": "assets/mini-logo.png",
   "error": {
     "403": "assets/403.png",
@@ -27,7 +27,7 @@
     "@layout-mode": "light",
     "@logo-background-color": "#ffffff",
     "@mini-logo-background-color": "#ffffff",
-    "@navigation-background-color": "#333333",
+    "@navigation-background-color": "#001529",
     "@project-nav-background-color": "#001529",
     "@project-nav-text-color": "rgba(255, 255, 255, 0.65)",
     "@navigation-text-color": "rgba(255, 255, 255, 0.65)",
@@ -71,7 +71,7 @@
     "links": [
       {
         "title": "Documentation",
-        "text": "CloudStack documentation website",
+        "text": "namuVirt documentation website",
         "link": "https://docs.cloudstack.apache.org/en/latest/",
         "icon": "read-outlined"
       },
@@ -83,7 +83,7 @@
       },
       {
         "title": "Email Support",
-        "text": "Join CloudStack users mailing list to seek and provide support",
+        "text": "Join namuVirt users mailing list to seek and provide support",
         "link": "mailto:users-subscribe@cloudstack.apache.org",
         "icon": "mail-outlined"
       },

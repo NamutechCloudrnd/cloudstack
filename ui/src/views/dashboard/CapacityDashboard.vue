@@ -285,7 +285,7 @@
             :key="alert.id"
             color="red">
             <span :style="{ color: '#999' }"><small>{{ $toLocaleDate(alert.sent) }}</small></span>&nbsp;
-            <span :style="{ color: '#666' }"><small><router-link :to="{ path: '/alert/' + alert.id }">{{ alert.name }}</router-link></small></span><br/>
+            <span :style="{ color: '#666' }"><small><router-link :to="{ path: '/alert/' + alert.id }">{{ $t(alert.name.toLowerCase()) }}</router-link></small></span><br/>
             <span :style="{ color: '#aaa' }">{{ alert.description }}</span>
           </a-timeline-item>
         </a-timeline>
@@ -313,7 +313,7 @@
             :key="event.id"
             :color="getEventColour(event)">
             <span :style="{ color: '#999' }"><small>{{ $toLocaleDate(event.created) }}</small></span>&nbsp;
-            <span :style="{ color: '#666' }"><small><router-link :to="{ path: '/event/' + event.id }">{{ event.type }}</router-link></small></span><br/>
+            <span :style="{ color: '#666' }"><small><router-link :to="{ path: '/event/' + event.id }">{{ $t(event.type.toLowerCase()) }}</router-link></small></span><br/>
             <span>
               <resource-label :resourceType="event.resourcetype" :resourceId="event.resourceid" :resourceName="event.resourcename" />
             </span>

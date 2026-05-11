@@ -17,7 +17,7 @@
 
 <template>
   <div class="footer">
-    <div class="line">
+    <!-- <div class="line">
       <span v-html="$config.footer" />
     </div>
     <div class="line" v-if="$store.getters.userInfo.roletype === 'Admin'">
@@ -36,7 +36,7 @@
         <github-outlined />
         {{ $t('label.report.bug') }}
       </a>
-    </div>
+    </div> -->
   </div>
 </template>
 

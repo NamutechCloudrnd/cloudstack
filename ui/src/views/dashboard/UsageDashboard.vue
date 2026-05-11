@@ -348,7 +348,7 @@
             :key="event.id"
             :color="getEventColour(event)">
             <span :style="{ color: '#999' }"><small>{{ $toLocaleDate(event.created) }}</small></span>&nbsp;
-            <span :style="{ color: '#666' }"><small><router-link :to="{ path: '/event/' + event.id }">{{ event.type }}</router-link></small></span><br/>
+            <span :style="{ color: '#666' }"><small><router-link :to="{ path: '/event/' + event.id }">{{ $t('label.' + event.type.toLowerCase()) }}</router-link></small></span><br/>
             <span>
               <resource-label :resourceType="event.resourcetype" :resourceId="event.resourceid" :resourceName="event.resourcename" />
             </span>
