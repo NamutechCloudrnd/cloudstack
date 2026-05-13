@@ -18,6 +18,11 @@
 <template>
   <div class="user-menu">
     <span class="action">
+      <a-button type="primary">
+        <bar-chart-outlined/>모니터링
+      </a-button>
+    </span>
+    <span class="action">
       <create-menu v-if="device === 'desktop'" />
     </span>
     <external-link class="action"/>
