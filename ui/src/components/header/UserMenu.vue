@@ -18,8 +18,8 @@
 <template>
   <div class="user-menu">
     <span class="action">
-      <a-button type="primary">
-        <bar-chart-outlined/>모니터링
+      <a-button type="primary" @click="goGrafana()">
+        <bar-chart-outlined/>Monitoring
       </a-button>
     </span>
     <span class="action">
@@ -140,6 +140,9 @@ export default {
     ...mapGetters(['nickname', 'avatar']),
     toggleUseBrowserTimezone () {
       this.$store.dispatch('SetUseBrowserTimezone', !this.$store.getters.usebrowsertimezone)
+    },
+    goGrafana () {
+      window.open(this.$config.grafanaBase, '_blank')
     },
     async getIcon () {
       await this.fetchResourceIcon(this.$store.getters.userInfo.id)
