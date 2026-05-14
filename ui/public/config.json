@@ -8,6 +8,7 @@
     }
   ],
   "docBase": "http://docs.cloudstack.apache.org/en/latest",
+  "grafanaBase": "http://10.10.14.5:3000/dashboards",
   "appTitle": "namuVirt",
   "footer": "",
   "loginTitle": "namuVirt",
