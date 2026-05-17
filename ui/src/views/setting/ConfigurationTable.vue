@@ -29,8 +29,8 @@
 
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'name'">
-          <!-- <b> {{record.displaytext }} </b> {{ ' (' + record.name + ')' }} <br/> {{ record.description }} -->
-           <b> {{record.displaytext }} </b> {{ ' (' + $t(record.name) + ')' }} <br/> {{ record.description }}
+          <b> {{ t(record.displaytext, record.name) }} </b>{{ ' (' + record.name + ')' }}<br/>
+          {{ t(record.description, record.name + '.description') }}
         </template>
         <template v-if="column.key === 'value'">
           <ConfigurationValue
@@ -109,6 +109,13 @@ export default {
     }
   },
   methods: {
+    // 지정한 i18n 키가 현재 locale에 등록되어 있으면 번역값을, 없으면 원본 텍스트를 반환.
+    // - text: API가 반환한 원본 (영문) — fallback
+    // - key:  ko_KR.json / en.json 등에 등록된 i18n 키 (예: record.name, record.name + '.description')
+    t (text, key) {
+      if (key && this.$te(key)) return this.$t(key)
+      return text || ''
+    },
     changePage (page, pagesize) {
       this.$emit('change-page', page, pagesize)
     },
