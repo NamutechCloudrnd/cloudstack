@@ -26,25 +26,25 @@
       @finish="handleSubmit">
       <a-form-item name="name" ref="name">
         <template #label>
-          <tooltip-label :title="$t('label.name')" :tooltip="apiParams.name.description"/>
+          <tooltip-label :title="$t('label.name')" :tooltip="apiParams?.name?.description"/>
         </template>
         <a-input
           v-model:value="form.name"
-          :placeholder="apiParams.name.description"
+          :placeholder="apiParams?.name?.description"
           @change="updatePath"
           v-focus="true" />
       </a-form-item>
       <a-form-item name="description" ref="description">
         <template #label>
-          <tooltip-label :title="$t('label.description')" :tooltip="apiParams.description.description"/>
+          <tooltip-label :title="$t('label.description')" :tooltip="apiParams?.description?.description"/>
         </template>
         <a-input
           v-model:value="form.description"
-          :placeholder="apiParams.description.description" />
+          :placeholder="apiParams?.description?.description" />
       </a-form-item>
       <a-form-item name="path" ref="path">
         <template #label>
-          <tooltip-label :title="$t('label.path')" :tooltip="apiParams.path.description"/>
+          <tooltip-label :title="$t('label.path')" :tooltip="apiParams?.path?.description"/>
         </template>
         <div class="path-input-container">
           <span v-if="!!safeName" :title="extenstionBasePath" class="path-input-base">
@@ -52,7 +52,7 @@
           </span>
           <a-input
             v-model:value="form.path"
-            :placeholder="apiParams.path.description"
+            :placeholder="apiParams?.path?.description"
             @input="markPathModified"
             class="path-input-relative"
           />
@@ -60,12 +60,12 @@
       </a-form-item>
       <a-form-item ref="type" name="type">
         <template #label>
-          <tooltip-label :title="$t('label.type')" :tooltip="apiParams.type.description"/>
+          <tooltip-label :title="$t('label.type')" :tooltip="apiParams?.type?.description"/>
         </template>
         <a-select
           showSearch
           v-model:value="form.type"
-          :placeholder="apiParams.type.description"
+          :placeholder="apiParams?.type?.description"
           optionFilterProp="label"
           :filterOption="(input, option) => {
             return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -77,13 +77,13 @@
       </a-form-item>
       <a-form-item name="orchestratorrequirespreparevm" ref="orchestratorrequirespreparevm" v-if="form.type === 'Orchestrator'">
         <template #label>
-          <tooltip-label :title="$t('label.orchestratorrequirespreparevm')" :tooltip="apiParams.orchestratorrequirespreparevm.description"/>
+          <tooltip-label :title="$t('label.orchestratorrequirespreparevm')" :tooltip="apiParams?.orchestratorrequirespreparevm?.description"/>
         </template>
         <a-switch v-model:checked="form.orchestratorrequirespreparevm" />
       </a-form-item>
       <a-form-item name="details" ref="details">
         <template #label>
-          <tooltip-label :title="$t('label.configuration.details')" :tooltip="apiParams.details.description"/>
+          <tooltip-label :title="$t('label.configuration.details')" :tooltip="apiParams?.details?.description"/>
         </template>
         <div style="margin-bottom: 10px">{{ $t('message.add.extension.details') }}</div>
         <details-input
@@ -91,15 +91,15 @@
       </a-form-item>
       <a-form-item name="reservedresourcedetails" ref="reservedresourcedetails">
         <template #label>
-          <tooltip-label :title="$t('label.reservedresourcedetails')" :tooltip="apiParams.reservedresourcedetails.description"/>
+          <tooltip-label :title="$t('label.reservedresourcedetails')" :tooltip="apiParams?.reservedresourcedetails?.description"/>
         </template>
         <a-input
           v-model:value="form.reservedresourcedetails"
-          :placeholder="apiParams.reservedresourcedetails.description" />
+          :placeholder="apiParams?.reservedresourcedetails?.description" />
       </a-form-item>
       <a-form-item name="state" ref="state">
         <template #label>
-          <tooltip-label :title="$t('label.enabled')" :tooltip="apiParams.state.description"/>
+          <tooltip-label :title="$t('label.enabled')" :tooltip="apiParams?.state?.description"/>
         </template>
         <a-switch v-model:checked="form.state" />
       </a-form-item>
@@ -127,11 +127,12 @@ export default {
     return {
       pathModified: false,
       extensionTypes: [],
-      loading: false
+      loading: false,
+      apiParams: {}
     }
   },
   beforeCreate () {
-    this.apiParams = this.$getApiParams('createExtension')
+    this.apiParams = this.$getApiParams('createExtension') || {}
   },
   created () {
     this.initForm()
