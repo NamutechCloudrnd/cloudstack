@@ -207,6 +207,7 @@
                 :ranges="rangePresets"
                 v-model:value="form.dateRange"
                 :disabled-date="disabledDate"
+                :placeholder="[$t('label.start.date'), $t('label.end.date')]"
               />
             </a-form-item>
           </a-col>
@@ -436,15 +437,17 @@ export default {
     this.apiParams = this.$getApiParams('listUsageRecords')
   },
   created () {
-    this.rangePresets[this.$t('label.range.today')] = [dayjs(), dayjs()]
-    this.rangePresets[this.$t('label.range.yesterday')] = [dayjs().add(-1, 'd'), dayjs().add(-1, 'd')]
-    this.rangePresets[this.$t('label.range.last.1week')] = [dayjs().add(-1, 'w'), dayjs()]
-    this.rangePresets[this.$t('label.range.last.2week')] = [dayjs().add(-2, 'w'), dayjs()]
-    this.rangePresets[this.$t('label.range.last.1month')] = [dayjs().add(-1, 'M'), dayjs()]
-    this.rangePresets[this.$t('label.range.last.3month')] = [dayjs().add(-90, 'M'), dayjs()]
+    this.initRangePresets()
     this.initForm()
     this.fetchData()
     this.updateColumns()
+  },
+  watch: {
+    '$i18n.locale' (to, from) {
+      if (to === from) return
+      this.initRangePresets()
+      this.updateColumns()
+    }
   },
   computed: {
     domainsApiParams () {
@@ -464,6 +467,15 @@ export default {
     }
   },
   methods: {
+    initRangePresets () {
+      this.rangePresets = {}
+      this.rangePresets[this.$t('label.range.today')] = [dayjs(), dayjs()]
+      this.rangePresets[this.$t('label.range.yesterday')] = [dayjs().add(-1, 'd'), dayjs().add(-1, 'd')]
+      this.rangePresets[this.$t('label.range.last.1week')] = [dayjs().add(-1, 'w'), dayjs()]
+      this.rangePresets[this.$t('label.range.last.2week')] = [dayjs().add(-2, 'w'), dayjs()]
+      this.rangePresets[this.$t('label.range.last.1month')] = [dayjs().add(-1, 'M'), dayjs()]
+      this.rangePresets[this.$t('label.range.last.3month')] = [dayjs().add(-90, 'M'), dayjs()]
+    },
     clearFilters () {
       this.formRef.value.resetFields()
       this.rules.type = {}
