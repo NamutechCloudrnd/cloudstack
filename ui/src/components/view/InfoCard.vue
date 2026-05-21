@@ -871,7 +871,8 @@
                   <template #icon>
                     <render-icon :icon="$router.resolve('/' + item.name).meta.icon" />
                   </template>
-                  {{ $t('label.view') + ' ' + $t(item.title) }}
+                  <!-- {{ $t('label.view') + ' ' + $t(item.title) }} -->
+                  {{ $t(item.title) + ' ' + $t('label.view') }}
                 </a-button>
               </router-link>
             </div>

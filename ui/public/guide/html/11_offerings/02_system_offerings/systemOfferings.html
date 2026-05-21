@@ -1,0 +1,68 @@
+<h2 id="시스템-오퍼링">시스템 오퍼링</h2>
+<blockquote>
+<p>namuVIRT의 시스템 VM에 적용되는 리소스 사양을 정의하는 기능이다.
+시스템 VM은 namuVIRT 내부 기능 수행을 위한 관리용 VM이며, 이 기능을 통해
+시스템 VM의 성능을 최적화하고 namuVIRT 서비스의 안정성을 확보할 수
+있다.</p>
+<p>namuVIRT에서 기본으로 제공하는 시스템 오퍼링 목록이 존재하며, 참조
+무결성을 유지하기 위해 오퍼링의 삭제는 불가능하다.</p>
+<p><img src="../../images/11_offerings/02_system_offerings/image34.png"
+style="width:6.57813in;height:3.20833in" /></p>
+<p>또한, 추가 버튼을 클릭하여 시스템 오퍼링을 생성할 수 있으며 필요한
+정보들은 다음과 같다.</p>
+<p><img src="../../images/11_offerings/02_system_offerings/image7.png"
+style="width:6.57813in;height:3.20833in" /></p>
+</blockquote>
+<ul>
+<li><p>이름: 시스템 오퍼링 이름</p></li>
+<li><p>설명: 시스템 오퍼링에 대한 설명</p></li>
+<li><p>시스템 VM 유형: 시스템 VM 유형</p>
+<ul>
+<li><p>도메인 라우터: DHCP, NAT, 방화벽, 포트 포워딩 등의 네트워크 기능
+제공</p></li>
+<li><p>콘솔 프록시: namuVIRT의 가상머신에 대해 브라우저 기반 콘솔 접속
+기능 제공</p></li>
+<li><p>2차 스토리지 VM: 템플릿, ISO, 스냅샷 등의 이미지 리소스를
+관리</p></li>
+</ul></li>
+<li><p>CPU 코어: CPU 코어 수</p></li>
+<li><p>CPU: CPU 속도 (MHz)</p></li>
+<li><p>메모리: 메모리 크기 (MB)</p></li>
+<li><p>호스트 태그: 해당 태그가 설정된 호스트에만 가상머신 배치</p></li>
+<li><p>네트워크 속도: 데이터 전송 속도</p></li>
+<li><p>HA 제공: 고가용성 제공 여부</p></li>
+<li><p>동적 스케일링 활성화: CPU, 메모리에 대한 동적 스케일링 사용
+여부</p></li>
+<li><p>CPU 제한: CPU 사용량 제한 여부</p></li>
+<li><p>공개: 퍼블릭 여부</p></li>
+<li><p>리소스 삭제: 가상머신 삭제 시 연결된 리소스 정보를
+데이터베이스에서 함께 제거</p></li>
+</ul>
+<blockquote>
+<p><img src="../../images/11_offerings/02_system_offerings/image17.png"
+style="width:6.57813in;height:3.20833in" /></p>
+</blockquote>
+<ul>
+<li><p>컴퓨트 전용 디스크 오퍼링: 기존의 디스크 오퍼링을 선택하거나 해당
+컴퓨트 오퍼링용 디스크 오퍼링 지정</p>
+<ul>
+<li><p>스토리지 유형: 어떤 종류의 스토리지에 생성할지 선택</p></li>
+<li><p>프로비저닝 유형: 디스크 공간 할당 방식</p></li>
+<li><p>Write-cache 유형: 디스크 캐시 모드 설정</p></li>
+<li><p>QoS 유형: 디스크 성능 제어 방식</p></li>
+<li><p>Root 디스크 크기: Root 디스크 크기 지정 (GB)</p></li>
+<li><p>스토리지 태그: 해당 태그가 설정된 스토리지에만 디스크
+할당</p></li>
+<li><p>암호화: 디스크 암호화 여부</p></li>
+<li><p>디스크 오퍼링 엄격성: 가상머신 생성 후 Root 디스크의 오퍼링 변경
+허용 여부 (true일 경우 불가)</p></li>
+</ul></li>
+<li><p>외부 세부 정보: 하이퍼바이저에 추가로 전달할 사용자 정의 설정값
+(Key-Value)</p></li>
+</ul>
+<blockquote>
+<p>상세 페이지에서 시스템 오퍼링을 수정하고 활성화 및 비활성화할 수
+있다.</p>
+<p><img src="../../images/11_offerings/02_system_offerings/image9.png"
+style="width:6.57813in;height:3.20833in" /></p>
+</blockquote>

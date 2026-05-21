@@ -19,7 +19,7 @@
   <div class="user-menu">
     <span class="action">
       <a-button type="primary" @click="goGrafana()">
-        <bar-chart-outlined/>Monitoring
+        <bar-chart-outlined/>{{ $t('label.monitoring') }}
       </a-button>
     </span>
     <span class="action">

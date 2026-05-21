@@ -1,0 +1,207 @@
+let menuData = null
+
+async function loadMenuData() {
+  try {
+    const response = await fetch('/guide/html/menu-data.json')
+    menuData = await response.json()
+    renderMenu()
+    handleRouteChange()
+
+    window.addEventListener('hashchange', handleRouteChange)
+  } catch (error) {
+    console.error('Failed to load menu data:', error)
+  }
+}
+
+function renderMenu() {
+  const sidebar = document.getElementById('menu-sidebar')
+  if (!sidebar) return
+
+  sidebar.innerHTML = ''
+  sidebar.classList.add('menu-sidebar')
+
+  const installLink = document.createElement('a')
+  installLink.className = 'sidebar-top-link'
+  installLink.href = '#/install'
+  installLink.dataset.path = 'install'
+  installLink.innerHTML = '<i class="fa fa-download"></i><span>설치 가이드</span>'
+  sidebar.appendChild(installLink)
+
+  const sidebarTitle = document.createElement('div')
+  sidebarTitle.className = 'sidebar-top-link sidebar-top-link--static'
+  sidebarTitle.innerHTML = '<i class="fa fa-book"></i><span>사용자 설명서</span>'
+  sidebar.appendChild(sidebarTitle)
+
+  menuData.menu.forEach((category) => {
+    const accordion = createAccordionItem(category)
+    sidebar.appendChild(accordion)
+  })
+}
+
+function createAccordionItem(category) {
+  const accordionDiv = document.createElement('div')
+  accordionDiv.className = 'accordion-item'
+  accordionDiv.id = `accordion-${category.id}`
+
+  const header = document.createElement('div')
+  header.className = 'accordion-header'
+  const iconHTML = category.icon ? `<i class="fa ${category.icon}"></i>` : ''
+  header.innerHTML = `
+    <span class="accordion-icon">▶</span>
+    ${iconHTML}
+    <span class="accordion-label">${category.label}</span>
+  `
+
+  const content = document.createElement('div')
+  content.className = 'accordion-content'
+
+  const itemsList = document.createElement('div')
+  itemsList.className = 'menu-items'
+
+  category.items.forEach((item) => {
+    const menuItem = document.createElement('div')
+    menuItem.className = 'menu-item'
+    menuItem.id = `menu-item-${item.id}`
+
+    const link = document.createElement('a')
+    link.href = `#/${item.path}`
+    link.textContent = item.label
+    link.dataset.path = item.path
+
+    menuItem.appendChild(link)
+    itemsList.appendChild(menuItem)
+  })
+
+  content.appendChild(itemsList)
+
+  header.addEventListener('click', () => toggleAccordion(accordionDiv))
+
+  accordionDiv.appendChild(header)
+  accordionDiv.appendChild(content)
+
+  return accordionDiv
+}
+
+function toggleAccordion(accordionDiv) {
+  const isOpen = accordionDiv.classList.contains('open')
+
+  accordionDiv.classList.add('animated')
+  accordionDiv.classList.toggle('open')
+}
+
+function handleRouteChange() {
+  let hash = window.location.hash.substring(1)
+  const iframe = document.getElementById('content-frame')
+  const defaultContent = document.getElementById('default-content')
+
+  // Remove leading slash from hash if present
+  if (hash.startsWith('/')) {
+    hash = hash.substring(1)
+  }
+
+  if (!hash) {
+    iframe.style.display = 'none'
+    defaultContent.style.display = 'block'
+    highlightCurrentPage('')
+  } else {
+    const filePath = `/guide/html/${hash}${hash.endsWith('.html') ? '' : '.html'}`
+    loadContentInIframe(filePath, iframe, defaultContent, hash)
+    highlightCurrentPage(hash)
+  }
+}
+
+function loadContentInIframe(filePath, iframe, defaultContent, hash) {
+  const trimmedPath = filePath
+
+  iframe.onload = function () {
+    try {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document
+      if (iframeDoc && iframeDoc.body) {
+        iframe.style.display = 'block'
+        defaultContent.style.display = 'none'
+      }
+    } catch (e) {
+      showNotFound(iframe, defaultContent)
+    }
+  }
+
+  iframe.onerror = function () {
+    showNotFound(iframe, defaultContent)
+  }
+
+  iframe.src = trimmedPath
+
+  setTimeout(() => {
+    try {
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document
+      if (!iframeDoc || !iframeDoc.body || iframeDoc.body.innerHTML.trim() === '') {
+        showNotFound(iframe, defaultContent)
+      }
+    } catch (e) {
+      showNotFound(iframe, defaultContent)
+    }
+  }, 500)
+}
+
+function showNotFound(iframe, defaultContent) {
+  iframe.style.display = 'none'
+  defaultContent.style.display = 'block'
+
+  const notFoundHTML = `
+    <div style="padding: 2rem;">
+      <h1>404 - 페이지를 찾을 수 없습니다</h1>
+      <p>요청하신 페이지가 존재하지 않습니다.</p>
+      <button onclick="window.location.hash=''" style="padding: 0.5rem 1rem; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        돌아가기
+      </button>
+    </div>
+  `
+
+  defaultContent.innerHTML = notFoundHTML
+}
+
+function highlightCurrentPage(currentHash) {
+  if (!menuData) return
+
+  const menuItems = document.querySelectorAll('.menu-item')
+  menuItems.forEach((item) => item.classList.remove('active'))
+
+  const accordions = document.querySelectorAll('.accordion-item')
+  accordions.forEach((item) => item.classList.remove('open'))
+
+  const topLinks = document.querySelectorAll('.sidebar-top-link')
+  topLinks.forEach((link) => link.classList.remove('active'))
+
+  if (!currentHash) return
+
+  const matchedTopLink = document.querySelector(`.sidebar-top-link[data-path="${currentHash}"]`)
+  if (matchedTopLink) {
+    matchedTopLink.classList.add('active')
+    return
+  }
+
+  for (const category of menuData.menu) {
+    for (const item of category.items) {
+      if (item.path === currentHash) {
+        const menuItem = document.getElementById(`menu-item-${item.id}`)
+        const accordionItem = document.getElementById(`accordion-${category.id}`)
+
+        if (menuItem) {
+          menuItem.classList.add('active')
+        }
+
+        if (accordionItem) {
+          accordionItem.classList.add('open')
+        }
+
+        return
+      }
+    }
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadMenuData)
+} else {
+  loadMenuData()
+}

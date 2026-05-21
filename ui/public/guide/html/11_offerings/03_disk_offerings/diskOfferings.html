@@ -1,0 +1,50 @@
+<h2 id="디스크-오퍼링">디스크 오퍼링</h2>
+<blockquote>
+<p>데이터 디스크의 저장소 정책 및 용량을 정의하는 기능이다. 가상머신에
+추가 디스크를 할당하거나 볼륨을 생성할 때 디스크 오퍼링을 선택하여
+사양을 지정할 수 있다.</p>
+<p>목록 페이지에서 디스크 오퍼링을 선택하여, 활성화 및 비활성화를 지정할
+수 있다. 참조 무결성을 유지하기 위해 오퍼링의 삭제는 불가능하다.</p>
+<p><img src="../../images/11_offerings/03_disk_offerings/image4.png"
+style="width:6.57813in;height:3.20833in" /></p>
+<p>추가 버튼을 클릭하여 디스크 오퍼링을 생성할 수 있으며 필요한 정보들은
+다음과 같다.</p>
+<p><img src="../../images/11_offerings/03_disk_offerings/image35.png"
+style="width:6.57813in;height:3.20833in" /></p>
+</blockquote>
+<ul>
+<li><p>이름: 디스크 오퍼링 이름</p></li>
+<li><p>설명: 디스크 오퍼링에 대한 설명</p></li>
+<li><p>스토리지 유형: 어떤 종류의 스토리지에 생성할지 선택</p></li>
+<li><p>프로비저닝 유형: 디스크 공간 할당 방식</p>
+<ul>
+<li><p>Thin 프로비저닝: 실제 사용한 만큼 디스크 공간 할당</p></li>
+<li><p>Sparse 프로비저닝: 디스크 공간을 미리 할당하고 필요한 시점에 블록
+초기화</p></li>
+<li><p>Fat 프로비저닝: 디스크 생성 시 전체 공간 즉시 할당 및
+초기화</p></li>
+</ul></li>
+<li><p>암호화: 디스크 암호화 여부</p></li>
+<li><p>디스크 크기 엄격성: 디스크 크기 변경 허용 여부 (true일 경우
+불가)</p></li>
+<li><p>커스텀 디스크 크기: 해당 오퍼링 사용 시 디스크 크기 직접
+지정</p></li>
+<li><p>QoS 유형: 디스크 성능 제어 방식</p></li>
+<li><p>Write-cache 유형: 디스크 캐시 모드 설정</p>
+<ul>
+<li><p>Write-back: 데이터를 캐시에 먼저 기록한 뒤 이후에 디스크에
+반영</p></li>
+<li><p>Write-through: 데이터를 캐시와 디스크 동시에 기록</p></li>
+</ul></li>
+<li><p>스토리지 태그: 해당 태그가 설정된 스토리지에만 디스크
+할당</p></li>
+<li><p>공개: 퍼블릭 여부</p></li>
+<li><p>Zone: 해당 Zone에만 디스크 할당 (퍼블릭 오퍼링의 경우
+null)</p></li>
+</ul>
+<blockquote>
+<p>상세 페이지에서 해당 디스크 오퍼링을 수정하고 활성화 및 비활성화할 수
+있다.</p>
+<p><img src="../../images/11_offerings/03_disk_offerings/image8.png"
+style="width:6.57813in;height:3.125in" /></p>
+</blockquote>
