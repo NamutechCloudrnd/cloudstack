@@ -22,7 +22,7 @@ export default {
   name: 'host',
   title: 'label.hosts',
   icon: 'database-outlined',
-  docHelp: 'conceptsandterminology/concepts.html#about-hosts',
+  docHelp: '#/10_infrastructure/05_hosts/hosts.html',
   permission: ['listHostsMetrics'],
   searchFilters: ['name', 'zoneid', 'podid', 'clusterid', 'arch', 'hypervisor'],
   resourceType: 'Host',
@@ -72,7 +72,7 @@ export default {
       api: 'addHost',
       icon: 'plus-outlined',
       label: 'label.add.host',
-      docHelp: 'installguide/configuration.html#adding-a-host',
+      // docHelp: 'installguide/configuration.html#adding-a-host',
       listView: true,
       popup: true,
       component: shallowRef(defineAsyncComponent(() => import('@/views/infra/HostAdd.vue')))
@@ -153,7 +153,7 @@ export default {
       icon: 'plus-square-outlined',
       label: 'label.action.enable.maintenance.mode',
       message: 'message.action.host.enable.maintenance.mode',
-      docHelp: 'adminguide/hosts.html#maintaining-hypervisors-on-hosts',
+      // docHelp: 'adminguide/hosts.html#maintaining-hypervisors-on-hosts',
       dataView: true,
       show: (record) => { return record.resourcestate === 'Enabled' }
     },
@@ -162,7 +162,7 @@ export default {
       icon: 'minus-square-outlined',
       label: 'label.action.cancel.maintenance.mode',
       message: 'message.action.cancel.maintenance.mode',
-      docHelp: 'adminguide/hosts.html#maintaining-hypervisors-on-hosts',
+      // docHelp: 'adminguide/hosts.html#maintaining-hypervisors-on-hosts',
       dataView: true,
       show: (record) => { return record.resourcestate === 'Maintenance' || record.resourcestate === 'ErrorInMaintenance' || record.resourcestate === 'PrepareForMaintenance' || record.resourcestate === 'ErrorInPrepareForMaintenance' }
     },
@@ -171,7 +171,7 @@ export default {
       icon: 'setting-outlined',
       label: 'label.outofbandmanagement.configure',
       message: 'label.outofbandmanagement.configure',
-      docHelp: 'adminguide/hosts.html#out-of-band-management',
+      // docHelp: 'adminguide/hosts.html#out-of-band-management',
       dataView: true,
       popup: true,
       show: (record) => { return record.hypervisor !== 'External' },
@@ -182,7 +182,7 @@ export default {
       icon: 'plus-circle-outlined',
       label: 'label.outofbandmanagement.enable',
       message: 'label.outofbandmanagement.enable',
-      docHelp: 'adminguide/hosts.html#out-of-band-management',
+      // docHelp: 'adminguide/hosts.html#out-of-band-management',
       dataView: true,
       show: (record) => {
         return record.hypervisor !== 'External' && !(record?.outofbandmanagement?.enabled === true)
@@ -199,7 +199,7 @@ export default {
       icon: 'minus-circle-outlined',
       label: 'label.outofbandmanagement.disable',
       message: 'label.outofbandmanagement.disable',
-      docHelp: 'adminguide/hosts.html#out-of-band-management',
+      // docHelp: 'adminguide/hosts.html#out-of-band-management',
       dataView: true,
       show: (record) => {
         return record.hypervisor !== 'External' && record?.outofbandmanagement?.enabled === true
@@ -216,7 +216,7 @@ export default {
       icon: 'login-outlined',
       label: 'label.outofbandmanagement.action.issue',
       message: 'label.outofbandmanagement.action.issue',
-      docHelp: 'adminguide/hosts.html#out-of-band-management',
+      // docHelp: 'adminguide/hosts.html#out-of-band-management',
       dataView: true,
       show: (record) => {
         return record.hypervisor !== 'External' && record?.outofbandmanagement?.enabled === true
@@ -236,7 +236,7 @@ export default {
       icon: 'key-outlined',
       label: 'label.outofbandmanagement.changepassword',
       message: 'label.outofbandmanagement.changepassword',
-      docHelp: 'adminguide/hosts.html#out-of-band-management',
+      // docHelp: 'adminguide/hosts.html#out-of-band-management',
       dataView: true,
       show: (record) => {
         return record.hypervisor !== 'External' && record?.outofbandmanagement?.enabled === true
@@ -253,7 +253,7 @@ export default {
       icon: 'tool-outlined',
       label: 'label.ha.configure',
       message: 'label.ha.configure',
-      docHelp: 'adminguide/reliability.html#ha-for-hosts',
+      // docHelp: 'adminguide/reliability.html#ha-for-hosts',
       dataView: true,
       show: (record) => { return ['KVM', 'Simulator'].includes(record.hypervisor) },
       args: ['hostid', 'provider'],
@@ -271,7 +271,7 @@ export default {
       icon: 'eye-outlined',
       label: 'label.ha.enable',
       message: 'label.ha.enable',
-      docHelp: 'adminguide/reliability.html#ha-for-hosts',
+      // docHelp: 'adminguide/reliability.html#ha-for-hosts',
       dataView: true,
       show: (record) => {
         return record.hypervisor !== 'External' && !(record?.hostha?.haenable === true)
@@ -288,7 +288,7 @@ export default {
       icon: 'eye-invisible-outlined',
       label: 'label.ha.disable',
       message: 'label.ha.disable',
-      docHelp: 'adminguide/reliability.html#ha-for-hosts',
+      // docHelp: 'adminguide/reliability.html#ha-for-hosts',
       dataView: true,
       show: (record) => {
         return record.hostha && record.hostha.haenable &&
@@ -306,7 +306,7 @@ export default {
       icon: 'control-outlined',
       label: 'label.start.rolling.maintenance',
       message: 'label.start.rolling.maintenance',
-      docHelp: 'adminguide/hosts.html#kvm-rolling-maintenance',
+      // docHelp: 'adminguide/hosts.html#kvm-rolling-maintenance',
       dataView: true,
       show: (record) => {
         return record.hypervisor === 'KVM' && (record.resourcestate === 'Enabled' || record.resourcestate === 'ErrorInMaintenance')
@@ -342,7 +342,7 @@ export default {
       api: 'deleteHost',
       icon: 'delete-outlined',
       label: 'label.action.remove.host',
-      docHelp: 'adminguide/hosts.html#removing-hosts',
+      // docHelp: 'adminguide/hosts.html#removing-hosts',
       dataView: true,
       args: ['forced'],
       show: (record) => { return ['Maintenance', 'Disabled', 'Down', 'Alert', 'Disconnected'].includes(record.resourcestate) }

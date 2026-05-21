@@ -22,7 +22,7 @@ export default {
   name: 'domain',
   title: 'label.domains',
   icon: 'BlockOutlined',
-  docHelp: 'adminguide/accounts.html#domains',
+  docHelp: '#/09_domains/01_domains/domains.html',
   permission: ['listDomains', 'listDomainChildren'],
   resourceType: 'Domain',
   columns: ['name', 'state', 'path', 'parentdomainname', 'level'],
@@ -141,7 +141,7 @@ export default {
       api: 'linkDomainToLdap',
       icon: 'LinkOutlined',
       label: 'label.link.domain.to.ldap',
-      docHelp: 'adminguide/accounts.html#using-an-ldap-server-for-user-authentication',
+      // docHelp: 'adminguide/accounts.html#using-an-ldap-server-for-user-authentication',
       listView: true,
       dataView: true,
       args: ['type', 'domainid', 'name', 'accounttype', 'admin'],
@@ -152,6 +152,20 @@ export default {
         accounttype: {
           options: ['0', '2']
         },
+        domainid: {
+          value: (record) => { return record.id }
+        }
+      }
+    },
+    {
+      api: 'unlinkDomainFromLdap',
+      icon: 'ArrowsAltOutlined',
+      label: 'label.unlink.domain.from.ldap',
+      // docHelp: 'adminguide/accounts.html#using-an-ldap-server-for-user-authentication',
+      listView: true,
+      dataView: true,
+      args: ['domainid'],
+      mapping: {
         domainid: {
           value: (record) => { return record.id }
         }

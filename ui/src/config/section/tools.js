@@ -26,7 +26,7 @@ export default {
       name: 'comment',
       title: 'label.comments',
       icon: 'message-outlined',
-      docHelp: 'adminguide/events.html',
+      docHelp: '#/14_tools/01_comments/comments.html',
       permission: ['listAnnotations'],
       columns: () => {
         const cols = ['entityid', 'entitytype', 'annotation', 'created', 'username']
@@ -65,6 +65,7 @@ export default {
       name: 'usage',
       title: 'label.usage',
       icon: 'ContainerOutlined',
+      docHelp: '#/14_tools/02_usage/usage.html',
       permission: ['listUsageRecords'],
       meta: { title: 'label.usage', icon: 'ContainerOutlined' },
       component: () => import('@/views/infra/UsageRecords.vue')
@@ -73,7 +74,7 @@ export default {
       name: 'manageinstances',
       title: 'label.action.import.export.instances',
       icon: 'interaction-outlined',
-      docHelp: 'adminguide/virtual_machines.html#importing-and-unmanaging-virtual-machine',
+      docHelp: '#/14_tools/03_import_export_instances/import_export_instances.html',
       resourceType: 'UserVm',
       permission: ['listInfrastructure', 'listUnmanagedInstances'],
       component: () => import('@/views/tools/ManageInstances.vue')
@@ -82,7 +83,7 @@ export default {
       name: 'managevolumes',
       title: 'label.action.import.unmanage.volumes',
       icon: 'interaction-outlined',
-      docHelp: 'adminguide/virtual_machines.html#importing-and-unmanaging-volume',
+      docHelp: '#/14_tools/04_import_data_volumes/import_data_volumes.html',
       resourceType: 'UserVm',
       permission: ['listInfrastructure', 'listVolumesForImport'],
       component: () => import('@/views/tools/ManageVolumes.vue')
@@ -91,7 +92,7 @@ export default {
       name: 'webhook',
       title: 'label.webhooks',
       icon: 'node-index-outlined',
-      docHelp: 'adminguide/webhooks.html',
+      docHelp: '#/14_tools/05_webhooks/webhooks.html',
       permission: ['listWebhooks'],
       columns: () => {
         const cols = ['name', 'payloadurl', 'state', 'created']
@@ -126,7 +127,7 @@ export default {
           api: 'createWebhook',
           icon: 'plus-outlined',
           label: 'label.create.webhook',
-          docHelp: 'adminguide/events.html#creating-webhooks',
+          // docHelp: 'adminguide/events.html#creating-webhooks',
           listView: true,
           popup: true,
           component: shallowRef(defineAsyncComponent(() => import('@/views/tools/CreateWebhook.vue')))

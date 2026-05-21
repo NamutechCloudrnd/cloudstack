@@ -28,7 +28,7 @@ export default {
       name: 'volume',
       title: 'label.volumes',
       icon: 'hdd-outlined',
-      docHelp: 'adminguide/storage.html#working-with-volumes',
+      docHelp: '#/02_storage/01_volumes/volumes.html',
       permission: ['listVolumesMetrics'],
       resourceType: 'Volume',
       filters: () => {
@@ -102,7 +102,7 @@ export default {
         {
           api: 'createVolume',
           icon: 'plus-outlined',
-          docHelp: 'adminguide/storage.html#creating-a-new-volume',
+          // docHelp: 'adminguide/storage.html#creating-a-new-volume',
           label: 'label.action.create.volume',
           show: isZoneCreated,
           listView: true,
@@ -112,7 +112,7 @@ export default {
         {
           api: 'createVolume',
           icon: 'cloud-upload-outlined',
-          docHelp: 'adminguide/storage.html#uploading-an-existing-volume-to-a-virtual-machine',
+          // docHelp: 'adminguide/storage.html#uploading-an-existing-volume-to-a-virtual-machine',
           label: 'label.upload.volume.from.local',
           show: () => { return isZoneCreated() && 'getUploadParamsForVolume' in store.getters.apis },
           listView: true,
@@ -122,7 +122,7 @@ export default {
         {
           api: 'uploadVolume',
           icon: 'link-outlined',
-          docHelp: 'adminguide/storage.html#uploading-an-existing-volume-to-a-virtual-machine',
+          // docHelp: 'adminguide/storage.html#uploading-an-existing-volume-to-a-virtual-machine',
           label: 'label.upload.volume.from.url',
           show: isZoneCreated,
           listView: true,
@@ -164,7 +164,7 @@ export default {
         {
           api: 'createSnapshot',
           icon: 'camera-outlined',
-          docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
+          // docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
           label: 'label.action.take.snapshot',
           dataView: true,
           show: (record, store) => {
@@ -179,7 +179,7 @@ export default {
         {
           api: 'createSnapshotPolicy',
           icon: 'clock-circle-outlined',
-          docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
+          // docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
           label: 'label.action.recurring.snapshot',
           dataView: true,
           show: (record, store) => {
@@ -202,7 +202,7 @@ export default {
         {
           api: 'resizeVolume',
           icon: 'fullscreen-outlined',
-          docHelp: 'adminguide/storage.html#resizing-volumes',
+          // docHelp: 'adminguide/storage.html#resizing-volumes',
           label: 'label.action.resize.volume',
           dataView: true,
           popup: true,
@@ -213,7 +213,7 @@ export default {
           api: 'migrateVolume',
           permission: ['migrateVolume', 'findStoragePoolsForMigration', 'listStoragePools', 'listDiskOfferings'],
           icon: 'drag-outlined',
-          docHelp: 'adminguide/storage.html#id2',
+          // docHelp: 'adminguide/storage.html#id2',
           label: 'label.migrate.volume',
           args: ['volumeid', 'storageid', 'livemigrate'],
           dataView: true,
@@ -224,7 +224,7 @@ export default {
         {
           api: 'changeOfferingForVolume',
           icon: 'swap-outlined',
-          docHelp: 'adminguide/storage.html#id2',
+          // docHelp: 'adminguide/storage.html#id2',
           label: 'label.change.offering.for.volume',
           args: ['id', 'diskofferingid', 'size', 'miniops', 'maxiops', 'automigrate'],
           dataView: true,
@@ -307,7 +307,7 @@ export default {
       name: 'snapshot',
       title: 'label.snapshots',
       icon: 'build-outlined',
-      docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
+      docHelp: '#/02_storage/02_volume_snapshots/volume_snapshots.html',
       permission: ['listSnapshots'],
       resourceType: 'Snapshot',
       columns: () => {
@@ -417,7 +417,7 @@ export default {
       name: 'snapshotpolicy',
       title: 'label.snapshotpolicies',
       icon: 'build-outlined',
-      docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
+      docHelp: '#/02_storage/03_snapshot_policies/snapshot_policies.html',
       permission: ['listSnapshotPolicies'],
       resourceType: 'SnapshotPolicy',
       params: { listall: true },
@@ -430,7 +430,7 @@ export default {
         {
           api: 'createSnapshotPolicy',
           icon: 'plus-outlined',
-          docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
+          // docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
           label: 'label.action.create.recurring.snapshot',
           listView: true,
           show: () => { return 'createSnapshotPolicy' in store.getters.apis },
@@ -462,6 +462,7 @@ export default {
       name: 'backup',
       title: 'label.backups',
       icon: 'cloud-upload-outlined',
+      docHelp: '#/02_storage/04_backups/backups.html',
       permission: ['listBackups'],
       params: { listvmdetails: 'true' },
       columns: ['name', 'status', 'size', 'virtualsize', 'virtualmachinename', 'backupofferingname', 'intervaltype', 'type', 'created', 'account', 'domain', 'zone'],
@@ -484,7 +485,7 @@ export default {
         {
           api: 'restoreBackup',
           icon: 'sync-outlined',
-          docHelp: 'adminguide/virtual_machines.html#restoring-instance-backups',
+          // docHelp: 'adminguide/virtual_machines.html#restoring-instance-backups',
           label: 'label.backup.restore',
           message: 'message.backup.restore',
           dataView: true,
@@ -503,7 +504,7 @@ export default {
         {
           api: 'createVMFromBackup',
           icon: 'caret-right-outlined',
-          docHelp: 'adminguide/virtual_machines.html#creating-a-new-instance-from-backup',
+          // docHelp: 'adminguide/virtual_machines.html#creating-a-new-instance-from-backup',
           label: 'label.create.instance.from.backup',
           message: 'message.backup.restore',
           dataView: true,
@@ -546,7 +547,7 @@ export default {
       name: 'backupschedule',
       title: 'label.backup.schedules',
       icon: 'build-outlined',
-      docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
+      docHelp: '#/02_storage/05_backup_schedules/backup_schedules.html',
       permission: ['listBackupSchedule'],
       resourceType: 'backupSchedule',
       params: { listall: true },
@@ -559,7 +560,7 @@ export default {
         {
           api: 'createBackupSchedule',
           icon: 'plus-outlined',
-          docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
+          // docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
           label: 'label.action.create.backup.schedule',
           listView: true,
           show: () => { return 'createBackupSchedule' in store.getters.apis },
@@ -591,6 +592,7 @@ export default {
       name: 'buckets',
       title: 'label.buckets',
       icon: 'funnel-plot-outlined',
+      docHelp: '#/02_storage/06_buckets/buckets.html',
       permission: ['listBuckets'],
       columns: ['name', 'state', 'objectstore', 'size', 'account'],
       details: ['id', 'name', 'state', 'objectstore', 'size', 'url', 'accesskey', 'usersecretkey', 'account', 'domain', 'created', 'quota', 'encryption', 'versioning', 'objectlocking', 'policy'],
@@ -617,7 +619,7 @@ export default {
         {
           api: 'createBucket',
           icon: 'plus-outlined',
-          docHelp: 'installguide/configuration.html#create-bucket',
+          // docHelp: 'installguide/configuration.html#create-bucket',
           label: 'label.create.bucket',
           listView: true,
           popup: true,
@@ -626,7 +628,7 @@ export default {
         {
           api: 'updateBucket',
           icon: 'edit-outlined',
-          docHelp: 'adminguide/object_storage.html#update-bucket',
+          // docHelp: 'adminguide/object_storage.html#update-bucket',
           label: 'label.bucket.update',
           dataView: true,
           popup: true,
@@ -650,6 +652,7 @@ export default {
       name: 'sharedfs',
       title: 'label.shared.filesystems',
       icon: 'file-text-outlined',
+      docHelp: '#/02_storage/07_shared_filesystems/shared_filesystems.html',
       permission: ['listSharedFileSystems'],
       resourceType: 'SharedFS',
       columns: () => {
@@ -684,7 +687,7 @@ export default {
         {
           api: 'createSharedFileSystem',
           icon: 'plus-outlined',
-          docHelp: 'adminguide/storage.html#creating-a-new-file-share',
+          // docHelp: 'adminguide/storage.html#creating-a-new-file-share',
           label: 'label.create.sharedfs',
           listView: true,
           popup: true,
@@ -693,7 +696,7 @@ export default {
         {
           api: 'updateSharedFileSystem',
           icon: 'edit-outlined',
-          docHelp: 'adminguide/storage.html#lifecycle-operations',
+          // docHelp: 'adminguide/storage.html#lifecycle-operations',
           label: 'label.update.sharedfs',
           dataView: true,
           popup: true,
@@ -704,7 +707,7 @@ export default {
           icon: 'caret-right-outlined',
           label: 'label.action.start.sharedfs',
           message: 'message.action.start.sharedfs',
-          docHelp: 'adminguide/storage.html#lifecycle-operations',
+          // docHelp: 'adminguide/storage.html#lifecycle-operations',
           dataView: true,
           popup: true,
           groupAction: true,
@@ -716,7 +719,7 @@ export default {
           icon: 'poweroff-outlined',
           label: 'label.action.stop.sharedfs',
           message: 'message.action.stop.sharedfs',
-          docHelp: 'adminguide/storage.html#lifecycle-operations',
+          // docHelp: 'adminguide/storage.html#lifecycle-operations',
           dataView: true,
           popup: true,
           groupAction: true,
@@ -727,7 +730,7 @@ export default {
         {
           api: 'restartSharedFileSystem',
           icon: 'reload-outlined',
-          docHelp: 'adminguide/storage.html#lifecycle-operations',
+          // docHelp: 'adminguide/storage.html#lifecycle-operations',
           label: 'label.action.restart.sharedfs',
           message: 'message.action.restart.sharedfs',
           dataView: true,
@@ -738,7 +741,7 @@ export default {
         {
           api: 'changeSharedFileSystemDiskOffering',
           icon: 'swap-outlined',
-          docHelp: 'adminguide/storage.html#lifecycle-operations',
+          // docHelp: 'adminguide/storage.html#lifecycle-operations',
           label: 'label.change.disk.offering',
           dataView: true,
           popup: true,
@@ -748,7 +751,7 @@ export default {
         {
           api: 'changeSharedFileSystemServiceOffering',
           icon: 'arrows-alt-outlined',
-          docHelp: 'adminguide/storage.html#lifecycle-operations',
+          // docHelp: 'adminguide/storage.html#lifecycle-operations',
           label: 'label.change.service.offering',
           dataView: true,
           popup: true,
@@ -758,7 +761,7 @@ export default {
         {
           api: 'destroySharedFileSystem',
           icon: 'delete-outlined',
-          docHelp: 'adminguide/storage.html#lifecycle-operations',
+          // docHelp: 'adminguide/storage.html#lifecycle-operations',
           label: 'label.destroy.sharedfs',
           message: 'message.action.destroy.sharedfs',
           dataView: true,
@@ -771,7 +774,7 @@ export default {
         {
           api: 'recoverSharedFileSystem',
           icon: 'medicine-box-outlined',
-          docHelp: 'adminguide/storage.html#lifecycle-operations',
+          // docHelp: 'adminguide/storage.html#lifecycle-operations',
           label: 'label.recover.sharedfs',
           message: 'message.action.recover.sharedfs',
           dataView: true,
@@ -780,7 +783,7 @@ export default {
         {
           api: 'expungeSharedFileSystem',
           icon: 'delete-outlined',
-          docHelp: 'adminguide/storage.html#lifecycle-operations',
+          // docHelp: 'adminguide/storage.html#lifecycle-operations',
           label: 'label.expunge.sharedfs',
           message: 'message.action.expunge.sharedfs',
           dataView: true,

@@ -94,8 +94,9 @@
             </div>
           </div>
           <div v-else-if="['name', 'type'].includes(item)">
-            <span v-if="['USER.LOGIN', 'USER.LOGOUT', 'ROUTER.HEALTH.CHECKS', 'FIREWALL.CLOSE', 'ALERT.SERVICE.DOMAINROUTER'].includes(dataResource[item])">{{ $t(dataResource[item].toLowerCase()) }}</span>
-            <span v-else>{{ dataResource[item] }}</span>
+            <!-- <span v-if="['USER.LOGIN', 'USER.LOGOUT', 'ROUTER.HEALTH.CHECKS', 'FIREWALL.CLOSE', 'ALERT.SERVICE.DOMAINROUTER'].includes(dataResource[item])">{{ $t(dataResource[item].toLowerCase()) }}</span>
+            <span v-else>{{ dataResource[item] }}</span> -->
+            <span>{{ dataResource[item] }}</span>
           </div>
           <div v-else-if="['created', 'sent', 'lastannotated', 'collectiontime', 'lastboottime', 'lastserverstart', 'lastserverstop', 'removed', 'effectiveDate', 'endDate'].includes(item)">
             {{ $toLocaleDate(dataResource[item]) }}

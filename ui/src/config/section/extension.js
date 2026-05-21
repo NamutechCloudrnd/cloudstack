@@ -22,7 +22,7 @@ export default {
   name: 'extension',
   title: 'label.extensions',
   icon: 'appstore-add-outlined',
-  docHelp: 'adminguide/extensions.html',
+  docHelp: '#/13_extensions/01_extensions/extensions.html',
   permission: ['listExtensions'],
   params: (dataView) => {
     const params = {}
@@ -81,7 +81,7 @@ export default {
       api: 'createExtension',
       icon: 'plus-outlined',
       label: 'label.create.extension',
-      docHelp: 'adminguide/extensions.html',
+      // docHelp: 'adminguide/extensions.html',
       listView: true,
       popup: true,
       component: shallowRef(defineAsyncComponent(() => import('@/views/extension/CreateExtension.vue')))
