@@ -22,7 +22,7 @@ export default {
   name: 'role',
   title: 'label.roles',
   icon: 'idcard-outlined',
-  docHelp: 'adminguide/accounts.html#roles',
+  docHelp: '#/07_roles/01_roles/roles.html',
   permission: ['listRoles', 'listRolePermissions'],
   searchFilters: ['name', 'type'],
   columns: ['name', 'type', 'description', 'state'],

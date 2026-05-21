@@ -22,7 +22,7 @@ export default {
   name: 'imagestore',
   title: 'label.secondary.storage',
   icon: 'picture-outlined',
-  docHelp: 'adminguide/storage.html#secondary-storage',
+  docHelp: '#/10_infrastructure/07_secondary_storage/secondary_storage.html',
   permission: ['listImageStores'],
   searchFilters: ['name', 'zoneid', 'provider'],
   columns: () => {
@@ -81,7 +81,7 @@ export default {
     {
       api: 'addImageStore',
       icon: 'plus-outlined',
-      docHelp: 'installguide/configuration.html#add-secondary-storage',
+      // docHelp: 'installguide/configuration.html#add-secondary-storage',
       label: 'label.add.secondary.storage',
       listView: true,
       popup: true,

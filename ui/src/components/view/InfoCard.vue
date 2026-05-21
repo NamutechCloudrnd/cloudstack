@@ -51,8 +51,13 @@
                   </slot>
                 </div>
                 <slot name="name">
-                  <div v-if="['USER.LOGIN', 'USER.LOGOUT', 'ROUTER.HEALTH.CHECKS', 'FIREWALL.CLOSE', 'ALERT.SERVICE.DOMAINROUTER'].includes(resource.name)">{{ $t(resource.name.toLowerCase()) }}</div>
+                  <!-- <div v-if="['USER.LOGIN', 'USER.LOGOUT', 'ROUTER.HEALTH.CHECKS', 'FIREWALL.CLOSE', 'ALERT.SERVICE.DOMAINROUTER'].includes(resource.name)">{{ $t(resource.name.toLowerCase()) }}</div>
                   <div v-else>
+                    <h4 class="name">
+                      {{ name }}
+                    </h4>
+                  </div> -->
+                  <div>
                     <h4 class="name">
                       {{ name }}
                     </h4>
@@ -68,8 +73,11 @@
                     {{ $t('label.inbuilt') }}
                   </a-tag>
                   <a-tag v-if="resource.type">
-                    <span v-if="['USER.LOGIN', 'USER.LOGOUT', 'ROUTER.HEALTH.CHECKS', 'FIREWALL.CLOSE', 'ALERT.SERVICE.DOMAINROUTER'].includes(resource.type)">{{ $t(resource.type.toLowerCase()) }}</span>
+                    <!-- <span v-if="['USER.LOGIN', 'USER.LOGOUT', 'ROUTER.HEALTH.CHECKS', 'FIREWALL.CLOSE', 'ALERT.SERVICE.DOMAINROUTER'].includes(resource.type)">{{ $t(resource.type.toLowerCase()) }}</span>
                     <span v-else>
+                      {{ resource.type }}
+                    </span> -->
+                    <span>
                       {{ resource.type }}
                     </span>
                   </a-tag>

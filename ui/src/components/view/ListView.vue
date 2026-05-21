@@ -228,10 +228,11 @@
         <router-link :to="{ path: '/template/' + record.templateid }">{{ text }}</router-link>
       </template>
       <template v-if="column.key === 'type'">
-        <span
+        <!-- <span
           v-if="isTranslatableEventType(text)"
         >{{ $t(text.toLowerCase().replace(/_/g, '.')) }}</span>
-        <span v-else>{{ text }}</span>
+        <span v-else>{{ text }}</span> -->
+        <span>{{ text }}</span>
       </template>
       <template v-if="column.key === 'schedule'">
         <div v-if="['/snapshotpolicy', '/backupschedule'].some(path => $route.path.endsWith(path))">

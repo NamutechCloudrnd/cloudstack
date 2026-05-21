@@ -22,7 +22,7 @@ export default {
   name: 'router',
   title: 'label.virtual.routers',
   icon: 'fork-outlined',
-  docHelp: 'adminguide/systemvm.html#virtual-router',
+  docHelp: '#/10_infrastructure/11_virtual_routers/virtual_routers.html',
   permission: ['listRouters'],
   params: { projectid: '-1' },
   columns: () => {
@@ -184,7 +184,7 @@ export default {
       icon: 'fullscreen-outlined',
       label: 'label.upgrade.router.newer.template',
       message: 'message.confirm.upgrade.router.newer.template',
-      docHelp: 'adminguide/systemvm.html#upgrading-virtual-routers',
+      // docHelp: 'adminguide/systemvm.html#upgrading-virtual-routers',
       dataView: true,
       groupAction: true,
       // show: (record) => { return record.requiresupgrade },

@@ -21,7 +21,7 @@ export default {
   name: 'event',
   title: 'label.events',
   icon: 'ScheduleOutlined',
-  docHelp: '05_events/01_events/events.html',
+  docHelp: '#/05_events/01_events/events.html',
   permission: ['listEvents'],
   columns: () => {
     var fields = ['level', 'type', 'state', 'description', 'resource', 'username', 'account']
@@ -47,7 +47,7 @@ export default {
       icon: 'book-outlined',
       label: 'label.archive.events',
       message: 'message.confirm.archive.selected.events',
-      docHelp: 'adminguide/events.html#deleting-and-archiving-events-and-alerts',
+      // docHelp: 'adminguide/events.html#deleting-and-archiving-events-and-alerts',
       dataView: true,
       successMessage: 'label.event.archived',
       groupAction: true,
@@ -70,7 +70,7 @@ export default {
       icon: 'delete-outlined',
       label: 'label.delete.events',
       message: 'message.confirm.remove.selected.events',
-      docHelp: 'adminguide/events.html#deleting-and-archiving-events-and-alerts',
+      // docHelp: 'adminguide/events.html#deleting-and-archiving-events-and-alerts',
       dataView: true,
       successMessage: 'label.event.deleted',
       groupAction: true,
