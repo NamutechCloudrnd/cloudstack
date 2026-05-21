@@ -21,7 +21,7 @@ export default {
   name: 'event',
   title: 'label.events',
   icon: 'ScheduleOutlined',
-  docHelp: 'adminguide/events.html',
+  docHelp: '05_events/01_events/events.html',
   permission: ['listEvents'],
   columns: () => {
     var fields = ['level', 'type', 'state', 'description', 'resource', 'username', 'account']

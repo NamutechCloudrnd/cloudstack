@@ -7,7 +7,7 @@
       "apiBase": "/client/api"
     }
   ],
-  "docBase": "http://docs.cloudstack.apache.org/en/latest",
+  "docBase": "http://localhost:5050/guide/html",
   "grafanaBase": "http://10.10.14.5:3000/dashboards",
   "appTitle": "namuVirt",
   "footer": "",
@@ -72,7 +72,7 @@
       {
         "title": "Documentation",
         "text": "namuVirt documentation website",
-        "link": "https://docs.cloudstack.apache.org/en/latest/",
+        "link": "/",
         "icon": "read-outlined"
       },
       {

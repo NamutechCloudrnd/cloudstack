@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>프로젝트 설명서</title>
+  <link rel="stylesheet" href="/guide/html/style.css">
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
+  />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <a href="/guide/html/index.html" class="logo">
+        <img src="/guide/html/images/logo.svg" alt="namuVIRT">
+      </a>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside id="menu-sidebar" class="menu-sidebar"></aside>
+
+    <main class="content">
+      <iframe id="content-frame" class="content-iframe"></iframe>
+      <div id="default-content">
+        <h1>namuVIRT 사용자 설명서</h1>
+        <p>
+          좌측 메뉴를 선택하여 시작하세요. 이 설명서는 컴퓨팅, 스토리지,
+          네트워크, 인프라 등 다양한 카테고리에 걸친 포괄적인 설명서에 접근할 수 있게 해줍니다.
+        </p>
+
+        <h2>사용 가능한 카테고리</h2>
+        <ul style="margin-left: 1.5rem; line-height: 1.8;">
+          <li><strong>컴퓨팅</strong> - 인스턴스, 쿠버네티스, SSH 키 쌍 등</li>
+          <li><strong>스토리지</strong> - 볼륨, 스냅샷, 백업, 버킷</li>
+          <li><strong>네트워크</strong> - VPC, 보안 그룹, VPN, 네트워크 ACL</li>
+          <li><strong>이미지</strong> - 템플릿, ISO, 쿠버네티스 ISO</li>
+          <li><strong>이벤트</strong> - 시스템 이벤트 및 모니터링</li>
+          <li><strong>프로젝트</strong> - 프로젝트 관리 및 조직</li>
+          <li><strong>역할</strong> - 역할 기반 접근 제어</li>
+          <li><strong>계정</strong> - 사용자 계정 및 인증</li>
+          <li><strong>도메인</strong> - 도메인 관리 및 설정</li>
+          <li><strong>인프라</strong> - 존, 팟, 클러스터, 호스트, 스토리지</li>
+          <li><strong>상품</strong> - 컴퓨팅, 시스템, 네트워크 상품</li>
+          <li><strong>구성</strong> - 전역 설정, LDAP, OAuth 등</li>
+          <li><strong>확장</strong> - 확장 관리</li>
+          <li><strong>도구</strong> - 주석, 사용현황, 웹훅 등의 유틸리티</li>
+        </ul>
+      </div>
+    </main>
+  </div>
+
+  <script src="/guide/html/menu-renderer.js"></script>
+</body>
+</html>
