@@ -1,104 +1,93 @@
-<h2 id="인스턴스-가져오기-내보내기-import-export-instances">인스턴스
+<h1 id="인스턴스-가져오기-내보내기-import-export-instances">인스턴스
 가져오기-내보내기 (Import-Export Instances)</h2>
 <p>인스턴스 가져오기-내보내기 기능은 기존 VMware 또는 namuVIRT
 클러스터에서 인스턴스를 가져오거나 내보낼 수 있는 기능이다. 관리 해제된
 인스턴스는 실행 상태를 유지하며 하이퍼바이저에 영향을 주지 않는다.</p>
 <h3 id="기능-흐름">기능 흐름</h3>
 <ol type="1">
-<li>소스 하이퍼바이저 선택 (VMware 또는 KVM)</li>
-<li>동작 옵션 선택</li>
-<li>목적지 설정 (Zone, Pod, 클러스터)</li>
-<li>인스턴스 선택 및 가져오기</li>
+  <li>소스 하이퍼바이저 선택 (VMware 또는 KVM)</li>
+  <li>동작 옵션 선택</li>
+  <li>목적지 설정 (Zone, Pod, 클러스터)</li>
+  <li>인스턴스 선택 및 가져오기</li>
 </ol>
 <p><strong>소스별 옵션</strong></p>
 <table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr>
-<th>번호</th>
-<th>항목</th>
-<th>설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>VMware</td>
-<td>기존 인스턴스 관리 / 관리 해제, 기존 인스턴스를 KVM 으로
+  <thead>
+    <tr>
+      <th>번호</th>
+      <th>항목</th>
+      <th>설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>VMware</td>
+      <td>기존 인스턴스 관리 / 관리 해제, 기존 인스턴스를 KVM 으로
 마이그레이션</td>
-</tr>
-<tr>
-<td>2</td>
-<td>KVM</td>
-<td>기존 인스턴스 관리 / 관리 해제, 원격 KVM 호스트에서 인스턴스
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>KVM</td>
+      <td>기존 인스턴스 관리 / 관리 해제, 원격 KVM 호스트에서 인스턴스
 가져오기, 로컬 저장소에서 QCOW2 이미지 가져오기, 공유 저장소에서 QCOW2
 이미지 가져오기</td>
-</tr>
-</tbody>
+    </tr>
+  </tbody>
 </table>
 <h3 id="인스턴스-가져오기-설정">인스턴스 가져오기 설정</h3>
-<p><img src="../../../images/14_tools/03_import_export_instances/02-03-import-instance.png" /></p>
-<p><em>인스턴스 가져오기 팝업</em></p>
+<p><img src="/guide/html/images/14_tools/03_import_export_instances/02-03-import-instance.png" /></p>
 <p><strong>인스턴스 가져오기 입력 항목</strong></p>
 <table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr>
-<th>번호</th>
-<th>항목</th>
-<th>설명</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>1</td>
-<td>이름 표시 (Display name)</td>
-<td>가져올 인스턴스의 표시 이름 (필수)</td>
-</tr>
-<tr>
-<td>2</td>
-<td>호스트 이름 (Host name)</td>
-<td>인스턴스의 호스트명</td>
-</tr>
-<tr>
-<td>3</td>
-<td>도메인 아이디 (Domain)</td>
-<td>인스턴스가 속한 도메인 지정</td>
-</tr>
-<tr>
-<td>4</td>
-<td>프로젝트(Project)</td>
-<td>특정 프로젝트에 포함시킬 수 있음</td>
-</tr>
-<tr>
-<td>5</td>
-<td>템플릿(Template)</td>
-<td>OS 템플릿 선택 (필수, 기존 템플릿 선택)</td>
-</tr>
-<tr>
-<td>6</td>
-<td>컴퓨트 오퍼링 (Compute Offering)</td>
-<td>CPU / 메모리 사양 선택 (목록에서 단일 선택)</td>
-</tr>
-<tr>
-<td>7</td>
-<td>마이그레이션 허용 (Migrate allowed)</td>
-<td>다른 호스트/풀로 마이그레이션 가능 여부 (토글)</td>
-</tr>
-<tr>
-<td>8</td>
-<td>강제(Force)</td>
-<td>MAC 주소 중복 시에도 가져오기 수행 (토글)</td>
-</tr>
-</tbody>
+  <thead>
+    <tr>
+      <th>번호</th>
+      <th>항목</th>
+      <th>설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>이름 표시 (Display name)</td>
+      <td>가져올 인스턴스의 표시 이름 (필수)</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>호스트 이름 (Host name)</td>
+      <td>인스턴스의 호스트명</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>도메인 아이디 (Domain)</td>
+      <td>인스턴스가 속한 도메인 지정</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>프로젝트(Project)</td>
+      <td>특정 프로젝트에 포함시킬 수 있음</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>템플릿(Template)</td>
+      <td>OS 템플릿 선택 (필수, 기존 템플릿 선택)</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>컴퓨트 오퍼링 (Compute Offering)</td>
+      <td>CPU / 메모리 사양 선택 (목록에서 단일 선택)</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>마이그레이션 허용 (Migrate allowed)</td>
+      <td>다른 호스트/풀로 마이그레이션 가능 여부 (토글)</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>강제(Force)</td>
+      <td>MAC 주소 중복 시에도 가져오기 수행 (토글)</td>
+    </tr>
+  </tbody>
 </table>
 <h3 id="관리되지-않는-인스턴스들">관리되지 않는 인스턴스들</h3>
 <p>관리 중인 인스턴스를 다시 외부 관리 상태로 되돌리는 작업을

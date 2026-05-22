@@ -91,7 +91,7 @@ function toggleAccordion(accordionDiv) {
 
 function handleRouteChange() {
   let hash = window.location.hash.substring(1)
-  const iframe = document.getElementById('content-frame')
+  const contentFrame = document.getElementById('content-frame')
   const defaultContent = document.getElementById('default-content')
 
   // Remove leading slash from hash if present
@@ -100,51 +100,38 @@ function handleRouteChange() {
   }
 
   if (!hash) {
-    iframe.style.display = 'none'
+    contentFrame.style.display = 'none'
+    contentFrame.innerHTML = ''
     defaultContent.style.display = 'block'
     highlightCurrentPage('')
   } else {
     const filePath = `/guide/html/${hash}${hash.endsWith('.html') ? '' : '.html'}`
-    loadContentInIframe(filePath, iframe, defaultContent, hash)
+    loadContent(filePath, contentFrame, defaultContent)
     highlightCurrentPage(hash)
   }
 }
 
-function loadContentInIframe(filePath, iframe, defaultContent, hash) {
-  const trimmedPath = filePath
-
-  iframe.onload = function () {
-    try {
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document
-      if (iframeDoc && iframeDoc.body) {
-        iframe.style.display = 'block'
-        defaultContent.style.display = 'none'
-      }
-    } catch (e) {
-      showNotFound(iframe, defaultContent)
+async function loadContent(filePath, contentFrame, defaultContent) {
+  try {
+    const response = await fetch(filePath)
+    if (!response.ok) {
+      showNotFound(contentFrame, defaultContent)
+      return
     }
+
+    const html = await response.text()
+    contentFrame.innerHTML = html
+    contentFrame.style.display = 'block'
+    defaultContent.style.display = 'none'
+    contentFrame.scrollTop = 0
+  } catch (e) {
+    showNotFound(contentFrame, defaultContent)
   }
-
-  iframe.onerror = function () {
-    showNotFound(iframe, defaultContent)
-  }
-
-  iframe.src = trimmedPath
-
-  setTimeout(() => {
-    try {
-      const iframeDoc = iframe.contentDocument || iframe.contentWindow.document
-      if (!iframeDoc || !iframeDoc.body || iframeDoc.body.innerHTML.trim() === '') {
-        showNotFound(iframe, defaultContent)
-      }
-    } catch (e) {
-      showNotFound(iframe, defaultContent)
-    }
-  }, 500)
 }
 
-function showNotFound(iframe, defaultContent) {
-  iframe.style.display = 'none'
+function showNotFound(contentFrame, defaultContent) {
+  contentFrame.style.display = 'none'
+  contentFrame.innerHTML = ''
   defaultContent.style.display = 'block'
 
   const notFoundHTML = `
