@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/guide/html/style.css">
+</head>
+<body>
+  <div class="container">
+    <main class="content">
+      <h1 id="zone">Zone</h1>
+      <p>Zone은 namuVirt 인프라 배포에서 두 번째로 큰 조직 단위입니다.
+      인프라를 Zone 단위로 구성하면 물리적 격리와 이중화를 제공할 수
+      있습니다..</p>
+      <p>Zone의 구성 요소:</p>
+      <ul>
+      <li><p><strong>Pod</strong>: Zone 내에 하나 이상의 Pod가 포함됩니다. 각
+      Pod는 호스트 클러스터 및 하나 이상의 기본 스토리지 서버로
+      구성됩니다.</p></li>
+      <li><p><strong>기본 스토리지(Primary Storage)</strong>: Zone 내 모든
+      Pod에서 공유될 수 있는 기본 스토리지 서버를 포함할 수 있습니다.</p></li>
+      <li><p><strong>2차 스토리지(Secondary Storage)</strong>: Zone 내 모든
+      Pod에서 공유되는 Zone 범위의 자원입니다.</p></li>
+      </ul>
+      <p>Zone은 최종 사용자에게 표시됩니다. 사용자가 게스트 인스턴스를 시작할
+      때 Zone을 선택해야 하며, 해당 Zone에서 인스턴스를 생성하려면 사용자의
+      프라이빗 템플릿을 해당 Zone에 복사해야 할 수도 있습니다.</p>
+      <p>Zone은 <strong>공개(Public)</strong> 또는
+      <strong>프라이빗(Private)</strong> 으로 설정할 수 있습니다. 공개 Zone은
+      모든 사용자에게 표시되어 누구든지 해당 Zone에서 게스트를 생성할 수
+      있습니다. 프라이빗 Zone은 특정 도메인을 위해 예약되며, 해당 도메인 또는
+      하위 도메인의 사용자만 게스트를 생성할 수 있습니다.</p>
+      <p>동일한 Zone 내의 호스트는 방화벽을 통하지 않고 서로 직접 접근할 수
+      있습니다. 서로 다른 Zone에 있는 호스트는 정적으로 구성된 VPN 터널을 통해
+      서로 접근할 수 있습니다.</p>
+      <hr />
+      <h2 id="목록-조회">목록 조회</h2>
+      <p>Zone 목록을 확인하는 화면입니다. 생성된 Zone 목록을
+      확인하거나 <strong>Zone 추가</strong> 버튼을 클릭하여 새로운 Zone을
+      생성할 수 있습니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image20.png" style="width:6.575694444444444in;height:3.122916666666667in" /></p>
+      <hr />
+      <h2 id="zone-추가">Zone 추가</h2>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image21.png" style="width:0.7258858267716536in;height:0.1968503937007874in" /><strong>Zone
+      추가</strong> 버튼을 클릭하면 Zone 추가 마법사가 시작됩니다.</p>
+      <p>namuVirt UI를 통해 새 Zone을 추가할 때 Zone의 물리 네트워크를
+      구성하고, 첫 번째 Pod, 클러스터, 호스트, 기본 스토리지 및 2차 스토리지를
+      추가하도록 안내됩니다.</p>
+      <p><strong>참고</strong>: 다음은 구성 예시입니다. Zone 구성 시 네트워크,
+      스토리지, 호스트 등 실제 구축하는 사이트 환경에 맞는 값을 입력해야
+      합니다.</p>
+      <p><strong>1단계: Zone 유형 선택</strong></p>
+      <p>Zone의 유형을 선택합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image22.png" style="width:6.575694444444444in;height:4.0375in" /></p>
+      <p><strong>1단계: Core Zone 유형 선택</strong></p>
+      <p>Zone의 네트워킹 유형을 선택합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image23.png" style="width:6.575694444444444in;height:4.311111111111111in" /></p>
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 11%" />
+      <col style="width: 87%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>유형</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>기본(Basic)</strong></td>
+      <td style="text-align: left;">AWS Classic 스타일 네트워킹과 유사합니다.
+      하이퍼바이저의 브리지 장치를 통해 레이어 3에서 게스트 격리가 제공되는
+      단일 플랫 레이어 2 네트워크를 제공합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>고급(Advanced)</strong></td>
+      <td style="text-align: left;">일반적으로 VLAN과 같은 레이어 2 격리를
+      사용합니다. Nicira NVP와 같은 SDN 기술도 이 범주에 포함됩니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>다음</strong> 버튼을 클릭합니다.</p>
+      <p><strong>2단계: Zone 정보 입력</strong></p>
+      <p>Zone에 대한 기본 정보를 입력합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image24.png" style="width:6.575694444444444in;height:4.4430555555555555in" /></p>
+      <table style="width:98%;">
+      <colgroup>
+      <col style="width: 22%" />
+      <col style="width: 75%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">Zone의 이름을 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>IPv4 DNS1</strong></td>
+      <td style="text-align: left;">게스트 인스턴스에서 사용할 외부 DNS 서버
+      주소를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>내부 DNS 1</strong></td>
+      <td style="text-align: left;">관리 네트워크 내부에서 사용할 DNS 서버
+      주소를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>하이퍼바이저</strong></td>
+      <td style="text-align: left;">이 Zone에서 사용할 하이퍼바이저를
+      선택합니다. (KVM, VMware 등)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>입력 정보 확인 후 <strong>다음</strong> 버튼을 클릭합니다.</p>
+      <p><strong>3단계: 물리 네트워크 및 트래픽 유형 설정</strong></p>
+      <p>Zone에서 사용하는 물리 네트워크와 트래픽 유형을 설정합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image25.png" style="width:6.575694444444444in;height:4.575694444444444in" /></p>
+      <p><strong>기본(Basic) Zone의 트래픽 유형:</strong></p>
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 7%" />
+      <col style="width: 91%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>트래픽 유형</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>Guest</strong></td>
+      <td style="text-align: left;">최종 사용자가 인스턴스를 실행할 때
+      발생하는 트래픽입니다. 기본 Zone에서는 각 Pod가 브로드캐스트 도메인이
+      되며 Pod마다 다른 IP 범위를 가집니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Management</strong></td>
+      <td style="text-align: left;">호스트, 시스템 VM, namuVIRT의 내부 통신
+      트래픽입니다. 시스템 VM이 사용할 IP 범위를 구성해야 합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Storage</strong></td>
+      <td style="text-align: left;">2차 스토리지 VM과 2차 스토리지 서버
+      사이에서 인스턴스 템플릿 및 스냅샷 전송 시 발생하는 트래픽입니다. 고속
+      템플릿 및 스냅샷 복사를 위해 높은 대역폭 네트워크에서 운영되는 별도의
+      스토리지 NIC를 사용합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>권장사항</strong>: 관리 트래픽과 게스트 트래픽은 별도의 NIC를
+      사용하도록 강력히 권장합니다.</p>
+      <p><strong>고급(Advanced) Zone의 트래픽 유형:</strong></p>
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 7%" />
+      <col style="width: 91%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>트래픽 유형</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>Guest</strong></td>
+      <td style="text-align: left;">최종 사용자 인스턴스 트래픽입니다.
+      격리(Isolated) 게스트 네트워크에서는 각 계정의 네트워크 격리를 위해 VLAN
+      범위를 예약해야 합니다. 공유(Shared) 게스트 네트워크에서는 모든 게스트
+      인스턴스가 단일 네트워크를 공유합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Management</strong></td>
+      <td style="text-align: left;">namuVirt 내부 자원 간 통신 트래픽입니다.
+      시스템 VM이 사용할 IP 범위를 구성해야 합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Public</strong></td>
+      <td style="text-align: left;">클라우드 내 인스턴스가 외부 시스템에
+      접근할 때 발생하는 트래픽입니다. 게스트 인스턴스는 Virtual Router를 통해
+      외부 시스템에 접근합니다. Public IP는 Virtual Router를 포함한 시스템
+      VM의 Public 인터페이스에 할당됩니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Storage</strong></td>
+      <td style="text-align: left;">2차 스토리지 관련 트래픽입니다. 기본
+      스토리지 트래픽에는 영향을 미치지 않습니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>각 트래픽 유형의 <strong>편집</strong> 버튼을 클릭하여 트래픽 라벨을
+      입력합니다.</p>
+      <p>입력 정보 확인 후 <strong>다음</strong> 버튼을 클릭합니다.</p>
+      <p><strong>4단계: Public 네트워크 정보 입력 (고급 Zone)</strong></p>
+      <p>Zone의 Public 서비스용 네트워크 정보를 입력합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image26.png" style="width:6.575694444444444in;height:4.8493055555555555in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 34%" />
+      <col style="width: 63%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>게이트웨이</strong></td>
+      <td style="text-align: left;">Public 네트워크의 게이트웨이를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>넷마스크</strong></td>
+      <td style="text-align: left;">Public 네트워크의 서브넷 마스크를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>가상 네트워크(VLAN)</strong></td>
+      <td style="text-align: left;">VLAN ID를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>시작 IP 주소</strong></td>
+      <td style="text-align: left;">Public IP 범위의 시작 주소를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>종료 IP 주소</strong></td>
+      <td style="text-align: left;">Public IP 범위의 종료 주소를
+      입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>추가</strong> 버튼을 클릭하고 입력 정보 확인
+      후 <strong>다음</strong> 버튼을 클릭합니다.</p>
+      <p><strong>5단계: Pod 네트워크 정보 입력</strong></p>
+      <p>Pod는 일반적으로 단일 랙에 해당하며, 동일한 Pod 내의 호스트는 동일한
+      서브넷에 위치합니다. Pod는 Zone에 포함되며 하나 이상의 호스트 클러스터와
+      하나 이상의 기본 스토리지 서버로 구성됩니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image27.png" style="width:6.575694444444444in;height:3.839583333333333in" /></p>
+      <table style="width:98%;">
+      <colgroup>
+      <col style="width: 31%" />
+      <col style="width: 65%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">Pod의 이름을 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>예약된 시스템
+      게이트웨이</strong></td>
+      <td style="text-align: left;">관리 네트워크(시스템 예약 IP 범위)의
+      게이트웨이를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>예약된 시스템
+      넷마스크</strong></td>
+      <td style="text-align: left;">관리 네트워크의 서브넷 마스크를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>예약된 시스템 시작
+      IP</strong></td>
+      <td style="text-align: left;">시스템 VM이 사용할 IP 범위의 시작 주소를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>예약된 시스템 종료
+      IP</strong></td>
+      <td style="text-align: left;">시스템 VM이 사용할 IP 범위의 종료 주소를
+      입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>참고</strong>: 시스템 예약 IP 범위는 클라우드 전체에서
+      고유해야 합니다. 서로 다른 Zone의 호스트가 동일한 프라이빗 IP를 가질 수
+      없습니다. 컴퓨팅 서버와 관리 서버에는 시스템 예약 IP 범위 외부의 IP를
+      사용해야 합니다.</p>
+      <p>입력 정보 확인 후 <strong>다음</strong> 버튼을 클릭합니다.</p>
+      <p><strong>6단계: 게스트 트래픽 설정</strong></p>
+      <p>게스트 인스턴스용 네트워크 정보를 입력합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image28.png" style="width:6.575694444444444in;height:3.6506944444444445in" /></p>
+      <table style="width:98%;">
+      <colgroup>
+      <col style="width: 17%" />
+      <col style="width: 80%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>VLAN 범위</strong></td>
+      <td style="text-align: left;">게스트 네트워크 격리를 위해 사용할 VLAN
+      범위를 입력합니다. (고급 Zone)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>입력 정보 확인 후 <strong>다음</strong> 버튼을 클릭합니다.</p>
+      <p><strong>7단계: 클러스터 정보 입력</strong></p>
+      <p>클러스터는 호스트를 그룹화하는 방법을 제공합니다. 클러스터 내의
+      호스트는 모두 동일한 하드웨어를 사용하고, 동일한 하이퍼바이저를
+      실행하며, 동일한 서브넷에 위치하고, 동일한 공유 기본 스토리지에
+      접근합니다. 인스턴스는 서비스 중단 없이 동일한 클러스터 내의 호스트 간에
+      실시간 마이그레이션(Live Migration)이 가능합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image29.png" style="width:6.575694444444444in;height:3.9243055555555557in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 32%" />
+      <col style="width: 64%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>클러스터 이름</strong></td>
+      <td style="text-align: left;">클러스터의 이름을 입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>입력 정보 확인 후 <strong>다음</strong> 버튼을 클릭합니다.</p>
+      <p><strong>8단계: 호스트 추가</strong></p>
+      <p>호스트는 게스트 인스턴스를 실행하는 컴퓨팅 자원을 제공하는 단일
+      컴퓨터입니다. 각 호스트에는 게스트 인스턴스를 관리하기 위한 하이퍼바이저
+      소프트웨어가 설치되어 있습니다. namuVirt는 호스트가 제공하는 CPU 및
+      메모리 자원의 크기를 자동으로 감지합니다.</p>
+      <p>호스트가 namuVirt에서 동작하려면 다음 조건이 충족되어야 합니다.</p>
+      <ul>
+      <li><p>호스트에 하이퍼바이저 소프트웨어가 설치되어 있어야
+      합니다.</p></li>
+      <li><p>호스트에 IP 주소가 할당되어 있어야 합니다.</p></li>
+      <li><p>호스트가 namuVirt 관리 서버에 연결되어 있어야 합니다.</p></li>
+      </ul>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image30.png" style="width:6.575694444444444in;height:4.113194444444445in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 23%" />
+      <col style="width: 73%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>호스트 이름</strong></td>
+      <td style="text-align: left;">호스트의 호스트명 또는 IP 주소를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>사용자 이름</strong></td>
+      <td style="text-align: left;">호스트 접근 시 사용할 사용자 이름을
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>비밀번호</strong></td>
+      <td style="text-align: left;">호스트 접근 시 사용할 비밀번호를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>태그</strong></td>
+      <td style="text-align: left;">호스트를 식별하기 위한 태그를
+      입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>입력 정보 확인 후 <strong>다음</strong> 버튼을 클릭합니다.</p>
+      <p><strong>9단계: 기본 스토리지 추가</strong></p>
+      <p>기본 스토리지(Primary Storage)는 클러스터와 연결되며, 해당 클러스터의
+      호스트에서 실행 중인 모든 인스턴스의 가상 디스크를 저장합니다. KVM 및
+      VMware에서는 Zone 단위로 기본 스토리지를 프로비저닝할 수 있습니다.</p>
+      <p>하나의 클러스터 또는 Zone에 여러 기본 스토리지 서버를 추가할 수
+      있으며, 최소 하나는 반드시 필요합니다. namuVirt는 게스트 가상 디스크를
+      특정 기본 스토리지 장치에 할당하는 것을 자동으로 관리합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image31.png" style="width:6.575694444444444in;height:3.839583333333333in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 18%" />
+      <col style="width: 78%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">기본 스토리지의 이름을 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>범위</strong></td>
+      <td style="text-align: left;">스토리지의 범위(Zone 범위 또는 클러스터
+      범위)를 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>제공자</strong></td>
+      <td style="text-align: left;">스토리지 제공자를 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>프로토콜</strong></td>
+      <td style="text-align: left;">스토리지 프로토콜을 선택합니다. (NFS,
+      iSCSI, RBD 등)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>입력 정보 확인 후 <strong>다음</strong> 버튼을 클릭합니다.</p>
+      <p><strong>10단계: 2차 스토리지 추가</strong></p>
+      <p>2차 스토리지(Secondary Storage)에는 다음 항목이 저장됩니다.</p>
+      <ul>
+      <li><p><strong>템플릿(Templates)</strong>: 인스턴스 부팅에 사용할 수
+      있는 OS 이미지이며, 설치된 애플리케이션 등 추가 구성 정보를 포함할 수
+      있습니다.</p></li>
+      <li><p><strong>ISO 이미지</strong>: 운영 체제용 부팅 미디어 또는
+      데이터를 포함하는 디스크 이미지입니다.</p></li>
+      <li><p><strong>디스크 볼륨 스냅샷</strong>: 데이터 복구 또는 새 템플릿
+      생성에 사용할 수 있는 인스턴스 데이터의 저장 사본입니다.</p></li>
+      </ul>
+      <p>2차 스토리지의 항목은 Zone 또는 Region 범위로 정의된 스코프 내의 모든
+      호스트에서 사용 가능합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image32.png" style="width:6.575694444444444in;height:4.065972222222222in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 17%" />
+      <col style="width: 80%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>제공자</strong></td>
+      <td style="text-align: left;">2차 스토리지 제공자를 선택합니다. (NFS,
+      S3, Swift 등)</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">2차 스토리지의 이름을 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>서버</strong></td>
+      <td style="text-align: left;">2차 스토리지 서버의 주소를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>경로</strong></td>
+      <td style="text-align: left;">스토리지 경로를 입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>입력 정보 확인 후 <strong>다음</strong> 버튼을 클릭합니다.</p>
+      <p><strong>Zone 시작</strong></p>
+      <p><strong>Zone 시작</strong> 버튼을 클릭하여 Zone 구성을 진행합니다.
+      입력값이나 구성이 올바르지 않은 경우, 해당 입력 영역을 다시 확인하여
+      입력할 수 있습니다.</p>
+      <p>구성이 완료되면 목록에서 추가된 Zone을 확인할 수 있습니다.</p>
+      <hr />
+      <h2 id="zone-편집">Zone 편집</h2>
+      <p>해당 Zone의 정보를 편집합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image33.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>Zone
+      편집</strong> 버튼을 클릭하여 Zone 편집 화면을 호출합니다. 수정할 항목을
+      입력한 후 <strong>확인</strong> 버튼을 클릭하여 Zone을
+      업데이트합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image34.png" style="width:5.51875in;height:9.5in" /></p>
+      <h2 id="zone-비활성화활성화">Zone 비활성화/활성화</h2>
+      <p>해당 Zone을 비활성화/활성화합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image35.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>Zone
+      비활성화/활성화</strong> 버튼을 클릭하여 비활성화/활성화 화면을 호출한
+      뒤 <strong>확인</strong> 버튼을 클릭합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image36.png" style="width:6.0in;height:2.207638888888889in" /></p>
+      <hr />
+      <h2 id="원격-관리-비활성화활성화">원격 관리 비활성화/활성화</h2>
+      <p>해당 Zone에 대한 원격 관리를 비활성화/활성화합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image37.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>원격관리
+      비활성화/활성화</strong> 버튼을 클릭하여 비활성화/활성화 화면을 호출한
+      뒤 <strong>확인</strong> 버튼을 클릭합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image38.png" style="width:6.0in;height:2.4340277777777777in" /></p>
+      <hr />
+      <h2 id="ha-비활성화">HA 비활성화</h2>
+      <p>해당 Zone의 HA(High Availability) 기능을 비활성화/활성화합니다.</p>
+      <p><strong>참고</strong>: namuVirt는 시스템 가용성을 높이기 위한 다양한
+      HA 기능을 제공합니다. 관리 서버는 서버가 로드 밸런싱되는 다중 노드
+      설치로 배포될 수 있으며, 데이터베이스 손실 시 장애 조치를 위해 MySQL
+      복제 구성이 가능합니다. 호스트에 대해서는 NIC 본딩과 스토리지를 위한
+      별도 네트워크 사용 및 iSCSI 다중 경로(Multipath) 구성을 지원합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image39.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>HA
+      비활성화/활성화</strong> 버튼을 클릭하여 HA 비활성화/활성화 화면을
+      호출한 뒤 <strong>확인</strong> 버튼을 클릭합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image40.png" style="width:6.0in;height:2.4340277777777777in" /></p>
+      <hr />
+      <h2 id="롤링-유지-관리-시작">롤링 유지 관리 시작</h2>
+      <p>해당 Zone의 롤링 유지 관리를 설정하는 기능입니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image41.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>롤링
+      유지 관리</strong> 버튼을 클릭하여 롤링 유지 관리 설정 화면을 호출한 뒤
+      아래 항목을 입력합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image42.png" style="width:6.0in;height:4.565972222222222in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 76%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>시간초과</strong></td>
+      <td style="text-align: left;">타임아웃을 설정합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>페이로드</strong></td>
+      <td style="text-align: left;">호스트가 maintenance 중일 때 실행할
+      커맨드를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>강제</strong></td>
+      <td style="text-align: left;">에러 상태 시 동작 여부를 설정합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>확인</strong> 버튼을 클릭하여 롤링 유지 관리를
+      설정합니다.</p>
+      <hr />
+      <h2 id="zone-삭제">Zone 삭제</h2>
+      <p><strong>주의</strong>: Zone을 삭제하기 위해서는 Pod, 클러스터,
+      호스트, 기본 스토리지, 2차 스토리지를 먼저 삭제해야 합니다.</p>
+      <p>해당 Zone을 삭제합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image43.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>Zone
+      삭제</strong> 버튼을 클릭하여 Zone 삭제 화면을 호출한
+      뒤 <strong>확인</strong> 버튼을 클릭합니다.</p>
+      <h2 id="상세-탭">상세 탭</h2>
+      <p>Zone에 대한 상세 정보를 조회하는 화면입니다. 해당 Zone의 이름,
+      아이디, 할당 상태, 유형, 네트워크 유형, 게스트 CIDR, 로컬 스토리지 사용
+      여부, 보안 그룹 활성화 여부, DNS, 내부 DNS, 전용 여부 등의 정보를 확인할
+      수 있습니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image44.png" style="width:6.565972222222222in;height:5.697916666666667in" /></p>
+      <hr />
+      <h2 id="물리네트워크-탭">물리네트워크 탭</h2>
+      <p>Zone에서 사용하는 물리 네트워크를 조회 및 관리하는 화면입니다. 물리
+      네트워크는 Zone 내의 실제 네트워크 하드웨어와 배선을 의미합니다.
+      Zone에는 여러 물리 네트워크가 있을 수 있습니다.</p>
+      <p>관리자는 물리 네트워크에서 다음을 수행할 수 있습니다.</p>
+      <ul>
+      <li><p>Zone 내 물리 네트워크 추가/제거/업데이트</p></li>
+      <li><p>물리 네트워크에서 VLAN 구성</p></li>
+      <li><p>하이퍼바이저가 네트워크를 인식할 수 있도록 이름 구성</p></li>
+      <li><p>물리 네트워크에서 사용 가능한 서비스 제공자(방화벽, 로드 밸런서
+      등) 구성</p></li>
+      <li><p>물리 네트워크에 트렁킹된 IP 주소 구성</p></li>
+      <li><p>물리 네트워크가 전달하는 트래픽 유형 및 네트워크 속도 등 속성
+      지정</p></li>
+      </ul>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image45.png" style="width:6.565972222222222in;height:1.8208333333333333in" /></p>
+      <p><strong>물리네트워크 추가</strong></p>
+      <p>Zone에 물리 네트워크를 추가하는 기능입니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image46.png" style="width:6.852854330708661in;height:0.1968503937007874in" /><strong>물리
+      네트워크 추가</strong> 버튼을 클릭하여 물리 네트워크 추가 화면을
+      호출합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image47.png" style="width:5.415277777777778in;height:5.811111111111111in" /></p>
+      <table style="width:98%;">
+      <colgroup>
+      <col style="width: 36%" />
+      <col style="width: 60%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">물리 네트워크의 이름을 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>분리 방법</strong></td>
+      <td style="text-align: left;">네트워크 격리 방식을 선택합니다. (VLAN
+      등)</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>VLAN/VNI</strong></td>
+      <td style="text-align: left;">VLAN 또는 VNI 범위를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>태그</strong></td>
+      <td style="text-align: left;">물리 네트워크를 식별하기 위한 태그를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>네트워크 속도</strong></td>
+      <td style="text-align: left;">물리 네트워크의 속도를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>브로드캐스트 도메인
+      범위</strong></td>
+      <td style="text-align: left;">브로드캐스트 도메인의 범위를
+      선택합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>확인</strong> 버튼을 클릭하여 물리 네트워크를 추가합니다.</p>
+      <hr />
+      <h2 id="ipv4-서브넷-탭">IPv4 서브넷 탭</h2>
+      <p>IPv4 서브넷은 ROUTED 네트워크 모드를 사용하는 격리(Isolated) 네트워크
+      또는 VPC의 게스트 네트워크에서 사용할 IP 주소 범위를 Zone 단위로 사전
+      구성하는 기능입니다. 운영자(Root Admin)는 Zone에서 사용할 IPv4 서브넷을
+      미리 등록해두어야 하며, 등록된 서브넷은 게스트 네트워크 생성 시
+      할당됩니다. IPv4 서브넷은 특정 도메인 또는 계정에 전용(Dedicated)으로
+      할당하거나, 전용 할당을 해제하여 공유 상태로 되돌릴 수 있습니다.</p>
+      <p>Zone에 구성된 IPv4 서브넷을 조회 및 관리하는 화면입니다.</p>
+      <p><strong>IPv4 서브넷 추가</strong></p>
+      <p>Zone에 IPv4서브넷을 추가하는 기능입니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image48.png" style="width:6.572916666666667in;height:0.1875in" /><strong>라우팅
+      된 네트워크용 IPv4 서브넷 추가</strong> 버튼을 클릭하여 IPv4 서브넷 추가
+      화면을 호출합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image49.png" style="width:5.416666666666667in;height:2.75in" /></p>
+      <table style="width:98%;">
+      <colgroup>
+      <col style="width: 30%" />
+      <col style="width: 67%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;">Subnet</td>
+      <td style="text-align: left;">추가할 서브넷을 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>예약 설정</strong></td>
+      <td style="text-align: left;">이 서브넷과 연결할 도메인/계정을 지정할지
+      여부입니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>계정</strong></td>
+      <td style="text-align: left;">이 서브넷과 연결할 계정을 지정합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>도메인</strong></td>
+      <td style="text-align: left;">이 서브넷과 연결할 도메인을
+      지정합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>확인</strong> 버튼을 클릭하여 IPv4서브넷을 추가합니다.</p>
+      <p><strong>보기 IPv4 서브넷</strong></p>
+      <p>IPv4 서브넷 페이지에서 IPv4 서브넷을 확인합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image50.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>보기
+      IPv4 서브넷</strong> 버튼을 클릭하여 IPv4 서브넷 페이지로
+      이동합니다.</p>
+      <p><strong>계정 추가</strong></p>
+      <p>IPv4 서브넷에 계정을 추가합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image1.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>계정
+      추가</strong> 버튼을 클릭하여 계정 추가 화면을 호출하고
+      <strong>확인</strong> 버튼을 클릭하여 추가합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image51.png" style="width:5.416666666666667in;height:2.7916666666666665in" /></p>
+      <p><strong>IPv4 서브넷 업데이트</strong></p>
+      <p>IPv4 서브넷을 업데이트합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image2.png" style="width:0.1968503937007874in;height:0.1968503937007874in" />IPv4
+      서브넷 업데이트 버튼을 클릭하여 IP 범위 업데이트 화면을 호출하고
+      <strong>확인</strong> 버튼을 클릭하여 수정합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image52.png" style="width:5.416666666666667in;height:2.2708333333333335in" /></p>
+      <p><strong>IPv4 서브넷 삭제</strong></p>
+      <p>해당 IPv4 서브넷을 삭제합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image43.png" style="width:0.1968503937007874in;height:0.1968503937007874in" />
+      <strong>IPv4 서브넷 삭제</strong> 버튼을 클릭하여 삭제합니다.</p>
+      <h2 id="as-번호-탭">AS 번호 탭</h2>
+      <p>Zone에 구성된 AS(Autonomous System) 번호 범위를 조회 및 관리하는
+      화면입니다.</p>
+      <p>동적 라우팅(Dynamic Routing) 모드로 네트워크를 생성하려면 운영자(Root
+      Admin)가 사전에 Zone에 AS 번호 범위를 등록해야 합니다. 동적 라우팅이
+      적용된 게스트 네트워크 또는 VPC를 생성하면, 등록된 AS 번호 범위에서 AS
+      번호가 자동으로 할당되고 가상 라우터(VR)에서 BGP 피어 세션이 자동으로
+      구성됩니다.</p>
+      <p><strong>AS 번호 범위 추가</strong></p>
+      <p>Zone에 AS 번호 범위를 추가하는 기능입니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image53.png" style="width:6.572916666666667in;height:0.1875in" /><strong>AS
+      번호 범위 추가</strong> 버튼을 클릭하여 AS 번호 범위 추가 화면을
+      호출합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image54.png" style="width:5.416666666666667in;height:1.46875in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 28%" />
+      <col style="width: 68%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>시작 AS 번호</strong></td>
+      <td style="text-align: left;">AS 번호 범위의 시작 값을 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>종료 AS 번호</strong></td>
+      <td style="text-align: left;">AS 번호 범위의 종료 값을 입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>확인</strong> 버튼을 클릭하여 AS 번호 범위를 추가합니다.</p>
+      <p><strong>AS 번호 범위 삭제</strong></p>
+      <p>Zone에서 AS 번호 범위를 삭제하는 기능입니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image43.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>AS
+      번호 범위 삭제</strong> 버튼을 클릭하여 삭제합니다.</p>
+      <hr />
+      <h2 id="bgp-피어-탭">BGP 피어 탭</h2>
+      <p>Zone에 구성된 BGP 피어(BGP Peer)를 조회 및 관리하는 화면입니다.</p>
+      <p>동적 라우팅(Dynamic Routing) 모드로 네트워크를 생성하려면 운영자(Root
+      Admin)가 사전에 Zone에 BGP 피어를 등록해야 합니다. 동적 라우팅이 적용된
+      게스트 네트워크는 해당 계정이 접근 가능한 모든 BGP 피어에 자동으로
+      연결됩니다. BGP 피어는 특정 도메인 또는 계정에 전용(Dedicated)으로
+      할당하거나, 전용 할당을 해제하여 공유 상태로 되돌릴 수 있습니다.</p>
+      <p><strong>BGP 피어 추가</strong></p>
+      <p>Zone에 BGP 피어를 추가하는 기능입니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image55.png" style="width:6.572916666666667in;height:0.1875in" /><strong>BGP
+      피어 추가</strong> 버튼을 클릭하여 BGP 피어 추가 화면을 호출합니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image56.png" style="width:5.416666666666667in;height:4.875in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 19%" />
+      <col style="width: 77%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>IP 주소</strong></td>
+      <td style="text-align: left;">BGP 피어의 IP 주소를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>AS 번호</strong></td>
+      <td style="text-align: left;">BGP 피어의 AS 번호를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>비밀번호</strong></td>
+      <td style="text-align: left;">BGP 피어 세션 인증에 사용할 비밀번호를
+      입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>확인</strong> 버튼을 클릭하여 BGP 피어를 추가합니다.</p>
+      <p><strong>BGP 피어 삭제</strong></p>
+      <p>Zone에서 BGP 피어를 삭제하는 기능입니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image11.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>BGP
+      피어 삭제</strong> 버튼을 클릭하여 삭제합니다.</p>
+      <hr />
+      <h2 id="시스템-vm-탭">시스템 VM 탭</h2>
+      <p>Zone에 배포된 시스템 가상머신의 상태를 조회하는 화면입니다.</p>
+      <p>namuVirt는 클라우드 내부 구성 및 운영을 위해 시스템 VM(가상
+      어플라이언스)을 자동으로 구성합니다. 이 시스템 VM들은 다음과 같은
+      서비스를 제공합니다.</p>
+      <ul>
+      <li><p>방화벽(Firewalling)</p></li>
+      <li><p>라우팅(Routing)</p></li>
+      <li><p>DHCP</p></li>
+      <li><p>VPN</p></li>
+      <li><p>콘솔 프록시(Console Proxy)</p></li>
+      <li><p>스토리지 접근(Storage Access)</p></li>
+      <li><p>스토리지 복제(Storage Replication)</p></li>
+      </ul>
+      <p>해당 Zone에서 실행 중인 시스템 VM의 이름, VM 상태, Agent 상태, 유형,
+      Public IP, 호스트 등의 정보를 확인할 수 있습니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image57.png" style="width:6.565972222222222in;height:1.707638888888889in" /></p>
+      <hr />
+      <h2 id="리소스-탭">리소스 탭</h2>
+      <p>Zone에 할당된 자원의 상태를 조회하는 화면입니다. 해당 Zone에서 현재
+      할당량과 할당 가능량을 확인할 수 있습니다.</p>
+      <p>namuVirt는 호스트가 제공하는 CPU 및 메모리 자원의 크기를 자동으로
+      감지합니다. 클러스터에 언제든지 호스트를 추가하여 게스트 인스턴스를 위한
+      용량을 늘릴 수 있습니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image58.png" style="width:6.5784722222222225in;height:5.1402777777777775in" /></p>
+      <hr />
+      <h2 id="설정-탭">설정 탭</h2>
+      <p>Zone에서 사용하는 설정을 조회 및 관리하는 화면입니다.</p>
+      <p><strong>편집</strong></p>
+      <p>Zone의 설정 값을 변경합니다. 설정 값을 수정한
+      후 <strong>확인</strong> 버튼을 클릭하여 해당 Zone에 설정 값을
+      적용합니다.</p>
+      <p><strong>기본값으로 재설정</strong></p>
+      <p>Zone의 설정 값을 초기값으로 재설정합니다.</p>
+      <hr />
+      <h2 id="이벤트-탭">이벤트 탭</h2>
+      <p>Zone에 관련된 이벤트 정보를 확인할 수 있는 화면입니다. Zone에서
+      발생한 다양한 액션과 변경 사항을 파악할 수 있습니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image59.png" style="width:6.5784722222222225in;height:2.251388888888889in" /></p>
+      <h2 id="코멘트-탭">코멘트 탭</h2>
+      <p>Zone에 관련된 코멘트를 확인할 수 있는 화면입니다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/02_zones/image60.png" style="width:6.5784722222222225in;height:2.3826388888888888in" /></p>
+    </main>
+  </div>
+</body>
+</html>

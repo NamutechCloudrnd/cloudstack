@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/guide/html/style.css">
+</head>
+<body>
+  <div class="container">
+    <main class="content">
+      <h1 id="게스트-네트워크">게스트 네트워크</h1>
+      <p>게스트 네트워크는 동일한 Zone 내의 가상머신 간 통신 및 외부
+      네트워크와의 연결을 관리하는 핵심 기능입니다.</p>
+      <p>가상머신용 네트워크의 주요 기능은 가상 라우터(Virtual Router)를 통해
+      제공됩니다. 가상 라우터는 호스트에서 실행되는 특수한 가상머신입니다.</p>
+      <h2 id="목록-조회">목록 조회</h2>
+      <p>게스트 네트워크 목록을 확인하는 화면입니다. 생성된 네트워크 목록을
+      확인하거나 네트워크 추가 버튼을 클릭하여 새 네트워크를 생성할 수
+      있습니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image8.png" style="width:6.575694444444444in;height:3.122916666666667in" /></p>
+      <h2 id="가상머신용-네트워크-추가">가상머신용 네트워크 추가</h2>
+      <p>게스트용 네트워크 생성 용도에 따라 Isolated, L2, Shared를 선택하여
+      생성합니다. 네트워크 추가 버튼을 클릭하여 새 네트워크 생성 화면을
+      호출합니다.</p>
+      <h2 id="isolated-네트워크-생성">Isolated 네트워크 생성</h2>
+      <p>Isolated 네트워크는 계정 단위로 격리된 독립 네트워크입니다. 특정
+      계정에 할당된 네트워크는 강한 격리성을 제공하며, 가상 라우터가 DHCP,
+      NAT, 방화벽 등의 네트워크 서비스를 담당합니다. Advanced Networking을
+      사용하는 Zone에서는 최초 설치 이후 언제든지 게스트 트래픽을 위한 추가
+      네트워크를 생성할 수 있습니다. 네트워크별로 DNS 접미사를 지정하여 도메인
+      이름을 커스터마이징할 수도 있습니다.</p>
+      <p>Advanced Zone에서 Isolated 네트워크를 생성하려면 아래 절차를
+      따릅니다.</p>
+      <ol type="1">
+      <li><p>왼쪽 탐색 메뉴에서 <strong>네트워크</strong>를
+      선택합니다.</p></li>
+      <li><p><strong>네트워크 추가</strong> 버튼을 클릭합니다.</p></li>
+      <li><p>아래 항목을 입력합니다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image9.png" style="width:5.792361111111111in;height:9.490277777777777in" /></p>
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 31%" />
+      <col style="width: 66%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">네트워크 이름을 입력합니다. 사용자에게
+      표시됩니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>설명</strong></td>
+      <td style="text-align: left;">네트워크에 대한 설명을 입력합니다.
+      사용자에게 표시됩니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Zone</strong></td>
+      <td style="text-align: left;">이 네트워크가 적용될 Zone을
+      선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>소유자 유형</strong></td>
+      <td style="text-align: left;">소유자 유형을 정합니다. 계정/프로젝트로
+      나뉩니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>도메인</strong></td>
+      <td style="text-align: left;">해당 네트워크를 관리할 도메인을
+      지정합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>계정/프로젝트</strong></td>
+      <td style="text-align: left;">소유자 유형에 따라 해당 네트워크를 소유할
+      계정/프로젝트를 지정합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>네트워크 도메인</strong></td>
+      <td style="text-align: left;">가상머신 네트워크에 특별한 도메인 이름을
+      부여할 경우 DNS 접미사를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>네트워크 오퍼링</strong></td>
+      <td style="text-align: left;">관리자가 여러 네트워크 오퍼링을 구성한
+      경우, 사용할 오퍼링을 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>External Id</strong></td>
+      <td style="text-align: left;">외부 시스템에서의 네트워크 ID입니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>게이트웨이</strong></td>
+      <td style="text-align: left;">가상머신이 사용할 게이트웨이를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>넷마스크</strong></td>
+      <td style="text-align: left;">가상머신이 사용할 서브넷의 넷마스크를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>DNS 1,2</strong></td>
+      <td style="text-align: left;">이 게스트 네트워크에서 사용할 커스텀 DNS를
+      입력합니다. 입력하지 않으면 Zone에 지정된 DNS가 사용됩니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>서비스용 네트워크의 라우터에 대한
+      IPv4 주소</strong></td>
+      <td style="text-align: left;">게스트 네트워크를 관리할 가상 라우터의
+      IPv4 주소를 입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="4" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 Isolated 네트워크를
+      생성합니다.</li>
+      </ol>
+      <h2 id="l2-네트워크-생성">L2 네트워크 생성</h2>
+      <p>L2 네트워크는 Layer 2(데이터 링크 계층) 기반으로 동작하는
+      네트워크입니다. 여러 가상머신이 동일한 물리 네트워크를 공유하며 연결될
+      수 있도록 합니다.</p>
+      <p>L2 네트워크를 생성하려면 아래 절차를 따릅니다.</p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인합니다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>네트워크</strong>를
+      선택합니다.</p></li>
+      <li><p><strong>게스트 네트워크</strong> 탭을 클릭합니다.</p></li>
+      <li><p><strong>네트워크 추가</strong> 아이콘을 클릭합니다.</p></li>
+      <li><p><strong>L2</strong> 탭을 선택합니다.</p></li>
+      <li><p>아래 항목을 입력합니다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image10.png" style="width:6.575694444444444in;height:6.622916666666667in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 32%" />
+      <col style="width: 65%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">네트워크 이름을 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>설명</strong></td>
+      <td style="text-align: left;">네트워크에 대한 설명을 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Zone</strong></td>
+      <td style="text-align: left;">Zone을 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>소유자 유형</strong></td>
+      <td style="text-align: left;">계정 또는 프로젝트 중 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>도메인</strong></td>
+      <td style="text-align: left;">도메인을 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>계정/프로젝트</strong></td>
+      <td style="text-align: left;">소유자 유형에 따라 계정/프로젝트를
+      선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>네트워크 오퍼링</strong></td>
+      <td style="text-align: left;">네트워크 오퍼링을 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>VLAN/VNI</strong></td>
+      <td style="text-align: left;">VLAN 또는 VNI 값을 입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="7" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 L2 네트워크를 생성합니다.</li>
+      </ol>
+      <h2 id="shared-네트워크-생성">Shared 네트워크 생성</h2>
+      <p>Shared 네트워크는 여러 사용자 및 가상머신이 동일한 VLAN을 공유하는
+      네트워크 유형입니다. 소수의 통합된 네트워크가 필요할 때 적절합니다.</p>
+      <p>Shared 네트워크를 생성하려면 아래 절차를 따릅니다.</p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인합니다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>네트워크</strong>를
+      선택합니다.</p></li>
+      <li><p><strong>게스트 네트워크</strong> 탭을 클릭합니다.</p></li>
+      <li><p><strong>네트워크 추가</strong> 아이콘을 클릭합니다.</p></li>
+      <li><p><strong>Shared</strong> 탭을 선택합니다.</p></li>
+      <li><p>아래 항목을 입력합니다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image11.png" style="width:3.7736111111111112in;height:9.5in" /></p>
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 33%" />
+      <col style="width: 65%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">네트워크 이름을 입력합니다. 사용자에게
+      표시됩니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>설명</strong></td>
+      <td style="text-align: left;">네트워크에 대한 짧은 설명을
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Zone</strong></td>
+      <td style="text-align: left;">네트워크가 적용될 Zone을 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>물리 네트워크</strong></td>
+      <td style="text-align: left;">이 네트워크가 속할 물리 네트워크 ID를
+      선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>VLAN ID</strong></td>
+      <td style="text-align: left;">(관리자 전용) 고유한 VLAN ID를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>VLAN ID/범위 겹침
+      허용</strong></td>
+      <td style="text-align: left;">(관리자 전용) true로 설정 시 Shared 및 L2
+      네트워크 생성 시 VLAN ID/범위 중복 검사를 건너뜁니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>범위</strong></td>
+      <td style="text-align: left;">도메인(Domain), 계정(Account),
+      프로젝트(Project), 전체(All) 중 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>네트워크 오퍼링</strong></td>
+      <td style="text-align: left;">사용할 네트워크 오퍼링을 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>IPv4/IPv6 게이트웨이</strong></td>
+      <td style="text-align: left;">게스트가 사용할 게이트웨이를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>넷마스크/CIDR</strong></td>
+      <td style="text-align: left;">게스트가 사용할 서브넷의
+      넷마스크(IPv4)/CIDR(IPv6)를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>IPv4/IPv6<br />
+      start IP/end IP</strong></td>
+      <td style="text-align: left;">게스트 가상머신에 할당될 IP 주소 범위를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>IPv4/IPv6 DNS</strong></td>
+      <td style="text-align: left;">이 네트워크에서 사용할 커스텀 DNS를
+      입력합니다. 입력하지 않으면 Zone의 DNS가 사용됩니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>CIDR</strong></td>
+      <td style="text-align: left;">게스트 네트워크 서브넷을 정의하는 네트워크
+      프리픽스입니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>서비스용 네트워크의 라우터에 대한
+      IPv4 주소</strong></td>
+      <td style="text-align: left;">게스트 네트워크를 관리할 가상라우터의
+      IPv4/IPv6 주소입니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>네트워크 도메인</strong></td>
+      <td style="text-align: left;">게스트 가상머신 네트워크에 특별한 도메인
+      이름을 부여할 경우 DNS 접미사를 입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="7" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 Shared 네트워크를
+      생성합니다.</li>
+      </ol>
+      <h2 id="네트워크-업데이트-isolated">네트워크 업데이트 (Isolated)</h2>
+      <p>Isolated 네트워크의 이름, 설명, 네트워크 오퍼링, CIDR, 네트워크
+      도메인 등의 정보를 수정할 수 있습니다.</p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인합니다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>네트워크</strong>를
+      선택합니다.</p></li>
+      <li><p><strong>게스트 네트워크</strong> 보기를 선택합니다.</p></li>
+      <li><p>수정할 네트워크를 선택합니다.</p></li>
+      <li><p><img src="/guide/html/images/03_network/01_guest_networks/image12.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>네트워크
+      업데이트</strong> 버튼을 클릭합니다.</p></li>
+      <li><p>수정할 항목을 입력합니다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image13.png" style="width:5.188888888888889in;height:7.9430555555555555in" /></p>
+      <ol start="7" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 업데이트합니다.</li>
+      </ol>
+      <h2 id="네트워크-재시작-isolated">네트워크 재시작 (Isolated)</h2>
+      <p>Isolated 네트워크의 가상 라우터를 재시작합니다. 재시작 시 해당
+      네트워크에서 제공하는 모든 서비스가 일시 중단됩니다. <strong>정리(Clean
+      up)</strong> 옵션을 활성화하면 기존 가상 라우터가 삭제되고 새 가상
+      라우터가 프로비저닝됩니다.</p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인합니다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>네트워크</strong>를
+      선택합니다.</p></li>
+      <li><p><strong>게스트 네트워크</strong> 보기를 선택합니다.</p></li>
+      <li><p>재시작할 네트워크를 선택합니다.</p></li>
+      <li><p><img src="/guide/html/images/03_network/01_guest_networks/image14.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>네트워크
+      재시작</strong> 버튼을 클릭합니다.</p></li>
+      <li><p><strong>확인</strong> 버튼을 클릭하여 가상 라우터를
+      재시작합니다.</p></li>
+      </ol>
+      <hr />
+      <h2 id="네트워크-삭제-isolated">네트워크 삭제 (Isolated)</h2>
+      <p>Isolated 네트워크를 삭제합니다.</p>
+      <p><strong>주의</strong>: 네트워크를 삭제하기 전에 연결된 모든
+      가상머신을 먼저 제거해야 합니다.</p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인합니다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>네트워크</strong>를
+      선택합니다.</p></li>
+      <li><p><strong>게스트 네트워크</strong> 보기를 선택합니다.</p></li>
+      <li><p>삭제할 네트워크를 선택합니다.</p></li>
+      <li><p><strong>상세</strong> 탭에서 <img src="/guide/html/images/03_network/01_guest_networks/image15.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>네트워크
+      삭제</strong> 버튼을 클릭합니다. 또는 목록 조희의 삭제 버튼을 사용할
+      수도 있습니다.</p></li>
+      <li><p><strong>확인</strong> 버튼을 클릭하여 네트워크를
+      삭제합니다.</p></li>
+      </ol>
+      <hr />
+      <h2 id="상세-탭-isolated">상세 탭 (Isolated)</h2>
+      <p>Isolated 네트워크에 대한 상세 정보를 조회하는 화면입니다. 해당
+      네트워크의 이름, 아이디, 유형, 트래픽 유형, CIDR, 넷마스크, 게이트웨이,
+      영구적 여부, 재시작 필요 여부, Redundant 라우터, 네트워크 도메인, 기본
+      송신 정책, Zone, 계정, 도메인, DNS1, Public 인터페이스 MTU, Private
+      인터페이스 MTU 등의 정보를 확인할 수 있습니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image16.png" style="width:6.565972222222222in;height:7.131944444444445in" /></p>
+      <hr />
+      <h2 id="송신-규칙-탭-isolated">송신 규칙 탭 (Isolated)</h2>
+      <p>Isolated 네트워크의 송신 규칙을 조회 및 관리하는 화면입니다. Source
+      CIDR, 목적지 CIDR, 프로토콜, 시작 포트, 종료 포트 등의 정보를 확인할 수
+      있습니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image17.png" style="width:6.565972222222222in;height:2.5284722222222222in" /></p>
+      <p><strong>송신 규칙 추가</strong></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 24%" />
+      <col style="width: 72%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>Source CIDR</strong></td>
+      <td style="text-align: left;">송신 규칙이 적용될 출발지 CIDR를
+      입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>목적지 CIDR</strong></td>
+      <td style="text-align: left;">목적지 네트워크의 CIDR를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>프로토콜</strong></td>
+      <td style="text-align: left;">적용할 프로토콜을 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>시작 포트</strong></td>
+      <td style="text-align: left;">포트 범위의 시작 포트를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>종료 포트</strong></td>
+      <td style="text-align: left;">포트 범위의 종료 포트를 입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image18.png" style="width:1.0336176727909012in;height:0.1968503937007874in" /><strong>추가</strong> 버튼을
+      클릭하여 송신 규칙을 추가합니다.</p>
+      <p><strong>송신 규칙 삭제</strong></p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image15.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>삭제</strong>
+      버튼을 클릭하여 해당 송신 규칙을 삭제합니다.</p>
+      <hr />
+      <h2 id="public-ip-주소-탭-isolated">Public IP 주소 탭 (Isolated)</h2>
+      <p>Isolated 네트워크의 Public IP 주소를 조회 및 관리하는 화면입니다. IP
+      주소, 상태, VM, 네트워크 등의 정보를 확인할 수 있습니다. IP 주소를
+      클릭하면 해당 Public IP 주소 상세 화면에서 Static NAT으로 가상머신에
+      IP를 제공할 수 있습니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image19.png" style="width:6.565972222222222in;height:1.6888888888888889in" /></p>
+      <p><strong>새 IP 주소 가져오기</strong></p>
+      <p>Isolated 네트워크에 Public IP 주소를 추가합니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image20.png" style="width:4.688888888888889in;height:2.792361111111111in" /></p>
+      <p><strong>Public IP 주소 일괄 해제</strong></p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image21.png" style="width:6.546180008748906in;height:0.18888888888888888in" />일괄
+      해제할 Public IP를 체크하고 <strong>IP 주소 해제</strong> 버튼을
+      클릭하여 Public IP 주소를 일괄 해제합니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image22.png" style="width:6.565972222222222in;height:1.9578740157480314in" /></p>
+      <hr />
+      <h2 id="가상-라우터-탭-isolated">가상 라우터 탭 (Isolated)</h2>
+      <p>Isolated 네트워크에 대한 가상 라우터를 조회하는 화면입니다. 해당
+      네트워크의 가상 라우터 이름, 상태, IP, 버전, 실행 중인 호스트 등의
+      정보를 확인할 수 있습니다.<img src="/guide/html/images/03_network/01_guest_networks/image23.png" style="width:6.565972222222222in;height:0.9987992125984252in" /></p>
+      <hr />
+      <h2 id="네트워크-권한-탭-isolated">네트워크 권한 탭 (Isolated)</h2>
+      <p>Isolated 네트워크의 네트워크 권한을 조회 및 관리하는 화면입니다. 해당
+      네트워크의 도메인, 계정, 프로젝트 등의 정보를 확인할 수 있습니다.</p>
+      <p>추가 네트워크는 모든 계정에서 사용 가능하도록 하거나 특정 계정에만
+      할당할 수 있습니다. 모든 계정에서 사용 가능한 네트워크는 Zone 전체
+      네트워크로, Zone에 접근 권한이 있는 모든 사용자가 해당 네트워크에
+      접근하는 가상머신을 생성할 수 있습니다. 특정 계정에 할당된 네트워크는
+      강한 격리성을 제공합니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image24.png" style="width:6.555157480314961in;height:1.8583333333333334in" /></p>
+      <p><strong>네트워크 권한 추가</strong></p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image25.png" style="width:5.188888888888889in;height:2.98125in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 22%" />
+      <col style="width: 74%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>계정</strong></td>
+      <td style="text-align: left;">권한을 부여할 계정을 선택합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>프로젝트</strong></td>
+      <td style="text-align: left;">권한을 부여할 프로젝트를 선택합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>확인</strong> 버튼을 클릭하여 네트워크 권한을 추가합니다.</p>
+      <p><strong>네트워크 권한 삭제</strong></p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image15.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>네트워크
+      권한 삭제</strong> 버튼을 클릭하여 네트워크 권한을 삭제합니다.</p>
+      <p><strong>네트워크 권한 재설정</strong></p>
+      <p><strong>확인</strong> 버튼을 클릭하여 네트워크 권한을
+      재설정합니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image26.png" style="width:2.9715277777777778in;height:1.792361111111111in" /></p>
+      <hr />
+      <h2 id="이벤트-탭-isolated">이벤트 탭 (Isolated)</h2>
+      <p>Isolated 네트워크에 관련된 이벤트 정보를 확인하는 화면입니다.
+      네트워크에서 발생한 다양한 액션과 변경 사항을 확인할 수 있습니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image27.png" style="width:6.565972222222222in;height:1.9715277777777778in" /></p>
+      <hr />
+      <h2 id="코멘트-탭-isolated">코멘트 탭 (Isolated)</h2>
+      <p>Isolated 네트워크에 관련된 코멘트 정보를 확인하는 화면입니다. 각
+      사용자별로 해당 네트워크에 대한 코멘트 정보를 조회 및 관리할 수
+      있습니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image28.png" style="width:6.565972222222222in;height:3.0944444444444446in" /></p>
+      <hr />
+      <h2 id="네트워크-업데이트-l2">네트워크 업데이트 (L2)</h2>
+      <p>L2 네트워크의 정보를 업데이트합니다.</p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인합니다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>네트워크</strong>를
+      선택합니다.</p></li>
+      <li><p><strong>게스트 네트워크</strong> 보기를 선택합니다.</p></li>
+      <li><p>수정할 네트워크를 선택합니다.</p></li>
+      <li><p><img src="/guide/html/images/03_network/01_guest_networks/image12.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>네트워크
+      업데이트</strong> 버튼을 클릭합니다.</p></li>
+      <li><p>수정할 항목을 입력합니다. <img src="/guide/html/images/03_network/01_guest_networks/image29.png" style="width:5.188888888888889in;height:7.9430555555555555in" /></p></li>
+      <li><p><strong>확인</strong> 버튼을 클릭하여 업데이트합니다.</p></li>
+      </ol>
+      <hr />
+      <h2 id="네트워크-삭제-l2">네트워크 삭제 (L2)</h2>
+      <p>L2 네트워크를 삭제합니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image15.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>네트워크
+      삭제</strong> 버튼을 클릭하여 삭제 화면을
+      호출하고, <strong>확인</strong> 버튼을 클릭하여 삭제합니다.</p>
+      <hr />
+      <h2 id="상세-탭-l2">상세 탭 (L2)</h2>
+      <p>L2 네트워크에 대한 상세 정보를 조회하는 화면입니다. 해당 네트워크의
+      이름, 아이디, 유형, 트래픽 유형, 영구적 여부, 재시작 필요 여부,
+      Redundant 라우터, Zone, 계정, 도메인, DNS1 등의 정보를 확인할 수
+      있습니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image30.png" style="width:6.565972222222222in;height:1.8583333333333334in" /></p>
+      <hr />
+      <h2 id="네트워크-권한-탭-l2">네트워크 권한 탭 (L2)</h2>
+      <p>L2 네트워크의 네트워크 권한을 조회 및 관리하는 화면입니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image31.png" style="width:6.565972222222222in;height:1.707638888888889in" /></p>
+      <p><strong>네트워크 권한 추가</strong></p>
+      <p>계정 또는 프로젝트를 선택하고 <strong>확인</strong> 버튼을 클릭하여
+      권한을 추가합니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image25.png" style="width:5.188888888888889in;height:2.98125in" /></p>
+      <p><strong>네트워크 권한 삭제</strong></p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image15.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>네트워크
+      권한 삭제</strong> 버튼을 클릭하여 권한을 삭제합니다.</p>
+      <p><strong>네트워크 권한 재설정</strong></p>
+      <p><strong>확인</strong> 버튼을 클릭하여 네트워크 권한을
+      재설정합니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image26.png" style="width:2.9715277777777778in;height:1.792361111111111in" /></p>
+      <hr />
+      <h2 id="이벤트-탭-l2">이벤트 탭 (L2)</h2>
+      <p>L2 네트워크에 관련된 이벤트 정보를 확인하는 화면입니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image31.png" style="width:6.565972222222222in;height:1.707638888888889in" /></p>
+      <hr />
+      <h2 id="코멘트-탭-l2">코멘트 탭 (L2)</h2>
+      <p>L2 네트워크에 관련된 코멘트 정보를 조회 및 관리하는 화면입니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image32.png" style="width:6.565972222222222in;height:3.0944444444444446in" /></p>
+      <hr />
+      <h2 id="네트워크-업데이트-shared">네트워크 업데이트 (Shared)</h2>
+      <p>Shared 네트워크의 정보를 업데이트합니다.</p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인합니다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>네트워크</strong>를
+      선택합니다.</p></li>
+      <li><p><strong>게스트 네트워크</strong> 보기를 선택합니다.</p></li>
+      <li><p>수정할 네트워크를 선택합니다.</p></li>
+      <li><p><img src="/guide/html/images/03_network/01_guest_networks/image12.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>네트워크
+      업데이트</strong> 버튼을 클릭합니다.</p></li>
+      <li><p>수정할 항목을 입력합니다. <img src="/guide/html/images/03_network/01_guest_networks/image33.png" style="width:5.188888888888889in;height:7.236111111111111in" /></p></li>
+      <li><p><strong>확인</strong> 버튼을 클릭하여 업데이트합니다.</p></li>
+      </ol>
+      <hr />
+      <h2 id="네트워크-재시작-shared">네트워크 재시작 (Shared)</h2>
+      <p>Shared 네트워크의 가상 라우터를 재시작합니다. 재시작 시 해당
+      네트워크에서 제공하는 모든 서비스가 일시 중단됩니다. <strong>정리(Clean
+      up)</strong> 옵션을 활성화하면 기존 가상 라우터가 삭제되고 새 가상
+      라우터가 프로비저닝됩니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image34.png" style="width:6.0in;height:4.084722222222222in" /></p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image35.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>네트워크
+      재시작</strong> 버튼을 클릭한 후 <strong>확인</strong> 버튼을 클릭하여
+      가상 라우터를 재시작합니다.</p>
+      <hr />
+      <h2 id="네트워크-삭제-shared">네트워크 삭제 (Shared)</h2>
+      <p>Shared 네트워크를 삭제합니다.</p>
+      <p><strong>주의</strong>: 네트워크를 삭제하기 전에 연결된 모든
+      가상머신을 먼저 제거해야 합니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image36.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>네트워크
+      삭제</strong> 버튼을 클릭하여 삭제 화면을
+      호출하고, <strong>확인</strong> 버튼을 클릭하여 삭제합니다.</p>
+      <hr />
+      <h2 id="상세-탭-shared">상세 탭 (Shared)</h2>
+      <p>Shared 네트워크에 대한 상세 정보를 조회하는 화면입니다. 해당
+      네트워크의 이름, 아이디, 유형, 트래픽 유형, CIDR, 넷마스크, 게이트웨이,
+      영구적 여부, 재시작 필요 여부, Redundant 라우터, Zone, 도메인, DNS1,
+      Public 인터페이스 MTU 등의 정보를 확인할 수 있습니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image37.png" style="width:6.565972222222222in;height:6.783333333333333in" /></p>
+      <hr />
+      <h2 id="ip-addresses-탭-shared">IP Addresses 탭 (Shared)</h2>
+      <p>Shared 네트워크의 IP Addresses를 조회 및 관리하는 화면입니다. IP
+      주소, 상태, VM, 네트워크 등의 정보를 확인할 수 있습니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image38.png" style="width:6.565972222222222in;height:1.6888888888888889in" /></p>
+      <p><strong>Public IP 주소 일괄 해제</strong><img src="/guide/html/images/03_network/01_guest_networks/image39.png" style="width:6.575694444444444in;height:0.18888888888888888in" /></p>
+      <p>일괄 해제할 Public IP를 체크하고 <strong>Public IP 주소 일괄
+      해제</strong> 버튼을 클릭하여 Public IP 주소를 일괄 해제합니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image40.png" style="width:6.565972222222222in;height:1.9625in" /></p>
+      <hr />
+      <h2 id="가상-라우터-탭-shared">가상 라우터 탭 (Shared)</h2>
+      <p>Shared 네트워크에 대한 가상 라우터를 조회하는 화면입니다. 해당
+      네트워크의 가상 라우터 이름, 상태, IP, 버전, 실행 중인 호스트 등의
+      정보를 확인할 수 있습니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image41.png" style="width:6.565972222222222in;height:1.6319444444444444in" /></p>
+      <hr />
+      <h2 id="게스트-ip-주소-범위-탭-shared">게스트 IP 주소 범위 탭
+      (Shared)</h2>
+      <p>Shared 네트워크의 게스트 IP 주소 범위를 조회 및 관리하는 화면입니다.
+      IPv4 시작/종료 IP, IPv6 시작/종료 IP, 게이트웨이, 넷마스크 등의 정보를
+      확인할 수 있습니다.</p>
+      <p>Advanced Zone에서는 네트워크가 정의될 때 IP 주소 범위 또는 CIDR이
+      네트워크에 할당됩니다. 가상 라우터는 DHCP 서버로 동작하며 CIDR을
+      기반으로 게스트 가상머신에 IP 주소를 할당합니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image42.png" style="width:6.565972222222222in;height:1.726388888888889in" /></p>
+      <p><strong>IP 주소 범위 추가</strong></p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image43.png" style="width:5.188888888888889in;height:5.811111111111111in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 29%" />
+      <col style="width: 67%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>게이트웨이</strong></td>
+      <td style="text-align: left;">게이트웨이를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>넷마스크</strong></td>
+      <td style="text-align: left;">넷마스크를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>IPv4 시작 IP</strong></td>
+      <td style="text-align: left;">IP 범위의 시작 IP를 입력합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>IPv4 종료 IP</strong></td>
+      <td style="text-align: left;">IP 범위의 종료 IP를 입력합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>확인</strong> 버튼을 클릭하여 게스트 IP 주소 범위를
+      추가합니다.</p>
+      <p><strong>IP 주소 범위 편집</strong></p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image44.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>편집</strong> 버튼을
+      클릭하여 IP 범위 업데이트 화면을 호출하고, 수정할 항목을 입력한
+      후 <strong>확인</strong> 버튼을 클릭합니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image45.png" style="width:5.415277777777778in;height:4.396527777777778in" /></p>
+      <p><strong>IP 주소 범위 삭제</strong></p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image15.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>IP
+      주소 범위 삭제</strong> 버튼을 클릭하고, <strong>예</strong> 버튼을
+      클릭하여 IP 범위를 삭제합니다.</p>
+      <hr />
+      <h2 id="이벤트-탭-shared">이벤트 탭 (Shared)</h2>
+      <p>Shared 네트워크에 관련된 이벤트 정보를 확인하는 화면입니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image46.png" style="width:6.565972222222222in;height:1.707638888888889in" /></p>
+      <hr />
+      <h2 id="코멘트-탭-shared">코멘트 탭 (Shared)</h2>
+      <p>Shared 네트워크에 관련된 코멘트 정보를 조회 및 관리하는
+      화면입니다.</p>
+      <p><img src="/guide/html/images/03_network/01_guest_networks/image47.png" style="width:6.565972222222222in;height:3.0944444444444446in" /></p>
+      <hr />
+      <h2 id="가상머신의-네트워크-재구성">가상머신의 네트워크 재구성</h2>
+      <p>가상머신을 네트워크 간에 이동하거나 가상머신의 네트워크를 재구성할 수
+      있습니다. 가상머신을 네트워크에서 제거하고 새 네트워크에 추가하거나,
+      가상머신의 기본 네트워크를 변경할 수 있습니다.</p>
+      <p><strong>NIC에 네트워크 추가</strong></p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인합니다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>가상머신</strong>을
+      선택합니다.</p></li>
+      <li><p>작업할 가상머신을 선택합니다.</p></li>
+      <li><p><strong>NIC</strong> 탭을 클릭합니다.</p></li>
+      <li><p><strong>VM에 네트워크 추가</strong>를 클릭합니다.</p></li>
+      <li><p>드롭다운 목록에서 추가할 네트워크를 선택합니다.</p></li>
+      <li><p>새 NIC이 추가되며, NIC 페이지에서 다음 정보를 확인할 수
+      있습니다.</p>
+      <ul>
+      <li>ID, 네트워크 이름, 유형, IP 주소, 게이트웨이, 넷마스크, 기본 여부,
+      CIDR(IPv6)</li>
+      </ul></li>
+      </ol>
+      <p><strong>NIC에서 네트워크 제거</strong></p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인합니다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>가상머신</strong>을
+      선택합니다.</p></li>
+      <li><p>작업할 가상머신을 선택합니다.</p></li>
+      <li><p><strong>NIC</strong> 탭을 클릭합니다.</p></li>
+      <li><p>제거할 NIC을 찾습니다.</p></li>
+      <li><p><strong>NIC 제거</strong> 버튼을 클릭합니다.</p></li>
+      <li><p><strong>예</strong>를 클릭하여 확인합니다.</p></li>
+      </ol>
+      <p><strong>기본 네트워크 변경</strong></p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인합니다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>가상머신</strong>을
+      선택합니다.</p></li>
+      <li><p>작업할 가상머신을 선택합니다.</p></li>
+      <li><p><strong>NIC</strong> 탭을 클릭합니다.</p></li>
+      <li><p>기본 네트워크로 설정할 NIC을 찾습니다.</p></li>
+      <li><p><strong>기본 NIC 설정</strong> 버튼을 클릭합니다.</p></li>
+      <li><p><strong>예</strong>를 클릭하여 확인합니다.</p></li>
+      </ol>
+      <hr />
+      <h2 id="용어사전">용어사전</h2>
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 13%" />
+      <col style="width: 85%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>용어</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>VNI</strong></td>
+      <td style="text-align: left;">VXLAN(Virtual Extensible LAN)에서 사용하는
+      개념으로, 물리적인 네트워크를 넘어 여러 데이터센터나 네트워크 구간을
+      가상화하는 기술에 사용됩니다. VXLAN은 대규모 데이터센터나 클라우드
+      환경에서 여러 가상 네트워크를 확장하고 관리하는 데 사용됩니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Public IP</strong></td>
+      <td style="text-align: left;">외부 접근 허용 목적으로 VM이나 로드
+      밸런서, 방화벽 등 외부에서 접근해야 하는 리소스에 할당됩니다. 클라우드
+      내의 VM이 외부 인터넷과 통신할 수 있게 하기 위해 사용됩니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Source CIDR</strong></td>
+      <td style="text-align: left;">가상 네트워크가 수신할 출발지 네트워크의
+      IP 범위를 정의합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>목적지 CIDR</strong></td>
+      <td style="text-align: left;">가상 네트워크가 송신할 목적지 네트워크의
+      IP 범위를 정의합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>CIDR</strong></td>
+      <td style="text-align: left;">Advanced Zone에서 네트워크 정의 시
+      네트워크에 할당되는 IP 주소 범위입니다. 가상 라우터는 DHCP 서버로
+      동작하며 CIDR을 기반으로 게스트 가상머신에 IP 주소를 할당합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Source NAT</strong></td>
+      <td style="text-align: left;">가상 라우터에 자동으로 구성되어 모든
+      게스트 가상머신의 아웃바운드 트래픽을 전달합니다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>기본 네트워크 (Default
+      Network)</strong></td>
+      <td style="text-align: left;">각 가상머신에 하나씩 존재하는 기본
+      네트워크입니다. 가상 라우터의 DHCP 응답이 기본 네트워크의 게이트웨이를
+      게스트의 기본 게이트웨이로 설정합니다.</td>
+      </tr>
+      </tbody>
+      </table>
+    </main>
+  </div>
+</body>
+</html>
