@@ -312,11 +312,14 @@ a:hover {
 
 main > ul > li,
 main > .content-frame > ul > li,
+main > .content-frame > ol > li,
 main > ol > li {
   margin-left: 2rem;
   margin-bottom: 1rem;
 }
-
+.indent {
+  margin-left: 1rem;
+}
 main > .content-frame > ul > li > ul > li {
   margin-left: 1.2rem;
   margin-bottom: 0.4rem;
