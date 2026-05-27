@@ -310,9 +310,16 @@ a:hover {
   background: var(--color-text-light);
 }
 
-main > ul > li {
+main > ul > li,
+main > .content-frame > ul > li,
+main > ol > li {
   margin-left: 2rem;
   margin-bottom: 1rem;
+}
+
+main > .content-frame > ul > li > ul > li {
+  margin-left: 1.2rem;
+  margin-bottom: 0.4rem;
 }
 
 blockquote {
@@ -337,7 +344,7 @@ blockquote {
   font-size: 0.875rem;
   background-color: #fff;
   color: rgba(0, 0, 0, 0.85);
-  border-radius: 4px;
+  /* border-radius: 4px; */
   overflow: hidden;
 }
 
@@ -351,7 +358,7 @@ blockquote {
   font-weight: 500;
   text-align: left;
   font-size: 0.875rem;
-  border-bottom: 1px solid #f0f0f0;
+  border: 1px solid #f0f0f0;
 }
 
 .content table thead th:nth-child(1) {
@@ -367,7 +374,7 @@ blockquote {
 
 .content table tbody td {
   padding: 0.85rem 1rem;
-  border-bottom: 1px solid #f0f0f0;
+  border: 1px solid #f0f0f0;
   color: rgba(0, 0, 0, 0.65);
   line-height: 1.5715;
   vertical-align: middle;
@@ -381,9 +388,9 @@ blockquote {
   background-color: #f3fae9;
 }
 
-.content table tbody tr:last-child td {
+/* .content table tbody tr:last-child td {
   border-bottom: none;
-}
+} */
 
 .content table tbody td:first-child {
   text-align: center;
