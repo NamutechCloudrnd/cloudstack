@@ -51,8 +51,13 @@
                   </slot>
                 </div>
                 <slot name="name">
-                  <div v-if="['USER.LOGIN', 'USER.LOGOUT', 'ROUTER.HEALTH.CHECKS', 'FIREWALL.CLOSE', 'ALERT.SERVICE.DOMAINROUTER'].includes(resource.name)">{{ $t(resource.name.toLowerCase()) }}</div>
+                  <!-- <div v-if="['USER.LOGIN', 'USER.LOGOUT', 'ROUTER.HEALTH.CHECKS', 'FIREWALL.CLOSE', 'ALERT.SERVICE.DOMAINROUTER'].includes(resource.name)">{{ $t(resource.name.toLowerCase()) }}</div>
                   <div v-else>
+                    <h4 class="name">
+                      {{ name }}
+                    </h4>
+                  </div> -->
+                  <div>
                     <h4 class="name">
                       {{ name }}
                     </h4>
@@ -68,8 +73,11 @@
                     {{ $t('label.inbuilt') }}
                   </a-tag>
                   <a-tag v-if="resource.type">
-                    <span v-if="['USER.LOGIN', 'USER.LOGOUT', 'ROUTER.HEALTH.CHECKS', 'FIREWALL.CLOSE', 'ALERT.SERVICE.DOMAINROUTER'].includes(resource.type)">{{ $t(resource.type.toLowerCase()) }}</span>
+                    <!-- <span v-if="['USER.LOGIN', 'USER.LOGOUT', 'ROUTER.HEALTH.CHECKS', 'FIREWALL.CLOSE', 'ALERT.SERVICE.DOMAINROUTER'].includes(resource.type)">{{ $t(resource.type.toLowerCase()) }}</span>
                     <span v-else>
+                      {{ resource.type }}
+                    </span> -->
+                    <span>
                       {{ resource.type }}
                     </span>
                   </a-tag>
@@ -709,7 +717,7 @@
               <div class="resource-detail-item__label">{{ $t('label.storagepool') }}</div>
               <div class="resource-detail-item__details">
                 <database-outlined />
-                <router-link v-if="!isStatic && $router.resolve('/storagepool/' + resource.storageid).matched[0].redirect !== '/exception/404'" :to="{ path: '/storagepool/' + resource.storageid }">{{ resource.storage || resource.storageid }} </router-link>
+                <router-link v-if="!isStatic && $router.resolve('/storagepool/' + encodeURIComponent(resource.storageid)).matched[0].redirect !== '/exception/404'" :to="{ path: '/storagepool/' + encodeURIComponent(resource.storageid) }">{{ resource.storage || resource.storageid }} </router-link>
                 <span v-else>{{ resource.storage || resource.storageid }}</span>
                 <a-tag style="margin-left: 5px;" v-if="resource.storagetype">
                   {{ resource.storagetype }}
@@ -1095,7 +1103,7 @@ export default {
       return ['UserVm', 'Template', 'ISO', 'Volume', 'Snapshot', 'Backup', 'Network',
         'LoadBalancer', 'PortForwardingRule', 'FirewallRule', 'SecurityGroup', 'SecurityGroupRule',
         'PublicIpAddress', 'Project', 'Account', 'Vpc', 'NetworkACL', 'StaticRoute', 'VMSnapshot',
-        'RemoteAccessVpn', 'User', 'SnapshotPolicy', 'VpcOffering']
+        'RemoteAccessVpn', 'User', 'SnapshotPolicy', 'VpcOffering', 'Domain']
     },
     name () {
       return this.resource.displayname || this.resource.name || this.resource.displaytext || this.resource.username ||

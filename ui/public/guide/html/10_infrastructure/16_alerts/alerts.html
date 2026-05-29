@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/guide/html/style.css">
+</head>
+<body>
+  <div class="container">
+    <main class="content">
+      <h1 id="알림">알림</h1>
+      <p>시스템은 클라우드 관리를 돕기 위해 알림(Alert)과 이벤트(Event)를
+      제공한다.</p>
+      <p>**알림(Alert)**은 클라우드에서 오류가 발생했음을 관리자에게 통지하는
+      메시지로, 일반적으로 이메일을 통해 전달된다. 알림 동작은 구성
+      가능한다.</p>
+      <p>**이벤트(Event)**는 클라우드에서 발생하는 모든 사용자 및 관리자
+      작업을 추적한다. 예를 들어 게스트 인스턴스가 시작될 때마다 관련
+      이벤트가 생성된다. 이벤트는 관리 서버의 데이터베이스에 저장된다.</p>
+      <p>다음 상황에서 관리자에게 이메일 알림이 전송된다.</p>
+      <ul>
+      <li><p>관리 서버 클러스터의 CPU, 메모리, 또는 스토리지 자원이 부족한
+      경우</p></li>
+      <li><p>관리 서버가 호스트로부터 3분 이상 하트비트(Heartbeat)를 받지 못한
+      경우</p></li>
+      <li><p>호스트 클러스터의 CPU, 메모리, 또는 스토리지 자원이 부족한
+      경우</p></li>
+      </ul>
+      <p><strong>이메일 알림 SMTP 설정</strong></p>
+      <p>알림 이메일 발송을 위한 전역 설정 파라미터는 다음과 같다.</p>
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 21%" />
+      <col style="width: 7%" />
+      <col style="width: 69%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>전역 설정</strong></th>
+      <th style="text-align: left;"><strong>기본값</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;">alert.smtp.host</td>
+      <td style="text-align: left;">null</td>
+      <td style="text-align: left;">이메일 알림 발송에 사용할 SMTP
+      호스트명</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">alert.smtp.port</td>
+      <td style="text-align: left;">465</td>
+      <td style="text-align: left;">SMTP 서버 리스닝 포트</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">alert.smtp.useAuth</td>
+      <td style="text-align: left;">false</td>
+      <td style="text-align: left;">true로 설정 시 이메일 발송 시 SMTP 인증을
+      사용</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">alert.smtp.username</td>
+      <td style="text-align: left;">null</td>
+      <td style="text-align: left;">SMTP 인증용 사용자명 (alert.smtp.useAuth가
+      true인 경우에만 적용)</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">alert.smtp.password</td>
+      <td style="text-align: left;">null</td>
+      <td style="text-align: left;">SMTP 인증용 비밀번호 (alert.smtp.useAuth가
+      true인 경우에만 적용)</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">alert.smtp.useStartTLS</td>
+      <td style="text-align: left;">false</td>
+      <td style="text-align: left;">true로 설정하고 alert.smtp.useAuth를 통해
+      보안을 활성화하면 StartTLS로 연결을 보호</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">alert.smtp.enabledSecurityProtocols</td>
+      <td style="text-align: left;">null</td>
+      <td style="text-align: left;">공백으로 구분된 보안 프로토콜 목록 (예:
+      "TLSv1 TLSv1.1"). 지원 프로토콜: SSLv2Hello, SSLv3, TLSv1, TLSv1.1,
+      TLSv1.2</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">alert.smtp.connectiontimeout</td>
+      <td style="text-align: left;">30000</td>
+      <td style="text-align: left;">소켓 연결 타임아웃(밀리초). -1은 무한
+      대기</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">alert.smtp.timeout</td>
+      <td style="text-align: left;">30000</td>
+      <td style="text-align: left;">소켓 I/O 타임아웃(밀리초). -1은 무한
+      대기</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">alert.email.addresses</td>
+      <td style="text-align: left;">null</td>
+      <td style="text-align: left;">알림 이메일을 수신할 이메일 주소 목록
+      (쉼표로 구분)</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">alert.email.sender</td>
+      <td style="text-align: left;">null</td>
+      <td style="text-align: left;">알림 이메일의 발신자 주소 (이메일의 From
+      헤더에 표시)</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>알림 유형 목록</strong></p>
+      <p>다음은 namuVirt에서 발생할 수 있는 알림 유형
+      목록이다. listAlerts API 명령으로 최신 목록을 조회할 수 있다.</p>
+      <table style="width:98%;">
+      <colgroup>
+      <col style="width: 14%" />
+      <col style="width: 25%" />
+      <col style="width: 57%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>유형 번호</strong></th>
+      <th style="text-align: left;"><strong>이름</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;">0</td>
+      <td style="text-align: left;">MEMORY</td>
+      <td style="text-align: left;">사용 가능한 메모리가 설정된 임계값
+      이하</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">1</td>
+      <td style="text-align: left;">CPU</td>
+      <td style="text-align: left;">할당되지 않은 CPU가 설정된 임계값
+      이하</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">2</td>
+      <td style="text-align: left;">STORAGE</td>
+      <td style="text-align: left;">사용 가능한 스토리지가 설정된 임계값
+      이하</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">3</td>
+      <td style="text-align: left;">STORAGE_ALLOCATED</td>
+      <td style="text-align: left;">남은 미할당 스토리지가 설정된 임계값
+      이하</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">4</td>
+      <td style="text-align: left;">PUBLIC_IP</td>
+      <td style="text-align: left;">할당되지 않은 가상 네트워크 공용 IP 수가
+      설정된 임계값 이하</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">5</td>
+      <td style="text-align: left;">PRIVATE_IP</td>
+      <td style="text-align: left;">할당되지 않은 사설 IP 수가 설정된 임계값
+      이하</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">6</td>
+      <td style="text-align: left;">SECONDARY_STORAGE</td>
+      <td style="text-align: left;">가용 Zone의 사용 가능한 2차 스토리지가
+      설정된 임계값 이하</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">7</td>
+      <td style="text-align: left;">HOST</td>
+      <td style="text-align: left;">호스트 연결 끊김 등 호스트 관련 알림</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">8</td>
+      <td style="text-align: left;">USERVM</td>
+      <td style="text-align: left;">사용자 인스턴스가 예기치 않게 중지됨</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">9</td>
+      <td style="text-align: left;">DOMAIN_ROUTER</td>
+      <td style="text-align: left;">도메인 라우터 VM이 예기치 않게 중지됨</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">10</td>
+      <td style="text-align: left;">CONSOLE_PROXY</td>
+      <td style="text-align: left;">Console Proxy VM이 예기치 않게 중지됨</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">11</td>
+      <td style="text-align: left;">ROUTING</td>
+      <td style="text-align: left;">기본 경로(게이트웨이)로의 연결이
+      끊어짐</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">12</td>
+      <td style="text-align: left;">STORAGE_MISC</td>
+      <td style="text-align: left;">시스템 VM에서 스토리지 문제 발생</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">13</td>
+      <td style="text-align: left;">USAGE_SERVER</td>
+      <td style="text-align: left;">사용 서버 프로세스가 실행 중이지 않음</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">14</td>
+      <td style="text-align: left;">MANAGEMENT_NODE</td>
+      <td style="text-align: left;">관리 네트워크 CIDR이 초기에 설정되지
+      않음</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">15</td>
+      <td style="text-align: left;">DOMAIN_ROUTER_MIGRATE</td>
+      <td style="text-align: left;">도메인 라우터 VM 마이그레이션 실패</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">16</td>
+      <td style="text-align: left;">CONSOLE_PROXY_MIGRATE</td>
+      <td style="text-align: left;">Console Proxy VM 마이그레이션 실패</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">17</td>
+      <td style="text-align: left;">USERVM_MIGRATE</td>
+      <td style="text-align: left;">사용자 인스턴스 마이그레이션 실패</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">18</td>
+      <td style="text-align: left;">VLAN</td>
+      <td style="text-align: left;">가용 Zone에서 할당되지 않은 VLAN 수가
+      설정된 임계값 이하</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">19</td>
+      <td style="text-align: left;">SSVM</td>
+      <td style="text-align: left;">SSVM(Secondary Storage VM)이 예기치 않게
+      중지됨</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">20</td>
+      <td style="text-align: left;">USAGE_SERVER_RESULT</td>
+      <td style="text-align: left;">사용량 집계 작업 실패</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">21</td>
+      <td style="text-align: left;">STORAGE_DELETE</td>
+      <td style="text-align: left;">스토리지 풀 삭제 실패</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">22</td>
+      <td style="text-align: left;">UPDATE_RESOURCE_COUNT</td>
+      <td style="text-align: left;">자원 사용량 카운트 업데이트 실패</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">23</td>
+      <td style="text-align: left;">USAGE_SANITY_RESULT</td>
+      <td style="text-align: left;">사용량 정합성 검사 실패</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">24</td>
+      <td style="text-align: left;">DIRECT_ATTACHED_PUBLIC_IP</td>
+      <td style="text-align: left;">가용 Zone에서 할당되지 않은 공유 네트워크
+      IP 수가 부족</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">25</td>
+      <td style="text-align: left;">LOCAL_STORAGE</td>
+      <td style="text-align: left;">남은 미할당 로컬 스토리지가 설정된 임계값
+      이하</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;">26</td>
+      <td style="text-align: left;">RESOURCE_LIMIT_EXCEEDED</td>
+      <td style="text-align: left;">자원 한도 초과 (현재 반복 스냅샷에만
+      사용)</td>
+      </tr>
+      </tbody>
+      </table>
+      <hr />
+      <h2 id="목록-조회">목록 조회</h2>
+      <p>알림 목록을 확인하는 화면이다. namuVirt 대시보드 UI에서 관리자
+      알림을 확인할 수 있으며, 이메일을 통해서도 동일한 알림을 받을 수
+      있다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/16_alerts/image106.png" style="width:6.575694444444444in;height:3.122916666666667in" /></p>
+      <hr />
+      <h2 id="알림-아카이브">알림 아카이브</h2>
+      <p>선택한 알림을 보관(Archive)하는 기능이다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/16_alerts/image107.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>알림
+      아카이브</strong> 버튼을 클릭하여 알림 아카이브 화면을 호출한
+      뒤 <strong>확인</strong> 버튼을 클릭한다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/16_alerts/image108.png" style="width:6.565972222222222in;height:3.263888888888889in" /></p>
+      <hr />
+      <h2 id="알림-삭제">알림 삭제</h2>
+      <p>선택한 알림을 삭제하는 기능이다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/16_alerts/image43.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>알림
+      삭제</strong> 버튼을 클릭하여 알림 삭제 화면을 호출한
+      뒤 <strong>확인</strong> 버튼을 클릭한다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/16_alerts/image109.png" style="width:6.565972222222222in;height:3.3208333333333333in" /></p>
+      <hr />
+      <h2 id="상세">상세</h2>
+      <p>알림에 대한 상세 정보를 조회하는 화면이다. 해당 알림의 이름,
+      아이디, 유형, 일자, 설명 등의 정보를 확인할 수 있다.</p>
+      <p><img src="/guide/html/images/10_infrastructure/16_alerts/image110.png" style="width:6.575694444444444in;height:3.122916666666667in" /></p>
+    </main>
+  </div>
+</body>
+</html>

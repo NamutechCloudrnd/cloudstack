@@ -33,7 +33,10 @@
           {{ t(record.description, record.name + '.description') }}
         </template>
         <template v-if="column.key === 'value'">
-          <ConfigurationValue :configrecord="record" />
+          <ConfigurationValue
+            :configrecord="record"
+            :resource="resource"
+            @refresh="handleConfigRefresh" />
         </template>
       </template>
     </a-table>
@@ -86,6 +89,10 @@ export default {
     pagesize: {
       type: Number,
       default: 20
+    },
+    resource: {
+      type: Object,
+      required: false
     }
   },
   data () {
@@ -117,6 +124,9 @@ export default {
         return 'config-light-row'
       }
       return 'config-dark-row'
+    },
+    handleConfigRefresh (name, updatedRecord) {
+      this.$emit('refresh-config', name, updatedRecord)
     }
   }
 }

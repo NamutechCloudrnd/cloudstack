@@ -22,11 +22,11 @@ export default {
   name: 'systemvm',
   title: 'label.system.vms',
   icon: 'thunderbolt-outlined',
-  docHelp: 'adminguide/systemvm.html',
+  docHelp: '#/10_infrastructure/10_system_vms/system_vms.html',
   permission: ['listSystemVms'],
   searchFilters: ['name', 'zoneid', 'podid', 'hostid', 'systemvmtype', 'storageid', 'arch'],
   columns: ['name', 'state', 'agentstate', 'systemvmtype', 'publicip', 'privateip', 'linklocalip', 'version', 'hostname', 'arch', 'zonename'],
-  details: ['name', 'id', 'agentstate', 'systemvmtype', 'publicip', 'privateip', 'linklocalip', 'gateway', 'hostname', 'arch', 'version', 'zonename', 'created', 'activeviewersessions', 'isdynamicallyscalable', 'hostcontrolstate'],
+  details: ['name', 'id', 'agentstate', 'systemvmtype', 'publicip', 'privateip', 'linklocalip', 'gateway', 'hostname', 'arch', 'version', 'zonename', 'created', 'activeviewersessions', 'isdynamicallyscalable', 'hostcontrolstate', 'storageip'],
   resourceType: 'SystemVm',
   filters: () => {
     const filters = ['starting', 'running', 'stopping', 'stopped', 'destroyed', 'expunging', 'migrating', 'error', 'unknown', 'shutdown']

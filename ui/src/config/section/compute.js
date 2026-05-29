@@ -18,6 +18,9 @@
 import { shallowRef, defineAsyncComponent } from 'vue'
 import store from '@/store'
 import { isZoneCreated } from '@/utils/zone'
+import { getAPI, postAPI, getBaseUrl } from '@/api'
+import { getLatestKubernetesIsoParams } from '@/utils/acsrepo'
+import kubernetesIcon from '@/assets/icons/kubernetes.svg?inline'
 
 export default {
   name: 'compute',
@@ -28,7 +31,7 @@ export default {
       name: 'vm',
       title: 'label.instances',
       icon: 'cloud-server-outlined',
-      docHelp: 'adminguide/virtual_machines.html',
+      docHelp: '#/01_compute/01_instances/instances.html',
       permission: ['listVirtualMachinesMetrics'],
       resourceType: 'UserVm',
       params: () => {
@@ -102,7 +105,7 @@ export default {
           api: 'deployVirtualMachine',
           icon: 'plus-outlined',
           label: 'label.vm.add',
-          docHelp: 'adminguide/virtual_machines.html#creating-vms',
+          // docHelp: 'adminguide/virtual_machines.html#creating-vms',
           listView: true,
           show: isZoneCreated,
           component: () => import('@/views/compute/DeployVM.vue')
@@ -111,7 +114,7 @@ export default {
           api: 'updateVirtualMachine',
           icon: 'edit-outlined',
           label: 'label.action.edit.instance',
-          docHelp: 'adminguide/virtual_machines.html#changing-the-vm-name-os-or-group',
+          // docHelp: 'adminguide/virtual_machines.html#changing-the-vm-name-os-or-group',
           dataView: true,
           popup: true,
           show: (record) => { return record.vmtype !== 'sharedfsvm' },
@@ -122,7 +125,7 @@ export default {
           icon: 'caret-right-outlined',
           label: 'label.action.start.instance',
           message: 'message.action.start.instance',
-          docHelp: 'adminguide/virtual_machines.html#stopping-and-starting-vms',
+          // docHelp: 'adminguide/virtual_machines.html#stopping-and-starting-vms',
           dataView: true,
           groupAction: true,
           popup: true,
@@ -142,7 +145,7 @@ export default {
           icon: 'poweroff-outlined',
           label: 'label.action.stop.instance',
           message: 'message.action.stop.instance',
-          docHelp: 'adminguide/virtual_machines.html#stopping-and-starting-vms',
+          // docHelp: 'adminguide/virtual_machines.html#stopping-and-starting-vms',
           dataView: true,
           groupAction: true,
           groupMap: (selection, values) => { return selection.map(x => { return { id: x, forced: values.forced } }) },
@@ -157,7 +160,7 @@ export default {
           icon: 'reload-outlined',
           label: 'label.action.reboot.instance',
           message: 'message.action.reboot.instance',
-          docHelp: 'adminguide/virtual_machines.html#stopping-and-starting-vms',
+          // docHelp: 'adminguide/virtual_machines.html#stopping-and-starting-vms',
           dataView: true,
           show: (record) => { return ['Running'].includes(record.state) },
           disabled: (record) => { return record.hostcontrolstate === 'Offline' },
@@ -190,7 +193,6 @@ export default {
           api: 'createVMSnapshot',
           icon: 'camera-outlined',
           label: 'label.action.vmsnapshot.create',
-          docHelp: 'adminguide/virtual_machines.html#virtual-machine-snapshots',
           dataView: true,
           args: (record, store) => {
             var args = ['virtualmachineid', 'name', 'description', 'snapshotmemory']
@@ -215,7 +217,6 @@ export default {
           api: 'createSnapshot',
           icon: ['fas', 'camera-retro'],
           label: 'label.action.vmstoragesnapshot.create',
-          docHelp: 'adminguide/virtual_machines.html#virtual-machine-snapshots',
           dataView: true,
           popup: true,
           show: (record, store) => {
@@ -231,7 +232,7 @@ export default {
           icon: 'folder-add-outlined',
           label: 'label.backup.offering.assign',
           message: 'label.backup.offering.assign',
-          docHelp: 'adminguide/virtual_machines.html#backup-offerings',
+          // docHelp: 'adminguide/virtual_machines.html#backup-offerings',
           dataView: true,
           args: ['virtualmachineid', 'backupofferingid'],
           show: (record) => { return ['Running', 'Stopped', 'Shutdown'].includes(record.state) && record.hypervisor !== 'External' && !record.backupofferingid },
@@ -250,7 +251,7 @@ export default {
           icon: 'cloud-upload-outlined',
           label: 'label.create.backup',
           message: 'message.backup.create',
-          docHelp: 'adminguide/virtual_machines.html#creating-vm-backups',
+          // docHelp: 'adminguide/virtual_machines.html#creating-vm-backups',
           dataView: true,
           show: (record) => { return record.backupofferingid },
           popup: true,
@@ -260,7 +261,7 @@ export default {
           api: 'createBackupSchedule',
           icon: 'schedule-outlined',
           label: 'label.backup.configure.schedule',
-          docHelp: 'adminguide/virtual_machines.html#creating-vm-backups',
+          // docHelp: 'adminguide/virtual_machines.html#creating-vm-backups',
           dataView: true,
           popup: true,
           show: (record) => { return record.backupofferingid },
@@ -279,7 +280,7 @@ export default {
           icon: 'scissor-outlined',
           label: 'label.backup.offering.remove',
           message: 'label.backup.offering.remove',
-          docHelp: 'adminguide/virtual_machines.html#restoring-vm-backups',
+          // docHelp: 'adminguide/virtual_machines.html#restoring-vm-backups',
           dataView: true,
           args: ['virtualmachineid', 'forced'],
           show: (record) => { return record.backupofferingid },
@@ -293,7 +294,7 @@ export default {
           api: 'attachIso',
           icon: 'paper-clip-outlined',
           label: 'label.action.attach.iso',
-          docHelp: 'adminguide/templates.html#attaching-an-iso-to-a-vm',
+          // docHelp: 'adminguide/templates.html#attaching-an-iso-to-a-vm',
           dataView: true,
           popup: true,
           show: (record) => { return record.hypervisor !== 'External' && ['Running', 'Stopped'].includes(record.state) && !record.isoid && record.vmtype !== 'sharedfsvm' },
@@ -325,10 +326,10 @@ export default {
           api: 'updateVMAffinityGroup',
           icon: 'swap-outlined',
           label: 'label.change.affinity',
-          docHelp: 'adminguide/virtual_machines.html#change-affinity-group-for-an-existing-vm',
+          // docHelp: 'adminguide/virtual_machines.html#change-affinity-group-for-an-existing-vm',
           dataView: true,
           args: ['affinitygroupids'],
-          show: (record) => { return record.hypervisor !== 'External' && ['Stopped'].includes(record.state) && record.vmtype !== 'sharedfsvm' },
+          show: (record) => { return record.hypervisor !== 'External' && ['Stopped'].includes(record.state) && record.vmtype !== 'sharedfsvm' && record.vmtype !== 'cksnode' },
           component: shallowRef(defineAsyncComponent(() => import('@/views/compute/ChangeAffinity'))),
           popup: true
         },
@@ -336,7 +337,7 @@ export default {
           api: 'scaleVirtualMachine',
           icon: 'arrows-alt-outlined',
           label: 'label.scale.vm',
-          docHelp: 'adminguide/virtual_machines.html#how-to-dynamically-scale-cpu-and-ram',
+          // docHelp: 'adminguide/virtual_machines.html#how-to-dynamically-scale-cpu-and-ram',
           dataView: true,
           show: (record) => { return record.hypervisor !== 'External' && (['Stopped'].includes(record.state) || (['Running'].includes(record.state) && record.hypervisor !== 'LXC')) && record.vmtype !== 'sharedfsvm' },
           disabled: (record) => { return record.state === 'Running' && !record.isdynamicallyscalable },
@@ -347,7 +348,7 @@ export default {
           api: 'migrateVirtualMachine',
           icon: 'drag-outlined',
           label: 'label.migrate.instance.to.host',
-          docHelp: 'adminguide/virtual_machines.html#moving-vms-between-hosts-manual-live-migration',
+          // docHelp: 'adminguide/virtual_machines.html#moving-vms-between-hosts-manual-live-migration',
           dataView: true,
           show: (record, store) => { return record.hypervisor !== 'External' && ['Running'].includes(record.state) && ['Admin'].includes(store.userInfo.roletype) },
           disabled: (record) => { return record.hostcontrolstate === 'Offline' },
@@ -359,7 +360,7 @@ export default {
           icon: 'drag-outlined',
           label: 'label.migrate.instance.to.ps',
           message: 'message.migrate.instance.to.ps',
-          docHelp: 'adminguide/virtual_machines.html#moving-vms-between-hosts-manual-live-migration',
+          // docHelp: 'adminguide/virtual_machines.html#moving-vms-between-hosts-manual-live-migration',
           dataView: true,
           show: (record, store) => { return record.hypervisor !== 'External' && ['Stopped'].includes(record.state) && ['Admin'].includes(store.userInfo.roletype) },
           disabled: (record) => { return record.hostcontrolstate === 'Offline' },
@@ -387,7 +388,6 @@ export default {
           icon: 'lock-outlined',
           label: 'label.reset.ssh.key.pair',
           message: 'message.desc.reset.ssh.key.pair',
-          docHelp: 'adminguide/virtual_machines.html#resetting-ssh-keys',
           dataView: true,
           show: (record) => { return record.hypervisor !== 'External' && ['Stopped'].includes(record.state) && record.vmtype !== 'sharedfsvm' },
           popup: true,
@@ -398,7 +398,7 @@ export default {
           icon: 'solution-outlined',
           label: 'label.reset.user.data.on.vm',
           message: 'message.desc.reset.userdata',
-          docHelp: 'adminguide/virtual_machines.html#resetting-userdata',
+          // docHelp: 'adminguide/virtual_machines.html#resetting-userdata',
           dataView: true,
           show: (record) => { return record.hypervisor !== 'External' && ['Stopped'].includes(record.state) && record.vmtype !== 'sharedfsvm' },
           popup: true,
@@ -443,7 +443,7 @@ export default {
           icon: 'delete-outlined',
           label: 'label.action.expunge.instance',
           message: (record) => { return record.backupofferingid ? 'message.action.expunge.instance.with.backups' : 'message.action.expunge.instance' },
-          docHelp: 'adminguide/virtual_machines.html#deleting-vms',
+          // docHelp: 'adminguide/virtual_machines.html#deleting-vms',
           dataView: true,
           show: (record, store) => { return ['Destroyed', 'Expunging'].includes(record.state) && store.features.allowuserexpungerecovervm && record.vmtype !== 'sharedfsvm' }
         },
@@ -452,7 +452,7 @@ export default {
           icon: 'delete-outlined',
           label: 'label.action.destroy.instance',
           message: 'message.action.destroy.instance',
-          docHelp: 'adminguide/virtual_machines.html#deleting-vms',
+          // docHelp: 'adminguide/virtual_machines.html#deleting-vms',
           dataView: true,
           groupAction: true,
           args: (record, store, group) => {
@@ -470,7 +470,7 @@ export default {
       name: 'vmsnapshot',
       title: 'label.vm.snapshots',
       icon: 'camera-outlined',
-      docHelp: 'adminguide/storage.html#working-with-volume-snapshots',
+      docHelp: '#/01_compute/02_instances_snapshots/instances_snapshots.html',
       permission: ['listVMSnapshot'],
       resourceType: 'VMSnapshot',
       columns: () => {
@@ -551,8 +551,8 @@ export default {
     {
       name: 'kubernetes',
       title: 'label.kubernetes',
-      icon: ['fa-solid', 'fa-dharmachakra'],
-      docHelp: 'plugins/cloudstack-kubernetes-service.html',
+      icon: kubernetesIcon,
+      docHelp: '#/01_compute/03_kubernetes/kubernetes.html',
       searchFilters: ['name', 'domainid', 'account', 'state'],
       permission: ['listKubernetesClusters'],
       columns: (store) => {
@@ -573,7 +573,7 @@ export default {
         const filters = ['cloud.managed', 'external.managed']
         return filters
       },
-      details: ['name', 'description', 'zonename', 'kubernetesversionname', 'autoscalingenabled', 'csienabled', 'minsize', 'maxsize', 'size', 'controlnodes', 'etcdnodes', 'cpunumber', 'memory', 'keypair', 'cniconfigname', 'associatednetworkname', 'account', 'domain', 'zonename', 'clustertype', 'created'],
+      details: ['name', 'description', 'zonename', 'kubernetesversionname', 'autoscalingenabled', 'csienabled', 'minsize', 'maxsize', 'size', 'controlnodes', 'controlaffinitygroupnames', 'etcdnodes', 'etcdaffinitygroupnames', 'workeraffinitygroupnames', 'cpunumber', 'memory', 'keypair', 'cniconfigname', 'associatednetworkname', 'account', 'domain', 'zonename', 'clustertype', 'created'],
       tabs: [
         {
           name: 'k8s',
@@ -581,12 +581,188 @@ export default {
         }
       ],
       resourceType: 'KubernetesCluster',
+      advisories: [
+        {
+          id: 'cks-min-offering',
+          severity: 'warning',
+          message: 'message.advisory.cks.min.offering',
+          docsHelp: 'plugins/cloudstack-kubernetes-service.html',
+          dismissOnConditionFail: true,
+          condition: async (store) => {
+            if (!('listServiceOfferings' in store.getters.apis)) {
+              return false
+            }
+            const params = {
+              cpunumber: 2,
+              memory: 2048,
+              issystem: false
+            }
+            try {
+              const json = await getAPI('listServiceOfferings', params)
+              const offerings = json?.listserviceofferingsresponse?.serviceoffering || []
+              return !offerings.some(o => !o.iscustomized)
+            } catch (error) {}
+            return false
+          },
+          actions: [
+            {
+              primary: true,
+              label: 'label.add.minimum.required.compute.offering',
+              loadingLabel: 'message.adding.minimum.required.compute.offering.kubernetes.cluster',
+              show: (store) => { return ('createServiceOffering' in store.getters.apis) },
+              run: async () => {
+                const params = {
+                  name: 'CKS Instance',
+                  cpunumber: 2,
+                  cpuspeed: 1000,
+                  memory: 2048,
+                  iscustomized: false,
+                  issystem: false
+                }
+                try {
+                  const json = await postAPI('createServiceOffering', params)
+                  if (json?.createserviceofferingresponse?.serviceoffering) {
+                    return true
+                  }
+                } catch (error) {}
+                return false
+              },
+              successMessage: 'message.added.minimum.required.compute.offering.kubernetes.cluster',
+              errorMessage: 'message.add.minimum.required.compute.offering.kubernetes.cluster.failed'
+            },
+            {
+              label: 'label.go.to.compute.offerings',
+              show: (store) => { return ('listServiceOfferings' in store.getters.apis) },
+              run: (store, router) => {
+                router.push({ name: 'computeoffering' })
+                return false
+              }
+            }
+          ]
+        },
+        {
+          id: 'cks-version-check',
+          severity: 'warning',
+          message: 'message.advisory.cks.version.check',
+          docsHelp: 'plugins/cloudstack-kubernetes-service.html',
+          dismissOnConditionFail: true,
+          condition: async (store) => {
+            const api = 'listKubernetesSupportedVersions'
+            if (!(api in store.getters.apis)) {
+              return false
+            }
+            try {
+              const json = await getAPI(api, {})
+              const versions = json?.listkubernetessupportedversionsresponse?.kubernetessupportedversion || []
+              return versions.length === 0
+            } catch (error) {}
+            return false
+          },
+          actions: [
+            {
+              primary: true,
+              label: 'label.add.latest.kubernetes.iso',
+              loadingLabel: 'message.adding.latest.kubernetes.iso',
+              show: (store) => { return ('addKubernetesSupportedVersion' in store.getters.apis) },
+              run: async () => {
+                let arch = 'x86_64'
+                if ('listClusters' in store.getters.apis) {
+                  try {
+                    const json = await getAPI('listClusters', { allocationstate: 'Enabled', page: 1, pagesize: 1 })
+                    const cluster = json?.listclustersresponse?.cluster?.[0] || {}
+                    arch = cluster.architecture || 'x86_64'
+                  } catch (error) {}
+                }
+                const params = await getLatestKubernetesIsoParams(arch)
+                try {
+                  const json = await postAPI('addKubernetesSupportedVersion', params)
+                  if (json?.addkubernetessupportedversionresponse?.kubernetessupportedversion) {
+                    return true
+                  }
+                } catch (error) {}
+                return false
+              },
+              successMessage: 'message.added.latest.kubernetes.iso',
+              errorMessage: 'message.add.latest.kubernetes.iso.failed'
+            },
+            {
+              label: 'label.go.to.kubernetes.isos',
+              show: true,
+              run: (store, router) => {
+                router.push({ name: 'kubernetesiso' })
+                return false
+              }
+            }
+          ]
+        },
+        {
+          id: 'cks-endpoint-url',
+          severity: 'warning',
+          message: 'message.advisory.cks.endpoint.url.not.configured',
+          docsHelp: 'plugins/cloudstack-kubernetes-service.html',
+          dismissOnConditionFail: true,
+          condition: async (store) => {
+            if (!['Admin'].includes(store.getters.userInfo.roletype)) {
+              return false
+            }
+            let url = ''
+            const baseUrl = getBaseUrl()
+            if (baseUrl.startsWith('/')) {
+              url = window.location.origin + baseUrl
+            }
+            if (!url || url.startsWith('http://localhost')) {
+              return false
+            }
+            const params = {
+              name: 'endpoint.url'
+            }
+            const json = await getAPI('listConfigurations', params)
+            const configuration = json?.listconfigurationsresponse?.configuration?.[0] || {}
+            return !configuration.value || configuration.value.startsWith('http://localhost')
+          },
+          actions: [
+            {
+              primary: true,
+              label: 'label.fix.global.setting',
+              show: (store) => { return ('updateConfiguration' in store.getters.apis) },
+              run: async () => {
+                let url = ''
+                const baseUrl = getBaseUrl()
+                if (baseUrl.startsWith('/')) {
+                  url = window.location.origin + baseUrl
+                }
+                const params = {
+                  name: 'endpoint.url',
+                  value: url
+                }
+                try {
+                  const json = await postAPI('updateConfiguration', params)
+                  if (json?.updateconfigurationresponse?.configuration) {
+                    return true
+                  }
+                } catch (error) {}
+                return false
+              },
+              successMessage: 'message.global.setting.updated',
+              errorMessage: 'message.global.setting.update.failed'
+            },
+            {
+              label: 'label.go.to.global.settings',
+              show: (store) => { return ('listConfigurations' in store.getters.apis) },
+              run: (store, router) => {
+                router.push({ name: 'globalsetting' })
+                return false
+              }
+            }
+          ]
+        }
+      ],
       actions: [
         {
           api: 'createKubernetesCluster',
           icon: 'plus-outlined',
           label: 'label.kubernetes.cluster.create',
-          docHelp: 'plugins/cloudstack-kubernetes-service.html#creating-a-new-kubernetes-cluster',
+          // docHelp: 'plugins/cloudstack-kubernetes-service.html#creating-a-new-kubernetes-cluster',
           listView: true,
           popup: true,
           show: isZoneCreated,
@@ -597,7 +773,7 @@ export default {
           icon: 'caret-right-outlined',
           label: 'label.kubernetes.cluster.start',
           message: 'message.kubernetes.cluster.start',
-          docHelp: 'plugins/cloudstack-kubernetes-service.html#starting-a-stopped-kubernetes-cluster',
+          // docHelp: 'plugins/cloudstack-kubernetes-service.html#starting-a-stopped-kubernetes-cluster',
           dataView: true,
           show: (record) => { return ['Stopped'].includes(record.state) && record.clustertype === 'CloudManaged' },
           groupAction: true,
@@ -609,7 +785,7 @@ export default {
           icon: 'poweroff-outlined',
           label: 'label.kubernetes.cluster.stop',
           message: 'message.kubernetes.cluster.stop',
-          docHelp: 'plugins/cloudstack-kubernetes-service.html#stopping-kubernetes-cluster',
+          // docHelp: 'plugins/cloudstack-kubernetes-service.html#stopping-kubernetes-cluster',
           dataView: true,
           show: (record) => { return !['Stopped', 'Destroyed', 'Destroying'].includes(record.state) && record.clustertype === 'CloudManaged' },
           groupAction: true,
@@ -618,21 +794,30 @@ export default {
         },
         {
           api: 'scaleKubernetesCluster',
-          icon: 'swap-outlined',
+          icon: 'arrows-alt-outlined',
           label: 'label.kubernetes.cluster.scale',
           message: 'message.kubernetes.cluster.scale',
-          docHelp: 'plugins/cloudstack-kubernetes-service.html#scaling-kubernetes-cluster',
+          // docHelp: 'plugins/cloudstack-kubernetes-service.html#scaling-kubernetes-cluster',
           dataView: true,
           show: (record) => { return ['Created', 'Running', 'Stopped'].includes(record.state) && record.clustertype === 'CloudManaged' },
           popup: true,
           component: shallowRef(defineAsyncComponent(() => import('@/views/compute/ScaleKubernetesCluster.vue')))
         },
         {
+          api: 'updateKubernetesClusterAffinityGroups',
+          icon: 'swap-outlined',
+          label: 'label.change.affinity',
+          dataView: true,
+          show: (record) => { return ['Stopped'].includes(record.state) && record.clustertype === 'CloudManaged' },
+          popup: true,
+          component: shallowRef(defineAsyncComponent(() => import('@/views/compute/ChangeKubernetesClusterAffinity.vue')))
+        },
+        {
           api: 'upgradeKubernetesCluster',
           icon: 'plus-circle-outlined',
           label: 'label.kubernetes.cluster.upgrade',
           message: 'message.kubernetes.cluster.upgrade',
-          docHelp: 'plugins/cloudstack-kubernetes-service.html#upgrading-kubernetes-cluster',
+          // docHelp: 'plugins/cloudstack-kubernetes-service.html#upgrading-kubernetes-cluster',
           dataView: true,
           show: (record) => { return ['Created', 'Running'].includes(record.state) && record.clustertype === 'CloudManaged' },
           popup: true,
@@ -663,7 +848,7 @@ export default {
           icon: 'delete-outlined',
           label: 'label.kubernetes.cluster.delete',
           message: 'message.kubernetes.cluster.delete',
-          docHelp: 'plugins/cloudstack-kubernetes-service.html#deleting-kubernetes-cluster',
+          // docHelp: 'plugins/cloudstack-kubernetes-service.html#deleting-kubernetes-cluster',
           dataView: true,
           show: (record) => { return !['Destroyed', 'Destroying'].includes(record.state) },
           groupAction: true,
@@ -683,7 +868,7 @@ export default {
       name: 'autoscalevmgroup',
       title: 'label.autoscale.vm.groups',
       icon: 'fullscreen-outlined',
-      docHelp: 'adminguide/autoscale_with_virtual_router.html',
+      docHelp: '#/01_compute/04_autoscaling_groups/autoscaling_groups.html',
       resourceType: 'AutoScaleVmGroup',
       permission: ['listAutoScaleVmGroups'],
       searchFilters: ['name', 'zoneid', 'domainid', 'account'],
@@ -795,7 +980,7 @@ export default {
       name: 'vmgroup',
       title: 'label.instance.groups',
       icon: 'gold-outlined',
-      docHelp: 'adminguide/virtual_machines.html#changing-the-vm-name-os-or-group',
+      docHelp: '#/01_compute/05_instance_groups/instance_groups.html',
       resourceType: 'VMInstanceGroup',
       permission: ['listInstanceGroups'],
       searchFilters: ['name', 'zoneid', 'domainid', 'account'],
@@ -855,7 +1040,7 @@ export default {
       name: 'ssh',
       title: 'label.ssh.key.pairs',
       icon: 'key-outlined',
-      docHelp: 'adminguide/virtual_machines.html#using-ssh-keys-for-authentication',
+      docHelp: '#/01_compute/06_ssh_key_pairs/ssh_key_pairs.html',
       permission: ['listSSHKeyPairs'],
       searchFilters: ['name', 'domainid', 'account', 'fingerprint'],
       columns: () => {
@@ -893,7 +1078,7 @@ export default {
           api: 'createSSHKeyPair',
           icon: 'plus-outlined',
           label: 'label.create.ssh.key.pair',
-          docHelp: 'adminguide/virtual_machines.html#creating-the-ssh-keypair',
+          // docHelp: '#/01_compute/06_ssh_key_pairs/ssh_key_pairs.html',
           listView: true,
           popup: true,
           component: shallowRef(defineAsyncComponent(() => import('@/views/compute/CreateSSHKeyPair.vue')))
@@ -939,7 +1124,7 @@ export default {
       name: 'userdata',
       title: 'label.user.data.library',
       icon: 'solution-outlined',
-      docHelp: 'adminguide/virtual_machines.html#user-data-and-meta-data',
+      docHelp: '#/01_compute/07_user_data_library/user_data_library.html',
       permission: ['listUserData'],
       columns: () => {
         var fields = ['name', 'id']
@@ -976,7 +1161,7 @@ export default {
           api: 'registerUserData',
           icon: 'plus-outlined',
           label: 'label.register.user.data',
-          docHelp: 'adminguide/virtual_machines.html#user-data-and-meta-data',
+          // docHelp: 'adminguide/virtual_machines.html#user-data-and-meta-data',
           listView: true,
           popup: true,
           component: shallowRef(defineAsyncComponent(() => import('@/views/compute/RegisterUserData.vue')))
@@ -1022,7 +1207,7 @@ export default {
       name: 'cniconfiguration',
       title: 'label.cniconfiguration',
       icon: 'solution-outlined',
-      docHelp: 'adminguide/virtual_machines.html#user-data-and-meta-data',
+      docHelp: '#/01_compute/08_cni_configuration/cni_configuration.html',
       permission: ['listCniConfiguration'],
       columns: () => {
         var fields = ['name', 'id']
@@ -1059,7 +1244,7 @@ export default {
           api: 'registerCniConfiguration',
           icon: 'plus-outlined',
           label: 'label.register.cni.config',
-          docHelp: 'adminguide/virtual_machines.html#creating-the-ssh-keypair',
+          // docHelp: 'adminguide/virtual_machines.html#creating-the-ssh-keypair',
           listView: true,
           popup: true,
           component: shallowRef(defineAsyncComponent(() => import('@/views/compute/RegisterUserData.vue')))
@@ -1105,7 +1290,7 @@ export default {
       name: 'affinitygroup',
       title: 'label.affinity.groups',
       icon: 'swap-outlined',
-      docHelp: 'adminguide/virtual_machines.html#affinity-groups',
+      docHelp: '#/01_compute/09_affinity_groups/affinity_groups.html',
       permission: ['listAffinityGroups'],
       searchFilters: ['name', 'zoneid', 'domainid', 'account', 'type'],
       columns: () => {
@@ -1144,20 +1329,16 @@ export default {
           api: 'createAffinityGroup',
           icon: 'plus-outlined',
           label: 'label.add.affinity.group',
-          docHelp: 'adminguide/virtual_machines.html#creating-a-new-affinity-group',
+          // docHelp: 'adminguide/virtual_machines.html#creating-a-new-affinity-group',
           listView: true,
-          args: ['name', 'description', 'type'],
-          mapping: {
-            type: {
-              options: ['host anti-affinity (Strict)', 'host affinity (Strict)', 'host anti-affinity (Non-Strict)', 'host affinity (Non-Strict)']
-            }
-          }
+          popup: true,
+          component: shallowRef(defineAsyncComponent(() => import('@/views/compute/CreateAffinityGroup.vue')))
         },
         {
           api: 'deleteAffinityGroup',
           icon: 'delete-outlined',
           label: 'label.delete.affinity.group',
-          docHelp: 'adminguide/virtual_machines.html#delete-an-affinity-group',
+          // docHelp: 'adminguide/virtual_machines.html#delete-an-affinity-group',
           message: 'message.delete.affinity.group',
           dataView: true,
           groupAction: true,

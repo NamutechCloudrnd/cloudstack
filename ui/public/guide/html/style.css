@@ -58,7 +58,7 @@ body {
 .container {
   display: flex;
   flex: 1;
-  min-height: 100vh;
+  /* min-height: 100vh; */
 }
 
 .menu-sidebar {
@@ -191,7 +191,7 @@ body {
 }
 
 .accordion-item.open .accordion-content {
-  max-height: 500px;
+  max-height: 2000px;
 }
 
 .accordion-item.animated .accordion-content {
@@ -258,8 +258,17 @@ p {
   line-height: 1.5;
 }
 
+img {
+  line-height: 1.5;
+}
+
+.content-frame > img,
 p > img {
   border: 1px solid var(--color-border);
+}
+
+.content p > img {
+  width: 50%;
 }
 
 a {
@@ -306,25 +315,110 @@ a:hover {
   background: var(--color-text-light);
 }
 
-main > ul > li {
+main > ul > li,
+main > .content-frame > ul > li,
+main > ol > li,
+main > ol > li > ul > li {
   margin-left: 2rem;
   margin-bottom: 1rem;
+}
+
+main > .content-frame > ul > li > ul > li {
+  margin-left: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+main > .content-frame > table > tbody > tr > td > ul > li {
+  margin-left: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+main > .content-frame > ol > li {
+  margin: 1rem 0 0.5rem 1rem;
 }
 
 blockquote {
   margin: 2rem 0;
   padding: 1rem;
   border-radius: 10px;
-  border: 2px solid var(--color-accent);
+  border: 1px solid var(--color-border);
 }
 
-.content-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
+.content-frame {
   display: none;
 }
 
 #default-content {
   display: block;
+}
+
+.content table {
+  width: 60%;
+  border-collapse: collapse;
+  margin: 1rem 0 1.5rem;
+  font-size: 0.875rem;
+  background-color: #fff;
+  color: rgba(0, 0, 0, 0.85);
+  /* border-radius: 4px; */
+  overflow: hidden;
+}
+
+.content table thead {
+  background-color: #fafafa;
+}
+
+.content table thead th {
+  padding: 0.85rem 1rem;
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 500;
+  text-align: left;
+  font-size: 0.875rem;
+  border: 1px solid #f0f0f0;
+}
+
+.content table thead th:nth-child(1) {
+  width: 20%;
+  text-align: center;
+}
+.content table thead th:nth-child(2) {
+  width: 30%;
+}
+.content table thead th:nth-child(3) {
+  width: 50%;
+}
+
+.content table tbody td {
+  padding: 0.85rem 1rem;
+  border: 1px solid #f0f0f0;
+  color: rgba(0, 0, 0, 0.65);
+  line-height: 1.5715;
+  vertical-align: middle;
+}
+
+.content table tbody tr {
+  transition: background 0.3s ease;
+}
+
+.content table tbody tr:hover td {
+  background-color: #f3fae9;
+}
+
+/* .content table tbody tr:last-child td {
+  border-bottom: none;
+} */
+
+.content table tbody td:first-child {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 768px) {
+  .content table {
+    font-size: 0.875rem;
+  }
+
+  .content table thead th,
+  .content table tbody td {
+    padding: 0.5rem 0.7rem;
+  }
 }

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/guide/html/style.css">
+</head>
+<body>
+  <div class="container">
+    <main class="content">
+      <h2 id="autoscaling-그룹">AutoScaling 그룹</h2>
+      <p>Auto Scaling 그룹은 서비스 부하 또는 정책 조건에 따라 인스턴스 수를
+      자동으로 조정하는 기능이다. 운영자는 Auto Scaling 그룹을 사용하여 트래픽
+      증가시 인스턴스를 자동으로 추가하고, 부하가 감소하면 불필요한 인스턴스
+      를 자동으로 제거하여 서비스 가용성과 리소스 효율을 함께 확보할 수
+      있다.</p>
+      <p>namuVIRT 의 Auto Scaling 그룹은 Load Balancer와 연동하여 동작한다.
+      외부 사용자는 Public IP와 공용 포트로 서비스에 접근하고, Load Balancer는
+      요청을 Auto Scaling 그룹에 속한 인스턴스의 사설 포트로 전환한다.
+      Scale-Up 으로 인스턴스 가 생성되면 해당 인스턴스 는 Load Balancer Rule에
+      자동으로 연결되고, Scale-Down 또는 삭제 시 Load Balancer Rule 에서
+      자동으로 제외된다.</p>
+      <h3 id="autoscaling-그룹-목록"><strong>AutoScaling 그룹
+      목록</strong></h3>
+      <p>Auto Scaling 그룹 에서는 현재 등록된 Auto Scaling 그룹 과 상태, Load
+      balancer 정보 등을 확인할 수 있다. Auto Scaling 그룹은 Load Balancer
+      Rule 과 연결되어 동작하므로, 목록 화면에서는 어떤 Public IP와 포트로
+      서비스가 노출되고 있는지 확인할 수 있다.</p>
+      <img src="/public/guide/html/images/image1.png" style="width:6.57813in;height:3.18056in" />
+
+      <p>해당 화면에서는 Auto Scaling 그룹 생성, 활성화, 비활성화, 삭제가
+      가능하며, 목록에서 Auto Scaling 그룹을 선택 시 화면에 버튼이
+      노출된다.</p>
+      <h3 id="autoscaling-그룹-생성"><strong>AutoScaling 그룹
+      생성</strong></h3>
+      <ol type="1">
+      <li><strong>사전준비</strong></li>
+      </ol>
+      <p>Auto Scaling 그룹을 생성하기 전에는 Auto Scaling을 지원하기 위한
+      Isolated Network 와 Load Balancer Rule 이 필요하다. Load Balancer Rule
+      은 Auto Scaling 그룹 생성 화면에서 새로 만드는 것이 아니라, 먼저 Public
+      IP에 생성해 둔 뒤 Auto Scaling 그룹 생성 시 선택하는 방식이다.</p>
+      <p>사전 준비 흐름은 다음과 같다.</p>
+      <ol type="1">
+      <li><p>Auto Scaling 지원 네트워크 Offering 생성</p>
+      <ol type="1">
+      <li><p>Isolated network</p></li>
+      <li><p>dhcp / dns / Source NAT / LB</p></li>
+      </ol></li>
+      <li><p>해당 Offering 으로 Isolated Network 생성</p></li>
+      <li><p>Isolated network 에 Public ip 할당</p></li>
+      <li><p>Public ip 에 Load Balancer Rule 생성</p>
+      <ol type="1">
+      <li><strong>Zone 선택</strong></li>
+      </ol></li>
+      </ol>
+      <p>Auto Scaling 그룹을 생성할 Zone 을 선택하는 단계이다. Zone 은
+      일반적으로 하나의 데이터센터 또는 물리적으로 분리된 인프라 영역을
+      의미하며, 선택한 Zone을 기준으로 Auto Scaling 그룹에서 사용할 네트워크,
+      Load Balancer, 인스턴스 리소스가 구성된다.</p>
+      <img src="/public/guide/html/images/image2.png" style="width:6.57813in;height:1.16667in" />
+
+      <ol start="2" type="1">
+      <li><strong>템플릿 선택</strong></li>
+      </ol>
+      <p>Auto Scaling 그룹 에서 Scale-Up 시 자동으로 생성할 인스턴스의 OS
+      템플릿을 선택하는 단계이다. 선택한 템플릿은 Auto Scaling 정책에 따라 새
+      인스턴스가 추가될 때 기본 이미지로 사용된다.</p>
+      <img src="/public/guide/html/images/image3.png" style="width:6.57813in;height:3.45833in" />
+
+      <p>Auto Scaling 그룹에서 사용하는 템플릿은 생성되는 모든 인스턴스에
+      동일하게 적용된다. 따라서 템플릿 내부에는 Auto Scaling 대상 서비스가
+      자동으로 실행될 수 있도록 초기 설정이 포함되어 있어야 한다.</p>
+      <ol start="3" type="1">
+      <li><strong>컴퓨트 오퍼링</strong></li>
+      </ol>
+      <p>Auto Scaling 그룹에서 Scale-Up 시 자동 생성될 인스턴스의 CPU, Memory,
+      Root Disk 구성을 선택하는 단계로 선택한 컴퓨트 오퍼링은 Auto Scaling
+      으로 생성되는 인스턴스에 동일하게 적용된다.</p>
+      <img src="/public/guide/html/images/image4.png" style="width:6.57813in;height:5.125in" />
+
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 26%" />
+      <col style="width: 73%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>컴퓨트 오퍼링</strong></td>
+      <td style="text-align: left;">Auto Scaling 인스턴스에 적용할 CPU/Memory 사양 선택</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Override root disk offering</strong></td>
+      <td style="text-align: left;"><p>Root Disk Offering을 별도로 지정할지 여부 선택</p>
+      <ul>
+      <li><p>비활성화 : 템플릿 또는 Compute Offering의 기본 Root Disk 구성 적용</p></li>
+      <li><p>활성화 : Disk Offering 목록에서 Root Disk 크기와 성능 정책 별도 선택</p></li>
+      </ul></td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>디스크 오퍼링</strong></td>
+      <td style="text-align: left;">Root Disk에 적용할 Disk Offering 선택</td>
+      </tr>
+      </tbody>
+      </table>
+
+      <p>Auto Scaling 그룹은 부하에 따라 인스턴스를 자동으로 생성하므로,
+      컴퓨트 오퍼링은 실제 서비스 부하를 처리할 수 있는 사양으로 선택해야
+      한다.</p>
+      <p>예를 들어 웹 서비스 테스트 환경은 Small 인스턴스 로 시작할 수 있지만,
+      운영 서비스는 CPU/Memory 사용량을 기준으로 적절한 오퍼링을 선택하는 것이
+      좋다.</p>
+      <ol type="1">
+      <li><strong>데이터 디스크</strong></li>
+      </ol>
+      <p>Auto Scaling 그룹에서 생성되는 인스턴스에 추가 Data Disk를 연결할지
+      설정하는 단계이다. Data Disk를 활성화하면 Scale-Up으로 성생되는
+      인스턴스에 Root Disk 외 별도의 데이터 볼륨을 추가할 수 있다.</p>
+      <img src="/public/guide/html/images/image5.png" style="width:6.57813in;height:2.94444in" />
+
+      <ol start="2" type="1">
+      <li><strong>네트워크 선택</strong></li>
+      </ol>
+      <p>Auto Scaling 그룹에서 생성되는 인스턴스에 연결할 네트워크를 선택하는
+      단계로 기본 네트워크는 VM 자동 확장을 지원하고 Load Balancer Rule 이
+      연결된 <strong>Isolated network</strong> 또는 <strong>VPC 네트워크
+      계층</strong>이어야 한다.</p>
+      <p>선택한 네트워크는 Auto Scaling으로 생성되는 인스턴스의 NIC에
+      연결되며, Load Balancer는 해당 네트워크에 속한 인스턴스로 트래픽을
+      전달한다.</p>
+      <img src="/public/guide/html/images/image6.png" style="width:6.57813in;height:4.59722in" />
+
+      <table style="width:99%;">
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>네트워크 선택</strong></td>
+      <td style="text-align: left;">Auto Scaling 그룹의 인스턴스에 대해서 최소 하나의 네트워크를
+      선택</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>새로운 네트워크 생성</strong></td>
+      <td style="text-align: left;">필요한 경우 Auto Scaling 용 네트워크를 새로 생성</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>IP / MAC 주소</strong></td>
+      <td style="text-align: left;">필요시 인스턴스에 할당할 IP 또는 MAC 주소 지정</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>Auto Scaling용 네트워크는 이후 Load Balance Rule과 연결되므로,
+      네트워크 선택 후 해당 네트워크에 Public IP와 Load Balancer Rule이
+      정상적으로 구성되어 있는지 확인해야 한다.</p>
+      <ol start="3" type="1">
+      <li><strong>부하 분산</strong></li>
+      </ol>
+      <p>Auto Scaling 그룹에서 사용할 Load Balancer Rule을 선택하는 단계로
+      선택한 Load Balancer Rule은 외부 요청을 Auto Scaling 그룹에 속한
+      인스턴스에 속한 인스턴스로 전달하는 역할을 한다.</p>
+      <p>Auto Scaling 그룹은 Scale-Up으로 인스턴스가 생성되면 해당 인스턴스를
+      Load Balancer Rule 에 자동으로 연결하고, Scale-Down으로 인스턴스가
+      제거되면 Load Balancer Rule에서 자동으로 제외된다.</p>
+      <img src="/public/guide/html/images/image7.png" style="width:6.57813in;height:1.70833in" />
+
+      <ol start="4" type="1">
+      <li><strong>스케일업 정책</strong></li>
+      </ol>
+      <p>Auto Scaling 그룹에서 인스턴스를 자동으로 추가하기 위한 Scale-Up
+      조건을 설정하는 단계로 Scale-Up 조건이 충족되면 설정된 최대 멤버 수 범위
+      내에서 인스턴스를 추가하여 서비스 처리 용량을 확장한다.</p>
+      <p>Scale-Up 정책은 Scale-Down 정책보다 먼저 평가되며, 최소 하나 이상의
+      Scale-Up 정책을 수가해야 Auto Scaling 그룹을 생성할 수 있다.</p>
+      <img src="/public/guide/html/images/image8.png" style="width:6.57813in;height:4.05556in" />
+
+      <table style="width:99%;">
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>스케일업 정책</strong></td>
+      <td style="text-align: left;">생성 또는 수정할 Scale-Up 정책 선택</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">Scale-Up 정책 이름 설정</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>기간</strong></td>
+      <td style="text-align: left;">조건을 판단할 기준 시간(초) 입력</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>조용한 시간</strong></td>
+      <td style="text-align: left;">Scale-Up 수행 후 다음 Scale 동작까지 대기할 시간(초) 입력</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>카운터</strong></td>
+      <td style="text-align: left;">Scale-Up 판단에 사용할 성능 지표 선택</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Operator</strong></td>
+      <td style="text-align: left;">카운터 값과 임계값을 비교할 조건 선택</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>임계값</strong></td>
+      <td style="text-align: left;">Scale-Up을 실행할 기준값 입력</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>정책 추가</strong></td>
+      <td style="text-align: left;">새로운 Scale-Up 정책 추가</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>정책 삭제</strong></td>
+      <td style="text-align: left;">선택한 정책을 삭제</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>조건 추가</strong></td>
+      <td style="text-align: left;">입력한 카운터, Operator, 임계값 조건을 정책 목록에 추가</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="5" type="1">
+      <li><strong>스케일다운 정책</strong></li>
+      </ol>
+      <p>Auto Scaling 그룹에서 인스턴스를 자동으로 줄이기 위한 Scale-Down
+      조건을 설정하는 단계로 Scale-Down 정책의 조건이 충족되면 Auto Scaling
+      그룹은 설정된 최소 멤버 수를 유지하는 범위 내에서 불필요한 인스턴스를
+      제거하여 리소스 사용량을 줄인다.</p>
+      <p>Scale-Down 정책은 Scale-Up 정책 이후 평가되며, 하나 이상의 Scale-Down
+      정책을 추가해야 Auto Scaling 그룹을 생성할 수 있다.</p>
+      <img src="/public/guide/html/images/image9.png" style="width:6.57813in;height:4.05556in" />
+
+      <table style="width:99%;">
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>스케일업 정책</strong></td>
+      <td style="text-align: left;">생성 또는 수정할 Scale-Down 정책 선택</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">Scale-Down 정책 이름 설정</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>기간</strong></td>
+      <td style="text-align: left;">조건을 판단할 기준 시간(초) 입력</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>조용한 시간</strong></td>
+      <td style="text-align: left;">Scale-Down 수행 후 다음 Scale 동작까지 대기할 시간(초) 입력</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>카운터</strong></td>
+      <td style="text-align: left;">Scale-Down 판단에 사용할 성능 지표 선택</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Operator</strong></td>
+      <td style="text-align: left;">카운터 값과 임계값을 비교할 조건 선택</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>임계값</strong></td>
+      <td style="text-align: left;">Scale-Down을 실행할 기준값 입력</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>정책 추가</strong></td>
+      <td style="text-align: left;">새로운 Scale-Down 정책 추가</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>정책 삭제</strong></td>
+      <td style="text-align: left;">선택한 정책을 삭제</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>조건 추가</strong></td>
+      <td style="text-align: left;">입력한 카운터, Operator, 임계값 조건을 정책 목록에 추가</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="6" type="1">
+      <li><strong>확장 모드(고급 설정)</strong></li>
+      </ol>
+      <p>Auto Scaling 그룹 생성 시 추가 고급 옵션을 설정하는 단계로 고급 설정
+      표시를 활성화하면 SSH Key Pair, Affinity 그룹, 사용자 데이터 등 Auto
+      Scaling 으로 생성될 인스턴스에 적용할 부가 설정을 지정할 수 있다.</p>
+      <img src="/public/guide/html/images/image10.png" style="width:6.57813in;height:7.75in" />
+
+      <table style="width:99%;">
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>고급 설정 표시</strong></td>
+      <td style="text-align: left;">Auto Scaling 그룹 생성 시 고급 설정 항목 표시 여부 선택</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>SSH 키 쌍</strong></td>
+      <td style="text-align: left;">Auto Scaling 그룹 인스턴스 접속에 사용할 SSH Key Pair 선택</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Affinity 그룹</strong></td>
+      <td style="text-align: left;">Auto Scaling 인스턴스 가 속할 Affinity 그룹 선택</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>사용자 데이터</strong></td>
+      <td style="text-align: left;">인스턴스 초기화 또는 서비스 자동 구성에 사용할 사용자 데이터 선택
+      또는 직접 입력</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="7" type="1">
+      <li><strong>상세</strong></li>
+      </ol>
+      <p>Auto Scaling 그룹 생성 전 그룹의 기본 정보와 확장 범위를 설정하는
+      단계로 이 단계에서 입력한 값에 따라 Auto Scaling 그룹의 이름, 최소/최대
+      인스턴스 수, Scale 동작 주기, 인스턴스 삭제 유예 시간이 결정된다.</p>
+      <img src="/public/guide/html/images/image11.png" style="width:6.57813in;height:2.72222in" />
+
+      <table style="width:99%;">
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">Auto Scaling 그룹 이름 입력</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>인스턴스 삭제 유예 기간</strong></td>
+      <td style="text-align: left;">Scale-Down 시 인스턴스를 삭제하기 전 대기할 시간(초) 입력</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>최대 멤버</strong></td>
+      <td style="text-align: left;">Auto Scaling 그룹에서 확장 가능한 최대 인스턴스 수 입력(1 이상의
+      수)</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>최소 멤버</strong></td>
+      <td style="text-align: left;">Auto Scaling 그룹에서 항상 유지할 최소 인스턴스 수 입력</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>폴링 간격</strong></td>
+      <td style="text-align: left;">Auto Scaling 조건을 확인하는 주기 입력</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>폴링 간격의 값이 너무 짧으면 불필요한 Scale 동작이 자주 발생할 수
+      있고, 너무 길면 부하 변화에 대한 대응이 늦어질 수 있으므로 서비스 특성에
+      맞게 설정하는 것이 좋다.</p>
+      <h3 id="autoscaling-그룹-상세"><strong>AutoScaling 그룹
+      상세</strong></h3>
+      <p>Auto Scaling 그룹 상세 화면에서는 선택한 Auto Scaling 그룹의 기본
+      정보, 연결된 네트워크, Public IP, Load Balancer Rule, 확장 정책, 이벤트
+      등을 확인하고 관리할 수 있다.</p>
+      <p>좌측 요약 영역에서는 Auto Scaling 그룹의 상태와 주요 연결정보를
+      빠르게 확인할 수 있으며, 우측 탭에서는 상세 정보와 정책 구성을 항목별로
+      조회할 수 있다.</p>
+      <img src="/public/guide/html/images/image12.png" style="width:6.57813in;height:3.18056in" />
+
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 26%" />
+      <col style="width: 73%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>상세</strong></td>
+      <td style="text-align: left;">Auto Scaling 그룹 이름, 계정, 도메인, 네트워크, Load Balancer, Public IP, 포트 정보 등 기본 구성 확인 가능</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Auto Scaling 인스턴스 프로필</strong></td>
+      <td style="text-align: left;">Scale-Up 시 생성될 인스턴스의 템플릿, 컴퓨트 오퍼링, 디스크, 사용자 데이터 등 구성을 확인 가능</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>부하 분산 규칙</strong></td>
+      <td style="text-align: left;"><p>Auto Scaling 그룹과 연결된 Load Balancer Rule 을 확인 가능하며, Load Balancer 알고리즘 또는 Sticky 정책 구성이 가능</p>
+      <ul>
+      <li><p>Sticky 정책 : 동일한 사용자의 요청을 같은 인스턴스 로 전달하기 위한 정책</p></li>
+      </ul></td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>스케일 업 정책</strong></td>
+      <td style="text-align: left;">인스턴스를 자동으로 추가하는 조건 확인 및 관리 가능</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>스케일 다운 정책</strong></td>
+      <td style="text-align: left;">인스턴스를 자동으로 줄이는 조건 확인 및 관리 가능</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>이벤트</strong></td>
+      <td style="text-align: left;">Auto Scaling 그룹 생성, 확장, 축소, 오류 등 이벤트 이력 확인</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>코멘트</strong></td>
+      <td style="text-align: left;">운영 메모 또는 코멘트 확인</td>
+      </tr>
+      </tbody>
+      </table>
+
+      <h3 id="autoscaling-그룹-과-가상-머신의-차이"><strong>AutoScaling 그룹
+      과 가상 머신의 차이</strong></h3>
+      <table style="width:99%;">
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>가상머신</strong></th>
+      <th style="text-align: left;"><strong>Auto Scaling 그룹</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>개념</strong></td>
+      <td style="text-align: left;">사용자가 직접 생성하고 관리하는 단일 인스턴스</td>
+      <td style="text-align: left;">정책에 따라 인스턴스 수를 자동으로 늘리거나 줄이는 관리 그룹</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>생성 방식</strong></td>
+      <td style="text-align: left;">관리자가 직접 인스턴스 생성</td>
+      <td style="text-align: left;">Auto Scaling 그룹이 템플릿 기준으로 인스턴스 자동 생성</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>수량 관리</strong></td>
+      <td style="text-align: left;">수동으로 생성/삭제</td>
+      <td style="text-align: left;">최소/최대 멤버 수와 Scale 정책에 따라 자동 조정</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Load Balancer 연동</strong></td>
+      <td style="text-align: left;">필요 시 수동으로 LB에 연결</td>
+      <td style="text-align: left;">생성된 인스턴스 가 LB Rule 에 자동 연결/해제</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>주요 목적</strong></td>
+      <td style="text-align: left;">고정적인 서버 운영</td>
+      <td style="text-align: left;">트래픽/자원사용량 변화에 따른 자동 확장/축소</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>예시</strong></td>
+      <td style="text-align: left;">DB 서버, 관리 서버, 단일 웹서버</td>
+      <td style="text-align: left;">웹 서버 풀, API 서버 풀, 트래픽 변동 서비스</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>즉, 가상 머신은 하나의 서버이고, Auto Scaling 그룹은 여러 가상 머신을
+      자동으로 관리하는 그룹이다.</p>
+      <ol type="1">
+      <li><strong>AutoScaling 그룹 과 가상 머신의 차이</strong></li>
+      </ol>
+      <p>일반적으로 Auto Scaling 그룹 생성 후 최소 멤버 수만큼 인스턴스가
+      생성된다. 예를 들어 Auto Scaling 그룹 을 생성할 때 최소 멤버 1, 최대
+      멤버 2로 설정하면 Auto Scaling 그룹은 최소 1대는 항상 유지해야 하므로,
+      Auto Scaling 그룹 생성 후 인스턴스 가 없으면 최소 1대의 인스턴스를
+      자동으로 생성한다.</p>
+    </main>
+  </div>
+
+  <script src="/guide/html/menu-renderer.js"></script>
+</body>
+</html>

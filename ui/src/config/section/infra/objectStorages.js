@@ -22,7 +22,7 @@ export default {
   name: 'objectstore',
   title: 'label.object.storage',
   icon: 'gold-outlined',
-  docHelp: 'adminguide/storage.html#object-storage',
+  docHelp: '#/10_infrastructure/09_object_storage/object_storage.html',
   permission: ['listObjectStoragePools'],
   columns: () => {
     var fields = ['name', 'url', 'providername']
@@ -49,7 +49,7 @@ export default {
     {
       api: 'addObjectStoragePool',
       icon: 'plus-outlined',
-      docHelp: 'installguide/configuration.html#add-object-storage',
+      // docHelp: 'installguide/configuration.html#add-object-storage',
       label: 'label.add.object.storage',
       listView: true,
       popup: true,

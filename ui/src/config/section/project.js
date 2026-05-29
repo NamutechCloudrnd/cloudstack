@@ -22,7 +22,7 @@ export default {
   name: 'project',
   title: 'label.projects',
   icon: 'project-outlined',
-  docHelp: 'adminguide/projects.html',
+  docHelp: '#/06_projects/01_projects/projects.html',
   permission: ['listProjects'],
   resourceType: 'Project',
   columns: ['name', 'state', 'displaytext', 'account', 'domain'],
@@ -71,7 +71,7 @@ export default {
       api: 'createProject',
       icon: 'plus-outlined',
       label: 'label.new.project',
-      docHelp: 'adminguide/projects.html#creating-a-new-project',
+      // docHelp: 'adminguide/projects.html#creating-a-new-project',
       listView: true,
       args: ['name', 'displaytext']
     },
@@ -79,7 +79,7 @@ export default {
       api: 'updateProjectInvitation',
       icon: 'key-outlined',
       label: 'label.enter.token',
-      docHelp: 'adminguide/projects.html#accepting-a-membership-invitation',
+      // docHelp: 'adminguide/projects.html#accepting-a-membership-invitation',
       listView: true,
       popup: true,
       show: (record, store) => { return store.features.projectinviterequired },
@@ -89,7 +89,7 @@ export default {
       api: 'listProjectInvitations',
       icon: 'team-outlined',
       label: 'label.project.invitation',
-      docHelp: 'adminguide/projects.html#accepting-a-membership-invitation',
+      // docHelp: 'adminguide/projects.html#accepting-a-membership-invitation',
       listView: true,
       popup: true,
       showBadge: true,
@@ -128,7 +128,7 @@ export default {
       icon: 'pause-circle-outlined',
       label: 'label.suspend.project',
       message: 'message.suspend.project',
-      docHelp: 'adminguide/projects.html#sending-project-membership-invitations',
+      // docHelp: 'adminguide/projects.html#sending-project-membership-invitations',
       dataView: true,
       show: (record, store) => {
         return ((['Admin', 'DomainAdmin'].includes(store.userInfo.roletype)) ||
@@ -142,7 +142,7 @@ export default {
       api: 'addAccountToProject',
       icon: 'user-add-outlined',
       label: 'label.action.project.add.account',
-      docHelp: 'adminguide/projects.html#adding-project-members-from-the-ui',
+      // docHelp: 'adminguide/projects.html#adding-project-members-from-the-ui',
       dataView: true,
       popup: true,
       show: (record, store) => {
@@ -155,7 +155,7 @@ export default {
       icon: 'delete-outlined',
       label: 'label.delete.project',
       message: 'message.delete.project',
-      docHelp: 'adminguide/projects.html#suspending-or-deleting-a-project',
+      // docHelp: 'adminguide/projects.html#suspending-or-deleting-a-project',
       dataView: true,
       show: (record, store) => {
         return (['Admin', 'DomainAdmin'].includes(store.userInfo.roletype) || record.isCurrentUserProjectAdmin) && record.id !== store.project.id

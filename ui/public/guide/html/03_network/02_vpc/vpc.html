@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/guide/html/style.css">
+</head>
+<body>
+  <div class="container">
+    <main class="content">
+      <h1 id="vpc">VPC</h1>
+      <p>VPC(Virtual Private Cloud)는 namuVirt 내에서 독립적이고 격리된
+      네트워크 영역이다. VPC는 전통적인 물리적 네트워크처럼 구성할 수 있는
+      가상 네트워크 구조를 제공한다. VPC 내에서 원하는 IP 주소 범위(예:
+      10.0.0.0/16)로 프라이빗 주소를 가진 인스턴스를 실행할 수 있다. 또한
+      VPC 내에서 Network Tier를 설정하여 IP 주소 범위에 따라 웹/앱/DB 등
+      기능적 역할별로 인스턴스를 계층화할 수 있다. (최대 4개 Tier 지원)</p>
+      <p><strong>VPC의 주요 구성 요소</strong></p>
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 19%" />
+      <col style="width: 79%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>구성 요소</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>VPC</strong></td>
+      <td style="text-align: left;">여러 격리 네트워크의 컨테이너 역할을 하며,
+      가상 라우터를 통해 내부 네트워크 간 통신을 지원한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Network Tier</strong></td>
+      <td style="text-align: left;">각 Network Tier는 자체 VLAN과 CIDR 목록을
+      갖는 격리 네트워크로 동작한다. 인스턴스 그룹을 배치할 수 있으며, 보안
+      목적으로 VLAN을 통해 다른 Tier와 격리된다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>가상 라우터 (Virtual
+      Router)</strong></td>
+      <td style="text-align: left;">VPC가 생성될 때 자동으로 생성된다. 각
+      Tier는 가상 라우터에 인터페이스를 추가하여 Tier 간 통신 및 외부 인터넷
+      연결을 처리한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Public Gateway</strong></td>
+      <td style="text-align: left;">VPC에서 인터넷으로 나가는 트래픽의
+      출구점이다. VPC 생성 시 자동으로 생성된다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>사설 게이트웨이 (Private
+      Gateway)</strong></td>
+      <td style="text-align: left;">VPC의 모든 트래픽이 물리적 네트워크로
+      나가는 출구점이다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>VPN 게이트웨이</strong></td>
+      <td style="text-align: left;">VPC 측의 VPN 엔드포인트이다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>사이트 간 VPN</strong></td>
+      <td style="text-align: left;">VPC와 데이터센터, 가정 네트워크, 또는 다른
+      클라우드 네트워크 간의 암호화된 연결을 제공한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>네트워크 ACL</strong></td>
+      <td style="text-align: left;">네트워크 ACL은 인바운드 및 아웃바운드
+      트래픽을 허용하거나 차단하는 Network Tier 수준의 보안 규칙
+      집합이다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <hr />
+      <h2 id="목록-조회">목록 조회</h2>
+      <p>VPC 목록을 확인하는 화면이다. 생성된 VPC 목록을 확인하거나 VPC 추가
+      버튼을 클릭하여 VPC를 생성할 수 있다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image48.png" style="width:6.575694444444444in;height:3.122916666666667in" /></p>
+      <hr />
+      <h2 id="vpc-추가">VPC 추가</h2>
+      <p><strong>VPC 추가</strong> 버튼을 클릭하여 VPC 추가 팝업을
+      호출한다.</p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인한다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>네트워크</strong>를
+      선택한다.</p></li>
+      <li><p><strong>VPC</strong> 탭을 선택한다.</p></li>
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image49.png" style="width:1in;" /><strong>VPC
+      추가</strong> 버튼을 클릭한다.</p></li>
+      <li><p>아래 항목을 입력한다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/02_vpc/image50.png" style="width:6in" /></p>
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 26%" />
+      <col style="width: 72%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">VPC 이름을 입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>설명</strong></td>
+      <td style="text-align: left;">VPC에 대한 설명을 입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Zone</strong></td>
+      <td style="text-align: left;">VPC가 위치할 Zone을 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>소유자 유형</strong></td>
+      <td style="text-align: left;">계정 또는 프로젝트 중 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>도메인</strong></td>
+      <td style="text-align: left;">도메인을 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>계정</strong></td>
+      <td style="text-align: left;">계정을 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>CIDR</strong></td>
+      <td style="text-align: left;">VPC 전체에서 사용할 슈퍼 CIDR을
+      입력한다. 생성하는 모든 Network Tier는 이 CIDR의 서브넷이어야
+      한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>VPC 오퍼링</strong></td>
+      <td style="text-align: left;">사용할 VPC 오퍼링을 선택한다. VPC
+      오퍼링에는 가상 라우터를 위한 시스템 서비스 오퍼링과 지원하는 네트워크
+      서비스 목록이 포함된다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>네트워크 도메인</strong></td>
+      <td style="text-align: left;">VPC의 네트워크 도메인 이름을
+      입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>DNS</strong></td>
+      <td style="text-align: left;">이 VPC에서 사용할 커스텀 DNS를
+      입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>IPv6 DNS</strong></td>
+      <td style="text-align: left;">이 VPC에서 사용할 커스텀 IPv6 DNS를
+      입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>서비스용 네트워크의 라우터에 대한
+      IPv4 주소</strong></td>
+      <td style="text-align: left;">게스트 네트워크를 관리할 가상 라우터의
+      IPv4 주소를 입력한다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="6" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 VPC를 생성한다.</li>
+      </ol>
+      <p><strong>참고</strong>: VPC 생성 후 가상 라우터가 자동으로
+      생성된다.</p>
+      <hr />
+      <h2 id="편집">편집</h2>
+      <p>해당 VPC의 이름, 설명, 네트워크 도메인 등의 정보를
+      업데이트한다.</p>
+      <ol type="1">
+      <li><p>관리자 또는 일반 사용자로 로그인한다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>네트워크</strong>를
+      선택한다.</p></li>
+      <li><p><strong>VPC</strong> 보기를 선택한다.</p></li>
+      <li><p>수정할 VPC를 선택한다.</p></li>
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image12.png" style="width:0.2in" /><strong>편집</strong> 버튼을
+      클릭하여 VPC 편집 화면을 호출한다.</p></li>
+      <li><p>수정할 항목을 입력한다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/02_vpc/image51.png" style="width:5in" /></p>
+      <ol start="7" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 VPC를 편집한다.</li>
+      </ol>
+      <hr />
+      <h2 id="vpc-재시작">VPC 재시작</h2>
+      <p>VPC와 연결된 모든 네트워크 구성 요소(Network Tier, 가상 라우터 등)를
+      재시작한다. <strong>정리(Clean up)</strong> 옵션을 활성화하면 기존
+      가상 라우터가 삭제되고 새 가상 라우터가 프로비저닝된다.</p>
+      <ol type="1">
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image14.png" style="width:0.2in" /><strong>VPC
+      재시작</strong> 버튼을 클릭하여 VPC 재시작 화면을 호출한다.</p></li>
+      <li><p><strong>확인</strong> 버튼을 클릭하여 VPC를
+      재시작한다.</p></li>
+      </ol>
+      <hr />
+      <h2 id="vpc-삭제">VPC 삭제</h2>
+      <p>VPC를 삭제한다.</p>
+      <p><strong>주의</strong>: VPC를 삭제하기 전에 연결된 모든 Network Tier
+      및 가상머신을 먼저 제거해야 한다.</p>
+      <ol type="1">
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image15.png" style="width:0.2in" /><strong>VPC
+      삭제</strong> 버튼을 클릭하여 VPC 삭제 화면을 호출한다.</p></li>
+      <li><p><strong>확인</strong> 버튼을 클릭하여 VPC를 삭제한다.</p></li>
+      </ol>
+      <hr />
+      <h2 id="상세-탭">상세 탭</h2>
+      <p>VPC에 대한 상세 정보를 조회하는 화면이다. 해당 VPC의 이름, 아이디,
+      설명, CIDR, 네트워크 도메인, Redundant VPC 여부, 재시작 필요 여부, Zone,
+      계정, 도메인, Public 인터페이스 MTU 등의 정보를 확인할 수 있다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image52.png" style="width:9in" /></p>
+      <hr />
+      <h2 id="네트워크-탭">네트워크 탭</h2>
+      <p>VPC에 대한 Network Tier(서브넷)를 조회 및 관리하는 화면이다. 서브넷
+      이름, 상태, CIDR, ACL 등의 정보를 확인할 수 있다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image53.png" style="width:9in" /></p>
+      <p><strong>새 서브넷 추가</strong></p>
+      <p>VPC의 Network Tier를 추가한다. 각 Network Tier는 VPC의 CIDR 범위
+      내의 서브넷으로 구성된다.</p>
+      <ol type="1">
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image54.png" style="width:9in" /><strong>새 서브넷
+      추가</strong> 버튼을 클릭하여 새 서브넷 추가 화면으로
+      이동한다.</p></li>
+      <li><p>아래 항목을 입력한다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/02_vpc/image55.png" style="width:4in" /></p>
+      <table style="width:98%;">
+      <colgroup>
+      <col style="width: 17%" />
+      <col style="width: 81%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">Network Tier의 이름을 입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>네트워크 오퍼링</strong></td>
+      <td style="text-align: left;">네트워크 오퍼링을 선택한다. VPC 내의
+      Network Tier에는 VPC 전용 네트워크 오퍼링만 선택할 수 있다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>게이트웨이</strong></td>
+      <td style="text-align: left;">Network Tier에서 사용할 게이트웨이를
+      입력한다. VPC CIDR 내의 주소여야 한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>넷마스크</strong></td>
+      <td style="text-align: left;">Network Tier의 넷마스크를 입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>ACL</strong></td>
+      <td style="text-align: left;">이 Tier에 적용할 네트워크 ACL을
+      선택한다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="3" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 새 서브넷을 추가한다.</li>
+      </ol>
+      <p><strong>참고</strong>: Network Tier에 적용된 네트워크 오퍼링은 나중에
+      다른 VPC 전용 오퍼링으로 변경할 수 있다.</p>
+      <p><strong>새 서브넷 가상머신 추가</strong></p>
+      <p>Network Tier에 가상머신을 추가하여 배포한다.</p>
+      <ol type="1">
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image56.png" style="width:9in" /><strong>가상머신
+      추가</strong> 버튼을 클릭하여 가상머신 생성 화면으로
+      이동한다.</p></li>
+      <li><p>아래 항목을 입력한다.</p></li>
+      </ol>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 27%" />
+      <col style="width: 70%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">가상머신 이름을 입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>소유자 유형</strong></td>
+      <td style="text-align: left;">소유자 유형을 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>도메인</strong></td>
+      <td style="text-align: left;">도메인을 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>계정</strong></td>
+      <td style="text-align: left;">계정을 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Zone</strong></td>
+      <td style="text-align: left;">Zone을 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Pod</strong></td>
+      <td style="text-align: left;">Pod를 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>클러스터</strong></td>
+      <td style="text-align: left;">클러스터를 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>호스트</strong></td>
+      <td style="text-align: left;">호스트를 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>템플릿</strong></td>
+      <td style="text-align: left;">사용할 템플릿을 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>컴퓨트 오퍼링</strong></td>
+      <td style="text-align: left;">컴퓨트 오퍼링을 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>데이터 디스크</strong></td>
+      <td style="text-align: left;">데이터 디스크를 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>네트워크</strong></td>
+      <td style="text-align: left;">가상머신이 배포될 네트워크를
+      선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>SSH 키 쌍</strong></td>
+      <td style="text-align: left;">SSH 키 쌍을 선택한다. (필요 시)</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>부팅 유형</strong></td>
+      <td style="text-align: left;">부팅 유형을 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>부팅 모드</strong></td>
+      <td style="text-align: left;">부팅 모드를 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>TPM 활성화</strong></td>
+      <td style="text-align: left;">TPM 활성화 여부를 선택한다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="3" type="1">
+      <li><strong>VM 시작</strong> 버튼을 클릭하여 새 서브넷에 가상머신을
+      추가한다.</li>
+      </ol>
+      <p><strong>내부 LB 추가</strong></p>
+      <p>Network Tier에 내부 로드 밸런서(Internal Load Balancer)를 추가한다.
+      내부 LB는 VPC Tier 내의 가상머신 간 트래픽을 분산한다.</p>
+      <ol type="1">
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image57.png" style="width:9in" /><strong>내부 LB
+      추가</strong> 버튼을 클릭하여 내부 LB 추가 화면을 호출한다.</p></li>
+      <li><p>아래 항목을 입력한다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/02_vpc/image58.png" style="width:4in" /></p>
+      <table style="width:98%;">
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 77%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>이름</strong></td>
+      <td style="text-align: left;">내부 LB의 이름을 입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>설명</strong></td>
+      <td style="text-align: left;">내부 LB에 대한 설명을 입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Source IP 주소</strong></td>
+      <td style="text-align: left;">내부 LB의 Source IP 주소를 입력한다.
+      해당 Tier의 CIDR 내의 주소여야 한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Source 포트</strong></td>
+      <td style="text-align: left;">내부 LB가 수신할 Source 포트를
+      입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>가상머신 포트</strong></td>
+      <td style="text-align: left;">트래픽을 전달할 가상머신의 포트를
+      입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>알고리즘</strong></td>
+      <td style="text-align: left;">로드 밸런싱 알고리즘(라운드 로빈, 최소
+      연결, 출발지 기반)을 선택한다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="3" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 내부 LB를 추가한다.</li>
+      </ol>
+      <hr />
+      <h2 id="public-ip-주소-탭">Public IP 주소 탭</h2>
+      <p>VPC에 할당된 Public IP 주소를 조회 및 관리하는 화면이다. IP 주소,
+      상태, 연결된 서브넷, ACL 등의 정보를 확인할 수 있다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image59.png" style="width:9in" /></p>
+      <p><strong>새 IP 주소 가져오기</strong></p>
+      <p>VPC에 Public IP 주소를 추가로 할당한다. 할당된 IP는 포트 포워딩,
+      Static NAT, 로드 밸런서 규칙 등에 사용할 수 있다.</p>
+      <ol type="1">
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image60.png" style="width:9in" /><strong>새 IP 주소
+      가져오기</strong> 버튼을 클릭한다.</p></li>
+      <li><p><strong>IP 주소</strong>를 선택한다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/02_vpc/image61.png" style="width:4in" /></p>
+      <ol start="3" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 Public IP를 추가한다.</li>
+      </ol>
+      <p><strong>참고</strong>: VPC에서 Source NAT IP는 VPC 생성 시 자동으로
+      할당되며 해제할 수 없다.</p>
+      <hr />
+      <h2 id="네트워크-acl-목록-탭">네트워크 ACL 목록 탭</h2>
+      <p>VPC에 할당된 네트워크 ACL 목록 탭이다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image62.png" style="width:9in" /></p>
+      <p><strong>네트워크 ACL 목록 추가하기</strong></p>
+      <p>VPC에 네트워크 ACL목록을 추가한다.</p>
+      <ol type="1">
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image63.png" style="width:9in" /><strong>네트워크 ACL
+      목록 추가</strong> 버튼을 클릭한다.</p></li>
+      <li><p><strong>ACL 목록 이름</strong>을 선택한다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/02_vpc/image64.png" style="width:4in" /></p>
+      <ol start="3" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 ACL 목록을 추가한다.</li>
+      </ol>
+      <hr />
+      <h2 id="사설-게이트웨이-탭">사설 게이트웨이 탭</h2>
+      <p>VPC에 연결된 사설 게이트웨이(Private Gateway)를 조회 및 관리하는
+      화면이다. 사설 게이트웨이의 IP, 상태, 게이트웨이, 넷마스크, VLAN/VNI
+      등의 정보를 확인할 수 있다.</p>
+      <p>사설 게이트웨이는 VPC와 물리적 네트워크(데이터센터 내부 네트워크
+      등)를 연결하는 데 사용된다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image65.png" style="width:9in" /></p>
+      <p><strong>사설 게이트웨이 추가</strong></p>
+      <ol type="1">
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image66.png" style="width:9in" /><strong>사설
+      게이트웨이 추가</strong> 버튼을 클릭하여 사설 게이트웨이 추가 화면으로
+      이동한다.</p></li>
+      <li><p>아래 항목을 입력한다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/02_vpc/image67.png" style="width:4in" /></p>
+      <table style="width:97%;">
+      <colgroup>
+      <col style="width: 27%" />
+      <col style="width: 69%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>물리 네트워크</strong></td>
+      <td style="text-align: left;">사설 게이트웨이가 연결될 물리 네트워크를
+      선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>VLAN/VNI</strong></td>
+      <td style="text-align: left;">VLAN 또는 VNI 값을 입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>연결된 네트워크</strong></td>
+      <td style="text-align: left;">연결할 네트워크를 선택한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Public IP 주소</strong></td>
+      <td style="text-align: left;">사설 게이트웨이에 할당할 IP 주소를
+      입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>게이트웨이</strong></td>
+      <td style="text-align: left;">사설 게이트웨이의 게이트웨이 주소를
+      입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>넷마스크</strong></td>
+      <td style="text-align: left;">넷마스크를 입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>ACL</strong></td>
+      <td style="text-align: left;">사설 게이트웨이에 적용할 ACL을
+      선택한다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="3" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 새 사설 게이트웨이를
+      추가한다.</li>
+      </ol>
+      <p><strong>참고</strong>: 사설 게이트웨이는 Source NAT를 지원하지
+      않는다.</p>
+      <hr />
+      <h2 id="vpn-게이트웨이-탭">VPN 게이트웨이 탭</h2>
+      <p>VPC에 연결된 VPN 게이트웨이를 조회 및 관리하는 화면이다.</p>
+      <p>VPN 게이트웨이는 VPC 측의 VPN 엔드포인트로, 이를 통해 VPC와 외부
+      네트워크(데이터센터, 원격 사무소 등) 간의 암호화된 사이트 간 VPN 터널을
+      구성할 수 있다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image68.png" style="width:9in" /></p>
+      <p><strong>VPN 게이트웨이 추가</strong></p>
+      <ol type="1">
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image69.png" style="width:9in" /><strong>사이트 간 VPN
+      게이트웨이 생성</strong> 버튼을 클릭하여 VPN 게이트웨이를
+      추가한다.</p></li>
+      <li><p>VPN 게이트웨이 IP 주소를 입력하고 <strong>확인</strong> 버튼을
+      클릭한다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/02_vpc/image70.png" style="width:4in" /></p>
+      <p><strong>참고</strong>: VPC당 하나의 VPN 게이트웨이만 생성할 수
+      있다.</p>
+      <hr />
+      <h2 id="vpn-접속-탭">VPN 접속 탭</h2>
+      <p>VPC에 설정된 사이트 간 VPN 연결을 조회 및 관리하는 화면이다. VPN
+      접속의 IP, 상태, 게이트웨이, IPsec 사전 공유 키 등의 정보를 확인할 수
+      있다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image71.png" style="width:9in" /></p>
+      <p><strong>사이트 간 VPN 연결 생성</strong></p>
+      <p>사이트 간 VPN 연결을 생성하려면 먼저 VPN 고객 게이트웨이(VPN Customer
+      Gateway)가 생성되어 있어야 한다.</p>
+      <ol type="1">
+      <li><p><img src="/guide/html/images/03_network/02_vpc/image72.png" style="width:9in" /><strong>사이트 간 VPN
+      연결 생성</strong> 버튼을 클릭한다.</p></li>
+      <li><p>아래 항목을 입력한다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/02_vpc/image73.png" style="width:4in" /></p>
+      <table style="width:98%;">
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 77%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>VPN 고객 게이트웨이</strong></td>
+      <td style="text-align: left;">연결할 VPN 고객 게이트웨이를 선택한다.
+      사전에 생성된 VPN 고객 게이트웨이 목록에서 선택한다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="3" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 VPN 연결을 생성한다.</li>
+      </ol>
+      <p><strong>참고</strong>: 하나의 VPN 고객 게이트웨이는 한 번에 하나의
+      VPN 게이트웨이에만 연결할 수 있다.</p>
+      <h2 id="가상-라우터-탭">가상 라우터 탭</h2>
+      <p>VPC에 대한 가상 라우터를 조회하는 화면이다. 해당 VPC의 가상 라우터
+      이름, 상태, IP, 버전, 실행 중인 호스트 등의 정보를 확인할 수
+      있다.</p>
+      <p>VPC의 가상 라우터는 VPC 생성 시 자동으로 프로비저닝되며, VPC 내 모든
+      Network Tier 간의 라우팅 및 NAT, DHCP, DNS, 방화벽 서비스를
+      제공한다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image74.png" style="width:9in" /></p>
+      <hr />
+      <h2 id="vnf-기기-탭">VNF 기기 탭</h2>
+      <p>VPC에 연결된 VNF(Virtual Network Function) 기기를 조회하는
+      화면이다. 연결된 VNF 기기의 이름, 상태, IP 주소, 템플릿, OS Display
+      명, 실행 중인 호스트 등의 정보를 확인할 수 있다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image75.png" style="width:9in" /></p>
+      <hr />
+      <h2 id="이벤트-탭">이벤트 탭</h2>
+      <p>VPC에 관련된 이벤트 정보를 확인하는 화면이다. VPC에서 발생한 다양한
+      액션과 변경 사항을 쉽게 파악할 수 있다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image76.png" style="width:9in" /></p>
+      <hr />
+      <h2 id="코멘트-탭">코멘트 탭</h2>
+      <p>VPC에 관련된 코멘트 정보를 확인하는 화면이다. 각 사용자별로 해당
+      VPC에 대한 코멘트 정보를 조회 및 관리할 수 있다.</p>
+      <p><img src="/guide/html/images/03_network/02_vpc/image77.png" style="width:9in" /></p>
+      <hr />
+      <h2 id="용어사전">용어사전</h2>
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 78%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>용어</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>VPC (Virtual Private
+      Cloud)</strong></td>
+      <td style="text-align: left;">namuVirt 내에서 독립적이고 격리된 네트워크
+      영역이다. 자체 가상 네트워크 토폴로지를 가지며, 물리적 네트워크와
+      유사하게 구성할 수 있다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Network Tier</strong></td>
+      <td style="text-align: left;">VPC 내의 서브넷이다. 각 Tier는 자체
+      VLAN과 CIDR을 가지며, VLAN을 통해 다른 Tier와 격리된다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>CIDR</strong></td>
+      <td style="text-align: left;">VPC 전체 또는 각 Network Tier에서 사용할
+      IP 주소 범위를 정의한다. 모든 Network Tier의 CIDR은 VPC의 슈퍼 CIDR
+      내의 서브넷이어야 한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>ACL (Access Control
+      List)</strong></td>
+      <td style="text-align: left;">네트워크에서 트래픽의 접근을 제어하는 보안
+      기능이다. Network Tier 수준에서 인바운드 및 아웃바운드 트래픽을
+      허용하거나 차단하는 규칙 집합을 정의한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Public IP</strong></td>
+      <td style="text-align: left;">외부 접근 허용 목적으로 VM이나 로드
+      밸런서, 방화벽 등 외부에서 접근해야 하는 리소스에 할당된다. VPC에서
+      Source NAT IP는 VPC 생성 시 자동으로 할당된다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>사설 게이트웨이 (Private
+      Gateway)</strong></td>
+      <td style="text-align: left;">VPC의 트래픽이 물리적 네트워크로 나가는
+      출구점이다. Source NAT를 지원하지 않는다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>VPN 게이트웨이</strong></td>
+      <td style="text-align: left;">VPC 측의 VPN 엔드포인트이다. VPC와 외부
+      네트워크 간의 사이트 간 VPN 터널을 위해 사용된다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>IPsec 사전 공유 키</strong></td>
+      <td style="text-align: left;">양쪽 VPN 엔드포인트에서 동일하게
+      설정되어야 하는 키이다. VPN 터널 인증에 사용되며 외부에 공개해서는 안
+      된다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>VNI</strong></td>
+      <td style="text-align: left;">VXLAN(Virtual Extensible LAN)에서 사용하는
+      개념으로, 물리적인 네트워크를 넘어 여러 데이터센터나 네트워크 구간을
+      가상화하는 기술에 사용된다.</td>
+      </tr>
+      </tbody>
+      </table>
+    </main>
+  </div>
+</body>
+</html>

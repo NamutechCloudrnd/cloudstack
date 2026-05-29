@@ -22,7 +22,7 @@ export default {
   name: 'account',
   title: 'label.accounts',
   icon: 'team-outlined',
-  docHelp: 'adminguide/accounts.html',
+  docHelp: '#/08_accounts/01_accounts/accounts.html',
   permission: ['listAccounts'],
   searchFilters: () => {
     var filters = ['name', 'accounttype', 'domainid']
@@ -113,7 +113,7 @@ export default {
       api: 'ldapCreateAccount',
       icon: 'user-add-outlined',
       label: 'label.add.ldap.account',
-      docHelp: 'adminguide/accounts.html#using-an-ldap-server-for-user-authentication',
+      // docHelp: 'adminguide/accounts.html#using-an-ldap-server-for-user-authentication',
       listView: true,
       popup: true,
       show: (record, store) => {

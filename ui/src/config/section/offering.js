@@ -27,7 +27,7 @@ export default {
     {
       name: 'computeoffering',
       title: 'label.compute.offerings',
-      docHelp: 'adminguide/service_offerings.html#compute-and-disk-service-offerings',
+      docHelp: '#/11_offerings/01_compute_offerings/compute_offerings.html',
       icon: 'cloud-outlined',
       permission: ['listServiceOfferings'],
       searchFilters: ['name', 'gpuenabled', 'zoneid', 'domainid', 'cpunumber', 'cpuspeed', 'memory'],
@@ -86,7 +86,7 @@ export default {
         api: 'createServiceOffering',
         icon: 'plus-outlined',
         label: 'label.add.compute.offering',
-        docHelp: 'adminguide/service_offerings.html#creating-a-new-compute-offering',
+        // docHelp: 'adminguide/service_offerings.html#creating-a-new-compute-offering',
         listView: true,
         popup: true,
         component: shallowRef(defineAsyncComponent(() => import('@/views/offering/AddComputeOffering.vue')))
@@ -94,7 +94,7 @@ export default {
         api: 'updateServiceOffering',
         icon: 'edit-outlined',
         label: 'label.edit',
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         dataView: true,
         args: ['name', 'displaytext', 'storagetags', 'hosttags', 'externaldetails'],
         mapping: {
@@ -106,7 +106,7 @@ export default {
         api: 'updateServiceOffering',
         icon: 'lock-outlined',
         label: 'label.action.update.offering.access',
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         dataView: true,
         popup: true,
         component: shallowRef(defineAsyncComponent(() => import('@/views/offering/UpdateOfferingAccess.vue')))
@@ -132,7 +132,7 @@ export default {
         icon: 'pause-circle-outlined',
         label: 'label.action.disable.service.offering',
         message: 'message.action.disable.service.offering',
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         dataView: true,
         groupAction: true,
         popup: true,
@@ -143,13 +143,21 @@ export default {
         },
         show: (record) => { return record.state === 'Active' },
         groupMap: (selection) => { return selection.map(x => { return { id: x, state: 'Inactive' } }) }
+      }, {
+        api: 'cloneServiceOffering',
+        icon: 'copy-outlined',
+        label: 'label.clone.compute.offering',
+        // docHelp: 'adminguide/service_offerings.html#creating-a-new-compute-offering',
+        dataView: true,
+        popup: true,
+        component: shallowRef(defineAsyncComponent(() => import('@/views/offering/CloneComputeOffering.vue')))
       }]
     },
     {
       name: 'systemoffering',
       title: 'label.system.offerings',
       icon: 'setting-outlined',
-      docHelp: 'adminguide/service_offerings.html#system-service-offerings',
+      docHelp: '#/11_offerings/02_system_offerings/system_offerings.html',
       permission: ['listServiceOfferings', 'listInfrastructure'],
       searchFilters: ['name', 'zoneid', 'domainid', 'cpunumber', 'cpuspeed', 'memory'],
       params: { issystem: 'true', isrecursive: 'true' },
@@ -178,7 +186,7 @@ export default {
         api: 'createServiceOffering',
         icon: 'plus-outlined',
         label: 'label.add.system.service.offering',
-        docHelp: 'adminguide/service_offerings.html#creating-a-new-system-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#creating-a-new-system-service-offering',
         listView: true,
         params: { issystem: 'true' },
         popup: true,
@@ -189,7 +197,7 @@ export default {
         label: 'label.edit',
         dataView: true,
         params: { issystem: 'true' },
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         args: ['name', 'displaytext', 'storagetags', 'hosttags']
       }, {
         api: 'updateServiceOffering',
@@ -213,7 +221,7 @@ export default {
         icon: 'pause-circle-outlined',
         label: 'label.action.disable.system.service.offering',
         message: 'message.action.disable.system.service.offering',
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         dataView: true,
         params: { issystem: 'true' },
         groupAction: true,
@@ -225,13 +233,22 @@ export default {
         },
         show: (record) => { return record.state === 'Active' },
         groupMap: (selection) => { return selection.map(x => { return { id: x, state: 'Inactive' } }) }
+      }, {
+        api: 'cloneServiceOffering',
+        icon: 'copy-outlined',
+        label: 'label.clone.system.service.offering',
+        // docHelp: 'adminguide/service_offerings.html#creating-a-new-system-service-offering',
+        dataView: true,
+        params: { issystem: 'true' },
+        popup: true,
+        component: shallowRef(defineAsyncComponent(() => import('@/views/offering/CloneComputeOffering.vue')))
       }]
     },
     {
       name: 'diskoffering',
       title: 'label.disk.offerings',
       icon: 'hdd-outlined',
-      docHelp: 'adminguide/service_offerings.html#compute-and-disk-service-offerings',
+      docHelp: '#/11_offerings/03_disk_offerings/disk_offerings.html',
       permission: ['listDiskOfferings'],
       searchFilters: ['name', 'zoneid', 'domainid', 'storageid'],
       params: () => {
@@ -280,7 +297,7 @@ export default {
         api: 'createDiskOffering',
         icon: 'plus-outlined',
         label: 'label.add.disk.offering',
-        docHelp: 'adminguide/service_offerings.html#creating-a-new-disk-offering',
+        // docHelp: 'adminguide/service_offerings.html#creating-a-new-disk-offering',
         listView: true,
         popup: true,
         component: shallowRef(defineAsyncComponent(() => import('@/views/offering/AddDiskOffering.vue')))
@@ -288,14 +305,14 @@ export default {
         api: 'updateDiskOffering',
         icon: 'edit-outlined',
         label: 'label.edit',
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         dataView: true,
         args: ['name', 'displaytext', 'tags']
       }, {
         api: 'updateDiskOffering',
         icon: 'lock-outlined',
         label: 'label.action.update.offering.access',
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         dataView: true,
         popup: true,
         component: shallowRef(defineAsyncComponent(() => import('@/views/offering/UpdateOfferingAccess.vue')))
@@ -321,7 +338,7 @@ export default {
         icon: 'pause-circle-outlined',
         label: 'label.action.disable.disk.offering',
         message: 'message.action.disable.disk.offering',
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         dataView: true,
         groupAction: true,
         popup: true,
@@ -332,17 +349,25 @@ export default {
         },
         show: (record) => { return record.state === 'Active' },
         groupMap: (selection) => { return selection.map(x => { return { id: x, state: 'Inactive' } }) }
+      }, {
+        api: 'cloneDiskOffering',
+        icon: 'copy-outlined',
+        label: 'label.clone.disk.offering',
+        // docHelp: 'adminguide/service_offerings.html#creating-a-new-disk-offering',
+        dataView: true,
+        popup: true,
+        component: shallowRef(defineAsyncComponent(() => import('@/views/offering/CloneDiskOffering.vue')))
       }]
     },
     {
       name: 'backupoffering',
       title: 'label.backup.offerings',
       icon: 'cloud-upload-outlined',
-      docHelp: 'adminguide/virtual_machines.html#backup-offerings',
+      docHelp: '#/11_offerings/04_backup_offerings/backup_offerings.html',
       permission: ['listBackupOfferings'],
-      searchFilters: ['zoneid'],
-      columns: ['name', 'description', 'zonename'],
-      details: ['name', 'id', 'description', 'externalid', 'zone', 'allowuserdrivenbackups', 'created'],
+      searchFilters: ['zoneid', 'domainid'],
+      columns: ['name', 'description', 'domain', 'zonename'],
+      details: ['name', 'id', 'description', 'externalid', 'domain', 'zone', 'allowuserdrivenbackups', 'created'],
       related: [{
         name: 'vm',
         title: 'label.instances',
@@ -364,7 +389,7 @@ export default {
         api: 'importBackupOffering',
         icon: 'plus-outlined',
         label: 'label.import.backup.offering',
-        docHelp: 'adminguide/virtual_machines.html#importing-backup-offerings',
+        // docHelp: 'adminguide/virtual_machines.html#importing-backup-offerings',
         listView: true,
         popup: true,
         component: shallowRef(defineAsyncComponent(() => import('@/views/offering/ImportBackupOffering.vue')))
@@ -377,11 +402,19 @@ export default {
         groupMap: (selection) => { return selection.map(x => { return { id: x } }) },
         args: ['name', 'description', 'allowuserdrivenbackups']
       }, {
+        api: 'cloneBackupOffering',
+        icon: 'copy-outlined',
+        label: 'label.clone.backup.offering',
+        // docHelp: 'adminguide/virtual_machines.html#importing-backup-offerings',
+        dataView: true,
+        popup: true,
+        component: shallowRef(defineAsyncComponent(() => import('@/views/offering/CloneBackupOffering.vue')))
+      }, {
         api: 'deleteBackupOffering',
         icon: 'delete-outlined',
         label: 'label.action.delete.backup.offering',
         message: 'message.action.delete.backup.offering',
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         dataView: true,
         groupAction: true,
         popup: true,
@@ -392,7 +425,7 @@ export default {
       name: 'networkoffering',
       title: 'label.network.offerings',
       icon: 'wifi-outlined',
-      docHelp: 'adminguide/networking.html#network-offerings',
+      docHelp: '#/11_offerings/05_network_offerings/network_offerings.html',
       permission: ['listNetworkOfferings'],
       filters: ['all', 'forvpc', 'guestnetwork'],
       searchFilters: ['name', 'zoneid', 'domainid', 'guestiptype', 'tags'],
@@ -439,7 +472,7 @@ export default {
         api: 'updateNetworkOffering',
         icon: 'edit-outlined',
         label: 'label.edit',
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         dataView: true,
         args: ['name', 'displaytext', 'availability', 'tags'],
         mapping: {
@@ -483,16 +516,24 @@ export default {
         api: 'updateNetworkOffering',
         icon: 'lock-outlined',
         label: 'label.action.update.offering.access',
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         dataView: true,
         popup: true,
         component: shallowRef(defineAsyncComponent(() => import('@/views/offering/UpdateOfferingAccess.vue')))
+      }, {
+        api: 'cloneNetworkOffering',
+        icon: 'copy-outlined',
+        label: 'label.clone.network.offering',
+        // docHelp: 'adminguide/networking.html#creating-a-new-network-offering',
+        dataView: true,
+        popup: true,
+        component: shallowRef(defineAsyncComponent(() => import('@/views/offering/CloneNetworkOffering.vue')))
       }, {
         api: 'deleteNetworkOffering',
         icon: 'delete-outlined',
         label: 'label.remove.network.offering',
         message: 'message.confirm.remove.network.offering',
-        docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
+        // docHelp: 'adminguide/service_offerings.html#modifying-or-deleting-a-service-offering',
         dataView: true,
         groupAction: true,
         popup: true,
@@ -503,12 +544,12 @@ export default {
       name: 'vpcoffering',
       title: 'label.vpc.offerings',
       icon: 'deployment-unit-outlined',
-      docHelp: 'plugins/nuage-plugin.html?#vpc-offerings',
+      docHelp: '#/11_offerings/06_vpc_offerings/vpc_offerings.html',
       permission: ['listVPCOfferings'],
       searchFilters: ['name', 'zoneid', 'domainid'],
       resourceType: 'VpcOffering',
       columns: ['name', 'state', 'displaytext', 'domain', 'zone', 'order'],
-      details: ['name', 'id', 'displaytext', 'internetprotocol', 'distributedvpcrouter', 'tags', 'routingmode', 'specifyasnumber', 'service', 'fornsx', 'networkmode', 'domain', 'zone', 'created'],
+      details: ['name', 'id', 'displaytext', 'internetprotocol', 'distributedvpcrouter', 'tags', 'routingmode', 'specifyasnumber', 'service', 'fornsx', 'networkmode', 'conservemode', 'domain', 'zone', 'created'],
       related: [{
         name: 'vpc',
         title: 'label.vpc',
@@ -529,7 +570,7 @@ export default {
       actions: [{
         api: 'createVPCOffering',
         icon: 'plus-outlined',
-        docHelp: 'plugins/nuage-plugin.html?#optional-create-and-enable-vpc-offering',
+        // docHelp: 'plugins/nuage-plugin.html?#optional-create-and-enable-vpc-offering',
         label: 'label.add.vpc.offering',
         listView: true,
         popup: true,
@@ -579,6 +620,14 @@ export default {
         dataView: true,
         popup: true,
         component: shallowRef(defineAsyncComponent(() => import('@/views/offering/UpdateOfferingAccess.vue')))
+      }, {
+        api: 'cloneVPCOffering',
+        icon: 'copy-outlined',
+        // docHelp: 'plugins/nuage-plugin.html?#optional-create-and-enable-vpc-offering',
+        label: 'label.clone.vpc.offering',
+        dataView: true,
+        popup: true,
+        component: shallowRef(defineAsyncComponent(() => import('@/views/offering/CloneVpcOffering.vue')))
       }, {
         api: 'deleteVPCOffering',
         icon: 'delete-outlined',

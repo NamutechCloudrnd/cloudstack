@@ -7,7 +7,7 @@
       "apiBase": "/client/api"
     }
   ],
-  "docBase": "http://localhost:5050/guide/html",
+  "docBase": "http://10.10.14.129:8080/guide/html",
   "grafanaBase": "http://10.10.14.5:3000/dashboards",
   "appTitle": "namuVirt",
   "footer": "",
@@ -62,7 +62,8 @@
     "uk": "label.uk.keyboard",
     "fr": "label.french.azerty.keyboard",
     "jp": "label.japanese.keyboard",
-    "sc": "label.simplified.chinese.keyboard"
+    "sc": "label.simplified.chinese.keyboard",
+    "es-latam": "Spanish Latin American Keyboard"
   },
   "userCard": {
     "enabled": true,
@@ -96,6 +97,7 @@
     ]
   },
   "plugins": [],
+  "allowMakingRouterRedundant": false,
   "apidocs": true,
   "basicZoneEnabled": true,
   "multipleServer": false,
@@ -106,6 +108,7 @@
   "showAllCategoryForModernImageSelection": false,
   "docHelpMappings": {},
   "notifyLatestCSVersion": true,
+  "showSearchFilters": true,
   "announcementBanner": {
     "enabled": false,
     "showIcon": false,
@@ -115,5 +118,6 @@
     "message": "🤔 <strong>Sample Announcement</strong>: New Feature Available: Check out our latest dashboard improvements! <a href='/features'>Learn more</a>",
     "startDate": "2025-06-01T00:00:00Z",
     "endDate": "2025-07-16T00:00:00Z"
-  }
+  },
+  "defaultLanguage": "en"
 }

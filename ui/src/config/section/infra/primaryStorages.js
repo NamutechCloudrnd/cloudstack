@@ -22,7 +22,7 @@ export default {
   name: 'storagepool',
   title: 'label.primary.storage',
   icon: 'hdd-outlined',
-  docHelp: 'adminguide/storage.html#primary-storage',
+  docHelp: '#/10_infrastructure/06_primary_storage/primary_storage.html',
   permission: ['listStoragePoolsMetrics'],
   searchFilters: ['name', 'zoneid', 'podid', 'clusterid', 'ipaddress', 'path', 'scope'],
   columns: () => {
@@ -79,7 +79,7 @@ export default {
     {
       api: 'createStoragePool',
       icon: 'plus-outlined',
-      docHelp: 'installguide/configuration.html#add-primary-storage',
+      // docHelp: 'installguide/configuration.html#add-primary-storage',
       label: 'label.add.primary.storage',
       listView: true,
       popup: true,

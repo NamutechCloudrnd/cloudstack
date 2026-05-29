@@ -18,18 +18,19 @@
 import { shallowRef, defineAsyncComponent } from 'vue'
 import store from '@/store'
 import { isZoneCreated } from '@/utils/zone'
+import kubernetesIcon from '@/assets/icons/kubernetes.svg?inline'
 
 export default {
   name: 'image',
   title: 'label.images',
   icon: 'picture-outlined',
-  docHelp: 'adminguide/templates.html',
+  docHelp: '#/04_images/01_templates/templates.html',
   children: [
     {
       name: 'template',
       title: 'label.templates',
       icon: 'save-outlined',
-      docHelp: 'adminguide/templates.html',
+      docHelp: '#/04_images/01_templates/templates.html',
       permission: ['listTemplates'],
       params: { templatefilter: 'self', showunique: 'true' },
       resourceType: 'Template',
@@ -60,9 +61,9 @@ export default {
       details: () => {
         var fields = ['name', 'id', 'displaytext', 'checksum', 'hypervisor', 'arch', 'format', 'externalprovisioner', 'ostypename', 'size', 'physicalsize', 'isready', 'passwordenabled',
           'crossZones', 'templatetype', 'directdownload', 'deployasis', 'ispublic', 'isfeatured', 'isextractable', 'isdynamicallyscalable', 'crosszones', 'type',
-          'account', 'domain', 'created', 'userdatadetails', 'userdatapolicy', 'forcks']
+          'account', 'domain', 'created', 'userdatadetails', 'userdatapolicy', 'url', 'forcks']
         if (['Admin'].includes(store.getters.userInfo.roletype)) {
-          fields.push('templatetag', 'templatetype', 'url')
+          fields.push('templatetag', 'templatetype')
         }
         return fields
       },
@@ -108,7 +109,7 @@ export default {
           api: 'registerTemplate',
           icon: 'plus-outlined',
           label: 'label.action.register.template',
-          docHelp: 'adminguide/templates.html#uploading-templates-from-a-remote-http-server',
+          // docHelp: 'adminguide/templates.html#uploading-templates-from-a-remote-http-server',
           listView: true,
           popup: true,
           show: isZoneCreated,
@@ -118,7 +119,7 @@ export default {
           api: 'registerTemplate',
           icon: 'cloud-upload-outlined',
           label: 'label.upload.template.from.local',
-          docHelp: 'adminguide/templates.html#uploading-templates-and-isos-from-a-local-computer',
+          // docHelp: 'adminguide/templates.html#uploading-templates-and-isos-from-a-local-computer',
           listView: true,
           popup: true,
           show: () => { return isZoneCreated() && 'getUploadParamsForTemplate' in store.getters.apis },
@@ -163,7 +164,7 @@ export default {
           icon: 'cloud-download-outlined',
           label: 'label.action.download.template',
           message: 'message.action.download.template',
-          docHelp: 'adminguide/templates.html#exporting-templates',
+          // docHelp: 'adminguide/templates.html#exporting-templates',
           dataView: true,
           show: (record, store) => {
             return (['Admin'].includes(store.userInfo.roletype) || // If admin or owner or belongs to current project
@@ -188,7 +189,7 @@ export default {
           api: 'updateTemplatePermissions',
           icon: 'reconciliation-outlined',
           label: 'label.action.template.permission',
-          docHelp: 'adminguide/templates.html#sharing-templates-with-other-accounts-projects',
+          // docHelp: 'adminguide/templates.html#sharing-templates-with-other-accounts-projects',
           dataView: true,
           popup: true,
           show: (record, store) => {
@@ -206,7 +207,7 @@ export default {
       name: 'iso',
       title: 'label.isos',
       icon: 'usb-outlined',
-      docHelp: 'adminguide/templates.html#working-with-isos',
+      docHelp: '#/04_images/02_isos/isos.html',
       permission: ['listIsos'],
       params: { isofilter: 'self', showunique: 'true' },
       resourceType: 'ISO',
@@ -269,7 +270,7 @@ export default {
           api: 'registerIso',
           icon: 'plus-outlined',
           label: 'label.action.register.iso',
-          docHelp: 'adminguide/templates.html#id10',
+          docHelp: '#/04_images/02_isos/isos.html',
           listView: true,
           popup: true,
           show: isZoneCreated,
@@ -280,7 +281,7 @@ export default {
           icon: 'cloud-upload-outlined',
           label: 'label.upload.iso.from.local',
           show: () => { return isZoneCreated() && 'getUploadParamsForIso' in store.getters.apis },
-          docHelp: 'adminguide/templates.html#id10',
+          // docHelp: 'adminguide/templates.html#id10',
           listView: true,
           popup: true,
           component: shallowRef(defineAsyncComponent(() => import('@/views/image/RegisterOrUploadIso.vue')))
@@ -325,7 +326,7 @@ export default {
           icon: 'cloud-download-outlined',
           label: 'label.action.download.iso',
           message: 'message.action.download.iso',
-          docHelp: 'adminguide/templates.html#exporting-templates',
+          // docHelp: 'adminguide/templates.html#exporting-templates',
           dataView: true,
           show: (record, store) => {
             return (['Admin'].includes(store.userInfo.roletype) || // If admin or owner or belongs to current project
@@ -349,7 +350,7 @@ export default {
           api: 'updateIsoPermissions',
           icon: 'reconciliation-outlined',
           label: 'label.action.iso.permission',
-          docHelp: 'adminguide/templates.html#sharing-templates-with-other-accounts-projects',
+          // docHelp: 'adminguide/templates.html#sharing-templates-with-other-accounts-projects',
           dataView: true,
           args: ['op', 'accounts', 'projectids'],
           popup: true,
@@ -367,12 +368,12 @@ export default {
     {
       name: 'kubernetesiso',
       title: 'label.kubernetes.isos',
-      icon: ['fa-solid', 'fa-dharmachakra'],
-      docHelp: 'plugins/cloudstack-kubernetes-service.html#kubernetes-supported-versions',
+      icon: kubernetesIcon,
+      docHelp: '#/04_images/03_kubernetes_isos/kubernetes_isos.html',
       permission: ['listKubernetesSupportedVersions'],
       searchFilters: ['zoneid', 'minimumsemanticversion', 'arch'],
       columns: ['name', 'state', 'semanticversion', 'isostate', 'mincpunumber', 'minmemory', 'arch', 'zonename'],
-      details: ['name', 'semanticversion', 'supportsautoscaling', 'zoneid', 'zonename', 'isoid', 'isoname', 'isostate', 'arch', 'mincpunumber', 'minmemory', 'supportsha', 'state', 'created'],
+      details: ['name', 'semanticversion', 'supportsautoscaling', 'zoneid', 'zonename', 'isoid', 'isoname', 'isostate', 'arch', 'mincpunumber', 'minmemory', 'supportsha', 'state', 'created', 'isourl'],
       tabs: [
         {
           name: 'details',

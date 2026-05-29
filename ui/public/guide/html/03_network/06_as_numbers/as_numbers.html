@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/guide/html/style.css">
+</head>
+<body>
+  <div class="container">
+    <main class="content">
+      <h1 id="as-numbers">AS Numbers</h1>
+      <p>AS Numbers(자율 시스템 번호)는 동적 라우팅(Dynamic Routing)을
+      설정하는 데 필수적인 요소이다. AS Number를 효율적으로 관리하면 다양한
+      네트워크 간의 경로 설정을 최적화하고 안정적인 라우팅을 보장할 수
+      있다. namuVirt에서 제공하는 API와 UI 기능을 통해 AS Number 범위를
+      생성·조회·삭제하고, 각 네트워크 및 VPC에 할당된 AS Number를 관리할 수
+      있다.</p>
+      <p><strong>AS Numbers의 동작 방식</strong></p>
+      <p>AS Numbers는 Dynamic Routing 모드와 함께 동작한다. 관리자는 Zone
+      단위로 AS Number 범위(AS Number Range)를 사전에 정의해야 하며, Dynamic
+      Routing 모드로 게스트 네트워크 또는 VPC가 생성될 때 namuVirt가 해당
+      범위에서 AS Number를 자동으로 할당한다.</p>
+      <ul>
+      <li><p><strong>네트워크(Isolated Network)</strong>: Dynamic Routing
+      모드로 생성된 네트워크는 AS Number 범위에서 AS Number를 하나
+      할당받는다.</p></li>
+      <li><p><strong>VPC</strong>: Dynamic Routing 모드로 생성된 VPC는 AS
+      Number 범위에서 AS Number를 하나 할당받으며, VPC에 속한 모든 Network
+      Tier는 해당 VPC의 AS Number를 상속한다.</p></li>
+      <li><p><strong>자동 할당</strong>: 네트워크 오퍼링의 Specify AS
+      Number 옵션이 false(기본값)인 경우, namuVirt가 AS Number 범위에서 사용
+      가능한 AS Number를 무작위로 자동 선택하여 할당한다.</p></li>
+      <li><p><strong>자동 해제</strong>: 네트워크 또는 VPC가 삭제될 때, 해당
+      네트워크 또는 VPC에 할당된 AS Number는 자동으로 AS Number 범위로
+      반환된다.</p></li>
+      <li><p><strong>BGP 피어 세션</strong>: AS Number가 할당된 네트워크 또는
+      VPC의 가상 라우터(VR)에 BGP 피어 세션이 자동으로 구성된다.</p></li>
+      </ul>
+      <p><strong>참고</strong>: AS Number 범위와 BGP 피어는 Dynamic Routing
+      모드 네트워크를 생성하기 전에 반드시 사전에 구성해야 한다. 이 설정은
+      루트 관리자(ROOT admin)만 수행할 수 있다.</p>
+      <hr />
+      <h2 id="목록-조회">목록 조회</h2>
+      <p>AS Numbers 목록을 확인하는 화면이다. Zone에 할당된 AS Number의 상태
+      및 연결 정보를 확인할 수 있다.</p>
+      <p><img src="/guide/html/images/03_network/06_as_numbers/image98.png" style="width:6.575694444444444in;height:3.122916666666667in" /></p>
+      <p>목록에서 확인할 수 있는 정보는 다음과 같다.</p>
+      <table style="width:98%;">
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 78%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>AS Number</strong></td>
+      <td style="text-align: left;">할당되었거나 사용 가능한 AS Number
+      값이다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>할당 상태</strong></td>
+      <td style="text-align: left;">AS Number의 현재 할당 상태이다.
+      할당됨(Allocated) 또는 사용 가능(Free) 상태를 나타낸다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>AS Range</strong></td>
+      <td style="text-align: left;">해당 AS Number가 속한 AS Number
+      범위이다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>연결된 네트워크 이름</strong></td>
+      <td style="text-align: left;">해당 AS Number가 할당된 게스트 네트워크
+      또는 VPC의 이름이다. 할당되지 않은 경우 표시되지 않는다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>목록은 Zone, 네트워크, VPC, 계정, 도메인, 할당 상태 기준으로
+      필터링하여 조회할 수 있다.</p>
+      <hr />
+      <h2 id="as-number-range-관리">AS Number Range 관리</h2>
+      <p>AS Number Range는 루트 관리자(ROOT admin)만 관리할 수 있다.
+      Zone별로 Dynamic Routing에 사용할 AS Number의 범위를 사전에
+      정의한다.</p>
+      <p><strong>AS Number Range 추가</strong></p>
+      <p>Dynamic Routing 모드 네트워크 생성 전에 Zone에 AS Number 범위를
+      등록한다.</p>
+      <ol type="1">
+      <li><p>루트 관리자로 로그인한다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>Infrastructure &gt; Zone</strong>를
+      선택한다.</p></li>
+      <li><p>AS Number 범위를 추가할 Zone을 선택한다.</p></li>
+      <li><p><strong>AS Number</strong> 탭을 선택한다.</p></li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/06_as_numbers/image99.png" style="width:6.565972222222222in;height:1.7548611111111112in" /></p>
+      <ol start="5" type="1">
+      <li><img src="/guide/html/images/03_network/06_as_numbers/image100.png" style="width:6.852854330708661in;height:0.1968503937007874in" /><strong>AS
+      Number Range 추가</strong> 버튼을 클릭한다.</li>
+      </ol>
+      <p><img src="/guide/html/images/03_network/06_as_numbers/image101.png" style="width:5.415277777777778in;height:1.4715277777777778in" /></p>
+      <ol start="6" type="1">
+      <li>아래 항목을 입력한다.</li>
+      </ol>
+      <table style="width:98%;">
+      <colgroup>
+      <col style="width: 20%" />
+      <col style="width: 78%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>항목</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>시작 AS Number</strong></td>
+      <td style="text-align: left;">AS Number 범위의 시작 값을
+      입력한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>종료 AS Number</strong></td>
+      <td style="text-align: left;">AS Number 범위의 종료 값을 입력한다.
+      시작 AS Number보다 크거나 같아야 한다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <ol start="5" type="1">
+      <li><strong>확인</strong> 버튼을 클릭하여 AS Number 범위를
+      추가한다.</li>
+      </ol>
+      <p><strong>참고</strong>: 하나의 Zone에 여러 AS Number 범위를 등록할 수
+      있다.</p>
+      <p><strong>AS Number Range 삭제</strong></p>
+      <p>등록된 AS Number 범위를 삭제한다.</p>
+      <p><strong>주의</strong>: AS Number 범위를 삭제하기 전에 해당 범위에서
+      할당된 모든 AS Number가 해제(Free) 상태여야 한다.</p>
+      <ol type="1">
+      <li><p>루트 관리자로 로그인한다.</p></li>
+      <li><p>왼쪽 탐색 메뉴에서 <strong>Infrastructure &gt; Zone</strong>를
+      선택한다.</p></li>
+      <li><p>AS Number 범위를 추가할 Zone을 선택한다.</p></li>
+      <li><p><strong>AS Number</strong> 탭을 선택한다.</p></li>
+      <li><p><img src="/guide/html/images/03_network/06_as_numbers/image36.png" style="width:0.1968503937007874in;height:0.1968503937007874in" /><strong>AS
+      Number Range 삭제</strong> 버튼을 클릭하여 삭제한다.</p></li>
+      </ol>
+      <h2 id="용어사전">용어사전</h2>
+      <table style="width:99%;">
+      <colgroup>
+      <col style="width: 14%" />
+      <col style="width: 85%" />
+      </colgroup>
+      <thead>
+      <tr>
+      <th style="text-align: left;"><strong>용어</strong></th>
+      <th style="text-align: left;"><strong>설명</strong></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td style="text-align: left;"><strong>AS (Autonomous System, 자율
+      시스템)</strong></td>
+      <td style="text-align: left;">단일 관리 주체 아래 운영되는 네트워크 또는
+      네트워크 그룹이다. AS 내부에서는 통일된 라우팅 정책을 사용한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>AS Number (자율 시스템
+      번호)</strong></td>
+      <td style="text-align: left;">AS를 식별하는 고유한 번호이다. BGP 동적
+      라우팅에서 각 네트워크 또는 VPC를 식별하기 위해 사용된다.
+      namuVirt에서는 Dynamic Routing 모드 네트워크 생성 시 AS Number 범위에서
+      자동으로 할당된다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>AS Number Range (AS 번호
+      범위)</strong></td>
+      <td style="text-align: left;">관리자가 Zone 단위로 사전에 정의하는 AS
+      Number의 범위이다. Dynamic Routing 모드 네트워크 또는 VPC 생성 시 이
+      범위 안에서 AS Number가 할당된다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>BGP (Border Gateway
+      Protocol)</strong></td>
+      <td style="text-align: left;">서로 다른 AS 간의 라우팅 정보를 교환하기
+      위한 프로토콜이다. namuVirt의 Dynamic Routing 모드에서 가상
+      라우터(VR)와 BGP 피어 간에 BGP 세션이 자동으로 구성된다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>BGP 피어 (BGP Peer)</strong></td>
+      <td style="text-align: left;">BGP 세션을 통해 라우팅 정보를 교환하는
+      상대방 장비이다. Dynamic Routing 모드 네트워크의 가상 라우터는
+      관리자가 사전에 등록한 BGP 피어와 세션을 맺는다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Dynamic Routing (동적
+      라우팅)</strong></td>
+      <td style="text-align: left;">AS Number가 자동으로 할당되고, 가상
+      라우터에 BGP 피어 세션이 자동으로 구성되는 라우팅 방식이다. Dynamic
+      Routing 모드로 네트워크 또는 VPC를 생성하려면 사전에 AS Number 범위와
+      BGP 피어가 등록되어 있어야 한다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>Static Routing (정적
+      라우팅)</strong></td>
+      <td style="text-align: left;">관리자 또는 운영자가 업스트림 라우터에
+      수동으로 정적 경로를 추가하는 라우팅 방식이다. AS Number가 사용되지
+      않는다.</td>
+      </tr>
+      <tr>
+      <td style="text-align: left;"><strong>ROUTED 모드</strong></td>
+      <td style="text-align: left;">가상 라우터가 Source NAT, Static NAT, 로드
+      밸런서, 포트 포워딩, VPN 서비스를 제공하지 않는 네트워크 모드이다.
+      DNS, DHCP, User data, 방화벽(Isolated 네트워크) 및 Network ACL(VPC)
+      서비스만 지원한다. Dynamic Routing은 ROUTED 모드에서만
+      동작한다.</td>
+      </tr>
+      </tbody>
+      </table>
+    </main>
+  </div>
+</body>
+</html>
