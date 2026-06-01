@@ -1,67 +1,51 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/guide/html/style.css">
-</head>
-<body>
-  <div class="container">
-    <main class="content">
-      <h2 id="ssh-key-pairs">SSH Key Pairs</h2>
-      <p>SSH Key Pair 는 인스턴스에 SSH 로 접속할 때 사용하는 인증 키정보이다.
-      사용자는 SSH Key Pair를 생성하거나 기존 Public Key를 등록한 뒤, 인스턴스
-      생성 시 해당 Key Pair를 선택하여 VM에 접속할 수 있다.</p>
-      <p>SSH Key Pair는 일반적으로 Linux 계열 인스턴스 접속에 사용되며,
-      비밀번호 방식보다 보안성이 높은 인증 방식이다. namuVIRt에서는 SSH Key
-      Pair를 생성하면 Public Key 는 플랫폼에 등록되고, Private Key는 사용자가
-      직접 다운로드하거나 복사하여 보관해야 한다.</p>
-      <h3 id="ssh-key-pairs-목록"><strong>SSH Key Pairs 목록</strong></h3>
-      <p>등록된 SSH Key Pair 의 목록을 조회할 수 있다.</p>
-      <img src="/public/guide/html/images/image1.png" style="width:6.57813in;height:3.18056in" />
+<h2 id="ssh-key-pairs">SSH Key Pairs</h2>
+<p>SSH Key Pair 는 인스턴스에 SSH 로 접속할 때 사용하는 인증 키정보이다.
+사용자는 SSH Key Pair를 생성하거나 기존 Public Key를 등록한 뒤, 인스턴스
+생성 시 해당 Key Pair를 선택하여 VM에 접속할 수 있다.</p>
+<p>SSH Key Pair는 일반적으로 Linux 계열 인스턴스 접속에 사용되며,
+비밀번호 방식보다 보안성이 높은 인증 방식이다. namuVIRt에서는 SSH Key
+Pair를 생성하면 Public Key 는 플랫폼에 등록되고, Private Key는 사용자가
+직접 다운로드하거나 복사하여 보관해야 한다.</p>
+<h3 id="ssh-key-pairs-목록"><strong>SSH Key Pairs 목록</strong></h3>
+<p>등록된 SSH Key Pair 의 목록을 조회할 수 있다.</p>
+<img src="/guide/html/images/01_compute/06_ssh_key_pairs/image1.png" style="width:10in" />
 
-      <h3 id="ssh-key-pairs-생성"><strong>SSH Key Pairs 생성</strong></h3>
-      <p>SSH Key Pair 를 생성하거나 이미 보유한 Public Key를 등록할 수
-      있다.</p>
-      <img src="/public/guide/html/images/image2.png" style="width:6.57813in;height:3.18056in" />
+<h3 id="ssh-key-pairs-생성"><strong>SSH Key Pairs 생성</strong></h3>
+<p>SSH Key Pair 를 생성하거나 이미 보유한 Public Key를 등록할 수
+있다.</p>
+<img src="/guide/html/images/01_compute/06_ssh_key_pairs/image2.png" style="width:10in" />
 
-      <table style="width:99%;">
-      <thead>
-      <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-      <td style="text-align: left;"><strong>이름</strong></td>
-      <td style="text-align: left;">생성 또는 등록할 Key Pair의 이름 입력</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>공개 키</strong></td>
-      <td style="text-align: left;">기존 public key 를 등록할 경우 입력</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>도메인 아이디</strong></td>
-      <td style="text-align: left;">SSH Key Pair를 등록할 도메인 선택</td>
-      </tr>
-      </tbody>
-      </table>
-      <img src="/public/guide/html/images/image3.png" style="width:5.1875in;height:1.9375in" />
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>항목</strong></th>
+<th style="text-align: left;"><strong>설명</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>이름</strong></td>
+<td style="text-align: left;">생성 또는 등록할 Key Pair의 이름 입력</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>공개 키</strong></td>
+<td style="text-align: left;">기존 public key 를 등록할 경우 입력</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>도메인 아이디</strong></td>
+<td style="text-align: left;">SSH Key Pair를 등록할 도메인 선택</td>
+</tr>
+</tbody>
+</table>
+<img src="/guide/html/images/01_compute/06_ssh_key_pairs/image3.png" class="popup-img" />
 
-      <p>공개키를 입력하지 않으면 namuVIRT가 새 SSH Key Pair를 생성한다. 이
-      경우 생성 완료 후 표시되는 Private Key를 클립보드로 복사하거나
-      다운로드하여 별도로 보관해야 한다.</p>
-      <p>Private Key는 최초 생성 시점에서만 확인할 수 있으며, namuVIRT는
-      Private Key를 보관하지 않는다. 따라서 생성 직후 반드시 안전한 위치에
-      저장해야 한다.</p>
-      <h3 id="ssh-key-pairs-상세"><strong>SSH Key Pairs 상세</strong></h3>
-      <p>SSH Key Pair 상세 화면에서는 선택한 Key Pair의 기본 정보와 소유
-      정보를 확인할 수 있다.</p>
-      <img src="/public/guide/html/images/image4.png" style="width:6.57813in;height:3.18056in" />
-    </main>
-  </div>
-
-  <script src="/guide/html/menu-renderer.js"></script>
-</body>
-</html>
+<p>공개키를 입력하지 않으면 namuVIRT가 새 SSH Key Pair를 생성한다. 이
+경우 생성 완료 후 표시되는 Private Key를 클립보드로 복사하거나
+다운로드하여 별도로 보관해야 한다.</p>
+<p>Private Key는 최초 생성 시점에서만 확인할 수 있으며, namuVIRT는
+Private Key를 보관하지 않는다. 따라서 생성 직후 반드시 안전한 위치에
+저장해야 한다.</p>
+<h3 id="ssh-key-pairs-상세"><strong>SSH Key Pairs 상세</strong></h3>
+<p>SSH Key Pair 상세 화면에서는 선택한 Key Pair의 기본 정보와 소유
+정보를 확인할 수 있다.</p>
+<img src="/guide/html/images/01_compute/06_ssh_key_pairs/image4.png" style="width:10in" />

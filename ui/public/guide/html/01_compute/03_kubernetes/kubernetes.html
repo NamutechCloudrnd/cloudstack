@@ -1,216 +1,200 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/guide/html/style.css">
-</head>
-<body>
-  <div class="container">
-    <main class="content">
-      <h2 id="쿠버네티스">쿠버네티스</h2>
-      <p>쿠버네티스는 NamuVIRT 환경에서 쿠버네티스 클러스터를 생성하고
-      관리하는 Compute 기능이다. 이 기능은 기본적으로 글로벌 설정 &gt; Compute
-      &gt; 쿠버네티스 탭에서 활성화 해야 사용이 가능하다. 또한 글로벌 설정
-      &gt; Miscellaneous &gt; Others 탭에서 ‘endpoint.url’ 옵션을 namuVIRT
-      관리서버 IP 주소 (예: <a
-      href="http://management-server-ip:8080/client/api"><u>http://management-server-ip:8080/client/api</u></a>)
-      로 설정해야 한다.</p>
-      <p>관리자는 이 메뉴를 통해 쿠버네티스 클러스터를 배포하고, 클러스터를
-      구성하는 노드 VM, 쿠버네티스 버전, 네트워크, 컴퓨트 리소스, SSH Key,
-      Storage 옵션 연동 등을 설정할 수 있다.</p>
-      <p>쿠버네티스 클러스터는 인스턴스와 달리 단일 VM 이 아니라 여러 노드
-      VM으로 구성되며, 클러스터 생성시 지정한 클러스터 크기에 따라 노드 VM 이
-      생성되고 각 노드는 선택한 Zone, Hypervisor, Network, Service Offering,
-      템플릿 설정을 기준으로 배포된다.</p>
-      <p>운영 관점에서 쿠버네티스는 단순히 VM을 생성하는 기능이 아니라,
-      컨테이너 워크로드를 실행하기 위한 클러스터 단위 인프라를 자동으로
-      구성하는 기능으로 클러스터 생성 전에는 쿠버네티스 버전, 네트워크 구성,
-      노드 사양, 스토리지 연동 여부, SSH 접근 방식 등을 미리 검토하는 것이
-      좋다.</p>
-      <h3 id="쿠버네티스-클러스터-목록"><strong>쿠버네티스 클러스터
-      목록</strong></h3>
-      <p>namuVIRT 에서 생성한 쿠버네티스 클러스터 목록을 조회할 수 있다. 목록
-      화면에서는 클러스터의 크기, 상태, 유형 등의 정보를 확인 할 수 있다.</p>
-      <img src="/public/guide/html/images/image1.png" style="width:6.57813in;height:3.66667in" />
+<h2 id="쿠버네티스">쿠버네티스</h2>
+<p>쿠버네티스는 NamuVIRT 환경에서 쿠버네티스 클러스터를 생성하고
+관리하는 Compute 기능이다. 이 기능은 기본적으로 글로벌 설정 &gt; Compute
+&gt; 쿠버네티스 탭에서 활성화 해야 사용이 가능하다. 또한 글로벌 설정
+&gt; Miscellaneous &gt; Others 탭에서 ‘endpoint.url’ 옵션을 namuVIRT
+관리서버 IP 주소 (예: <a
+href="http://management-server-ip:8080/client/api"><u>http://management-server-ip:8080/client/api</u></a>)
+로 설정해야 한다.</p>
+<p>관리자는 이 메뉴를 통해 쿠버네티스 클러스터를 배포하고, 클러스터를
+구성하는 노드 VM, 쿠버네티스 버전, 네트워크, 컴퓨트 리소스, SSH Key,
+Storage 옵션 연동 등을 설정할 수 있다.</p>
+<p>쿠버네티스 클러스터는 인스턴스와 달리 단일 VM 이 아니라 여러 노드
+VM으로 구성되며, 클러스터 생성시 지정한 클러스터 크기에 따라 노드 VM 이
+생성되고 각 노드는 선택한 Zone, Hypervisor, Network, Service Offering,
+템플릿 설정을 기준으로 배포된다.</p>
+<p>운영 관점에서 쿠버네티스는 단순히 VM을 생성하는 기능이 아니라,
+컨테이너 워크로드를 실행하기 위한 클러스터 단위 인프라를 자동으로
+구성하는 기능으로 클러스터 생성 전에는 쿠버네티스 버전, 네트워크 구성,
+노드 사양, 스토리지 연동 여부, SSH 접근 방식 등을 미리 검토하는 것이
+좋다.</p>
+<h3 id="쿠버네티스-클러스터-목록"><strong>쿠버네티스 클러스터
+목록</strong></h3>
+<p>namuVIRT 에서 생성한 쿠버네티스 클러스터 목록을 조회할 수 있다. 목록
+화면에서는 클러스터의 크기, 상태, 유형 등의 정보를 확인 할 수 있다.</p>
+<img src="/guide/html/images/01_compute/03_kubernetes/image1.png" style="width:10in" />
 
-      <p>해당 화면에서는 클러스터의 정지, 시작, 삭제가 가능하며, 목록에서
-      클러스터를 선택 시 화면에 버튼이 노출된다.</p>
-      <h3 id="쿠버네티스-클러스터-생성"><strong>쿠버네티스 클러스터
-      생성</strong></h3>
-      <p>쿠버네티스 클러스터를 생성하기 위해서는 쿠버네티스 ISO(쿠버네티스
-      version) 가 등록되어 있어야 한다.</p>
-      <ul>
-      <li>이미지 &gt; 쿠버네티스 ISO 메뉴 에서 등록가능</li>
-      </ul>
-      <p>클러스터 생성 시 이름, Zone, Hypervisor, 쿠버네티스 버전, 컴퓨트
-      오퍼링, 네트워크, 클러스터 크기 등을 지정하며, 고급 설정을 통해 CSI
-      드라이버, 노드용 서비스 오퍼링, 사용자 데이터 등을 추가로 설정할 수
-      있다.</p>
-      <img src="/public/guide/html/images/image2.png" style="width:6.57813in;height:3.66667in" />
+<p>해당 화면에서는 클러스터의 정지, 시작, 삭제가 가능하며, 목록에서
+클러스터를 선택 시 화면에 버튼이 노출된다.</p>
+<h3 id="쿠버네티스-클러스터-생성"><strong>쿠버네티스 클러스터
+생성</strong></h3>
+<p>쿠버네티스 클러스터를 생성하기 위해서는 쿠버네티스 ISO(쿠버네티스
+version) 가 등록되어 있어야 한다.</p>
+<ul>
+<li>이미지 &gt; 쿠버네티스 ISO 메뉴 에서 등록가능</li>
+</ul>
+<p>클러스터 생성 시 이름, Zone, Hypervisor, 쿠버네티스 버전, 컴퓨트
+오퍼링, 네트워크, 클러스터 크기 등을 지정하며, 고급 설정을 통해 CSI
+드라이버, 노드용 서비스 오퍼링, 사용자 데이터 등을 추가로 설정할 수
+있다.</p>
+<img src="/guide/html/images/01_compute/03_kubernetes/image2.png" style="width:10in" />
 
-      <table style="width:99%;">
-      <thead>
-      <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-      <td style="text-align: left;"><strong>이름</strong></td>
-      <td style="text-align: left;">생성할 쿠버네티스 클러스터 이름 입력</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>설명</strong></td>
-      <td style="text-align: left;">클러스터 용도나 운영 목적에 대한 설명 입력</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>Zone</strong></td>
-      <td style="text-align: left;">쿠버네티스 클러스터가 배포될 Zone 선택</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>하이퍼바이저</strong></td>
-      <td style="text-align: left;">쿠버네티스 노드 VM이 생성될 하이퍼 바이저 선택</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>쿠버네티스 버전</strong></td>
-      <td style="text-align: left;">클러스터에 적용할 쿠버네티스 버전</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>컴퓨트 오퍼링</strong></td>
-      <td style="text-align: left;">쿠버네티스 노드 VM 에 할당할 CPU/Memory 사양 선택</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>노드 루트 디스크 크기</strong></td>
-      <td style="text-align: left;">쿠버네티스 노드 VM의 루트 디스크 크기 지정</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>네트워크</strong></td>
-      <td style="text-align: left;">쿠버네티스 클러스터가 연결될 네트워크 선택</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>클러스터 크기</strong></td>
-      <td style="text-align: left;">생성할 쿠버네티스 노드 수 입력</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>SSH 키 쌍</strong></td>
-      <td style="text-align: left;">노드 VM 접속에 사용할 SSH Key Pair 선택</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>고급 설정 표시</strong></td>
-      <td style="text-align: left;">추가 쿠버네티스 클러스터 설정 항목 표시 여부 선택</td>
-      </tr>
-      </tbody>
-      </table>
-      <p>고급 설정을 활성화하면 다음 항목을 추가로 설정할 수 있다.</p>
-      <table style="width:99%;">
-      <thead>
-      <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-      <td style="text-align: left;"><strong>namuVIRT CSI 드라이버 활성화</strong></td>
-      <td style="text-align: left;">쿠버네티스 클러스터에서 namuVIRT Storage 연동용 CSI Driver 사용 여부
-      선택</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>제어 노드용 서비스 오퍼링</strong></td>
-      <td style="text-align: left;">Control Plane 노드에 적용할 Service Offering 선택</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>제어 노드용 템플릿</strong></td>
-      <td style="text-align: left;">Control Plane 노드 생성에 사용할 템플릿 선택</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>워커 노드용 서비스 오퍼링</strong></td>
-      <td style="text-align: left;">워커 노드에 적용할 Service Offering 선택</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>워커 노드용 템플릿</strong></td>
-      <td style="text-align: left;">워커 노드 생성에 사용할 템플릿 선택</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>Etcd 노드</strong></td>
-      <td style="text-align: left;">Etcd 전용 노드 수 지정</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>CNI 구성</strong></td>
-      <td style="text-align: left;">쿠버네티스 네트워크 구성을 위한 CNI 설정 선택</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>사용자 데이터</strong></td>
-      <td style="text-align: left;">쿠버네티스 노드에 전달할 사용자 데이터 선택</td>
-      </tr>
-      </tbody>
-      </table>
-      <p>쿠버네티스 클러스터를 생성하게 되면 Master Node 와 Worker Node 가
-      인스턴스 로 생성되게 된다. 이렇게 생성된 인스턴스 는 쿠버네티스
-      상세화면에서 확인 가능하다.</p>
-      <h3 id="쿠버네티스-클러스터-상세"><strong>쿠버네티스 클러스터
-      상세</strong></h3>
-      <p>쿠버네티스 상세 화면에서는 선택한 클러스터의 기본 정보, 리소스 구성,
-      연결 네트워크, 노드 구성, 접근 정보, 방화벽, 포트 포워딩, 부하분산,
-      이벤트 등을 확인하고 관리할 수 있다.</p>
-      <p>좌측 요약 영역에서는 클러스터의 상태와 주요 구성 정보를 빠르게 확인할
-      수 있으며, 우측 탭에서는 항목별 세부 정보와 운영 기능을 조회할 수
-      있다.</p>
-      <p>우측 영역의 탭에 대한 설명은 다음과 같다</p>
-      <table style="width:99%;">
-      <thead>
-      <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-      <td style="text-align: left;"><strong>상세</strong></td>
-      <td style="text-align: left;">클러스터의 이름, 설명, Zone 정보등 쿠버네티스 클러스터 구성의 기본
-      정보를 확인 가능</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>액세스</strong></td>
-      <td style="text-align: left;">쿠버네티스에 접근하기 위한 가이드와 대시보드 구성방법을 가이드하고,
-      실행가능한 파일 또는 설정파일의 다운로드 가능</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>가상머신</strong></td>
-      <td style="text-align: left;">클러스터를 구성하는 노드 VM 목록 확인 가능</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>방화벽</strong></td>
-      <td style="text-align: left;">클러스터 네트워크에 적용된 방화벽 정책 확인 및 관리</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>포트 포워딩</strong></td>
-      <td style="text-align: left;">외부 클러스터에서 내부 서비스로 접근하기 위한 포트 포워딩 정책
-      관리</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>부하 분산</strong></td>
-      <td style="text-align: left;">클러스터 서비스 접근을 위한 로드 밸런싱 정책 관리</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>이벤트</strong></td>
-      <td style="text-align: left;">클러스터 생성, 변경, 오류 등 이벤트 이력 확인 가능</td>
-      </tr>
-      <tr>
-      <td style="text-align: left;"><strong>코멘트</strong></td>
-      <td style="text-align: left;">운영 메모 또는 코멘트 관리</td>
-      </tr>
-      </tbody>
-      </table>
-      <p>쿠버네티스 클러스터 상세 화면은 클러스터 운영 상태를 확인하고 장애를
-      분석할 때 주로 사용한다. 운영자는 이 화면에서 클러스터가 정상 실행
-      중인지, 어떤 비전과 리소스 사양으로 구성되어 있는지, 어떤 네트워크와 SSH
-      Key 를 사용하는지 확인할 수 있다.</p>
-    </main>
-  </div>
-
-  <script src="/guide/html/menu-renderer.js"></script>
-</body>
-</html>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>항목</strong></th>
+<th style="text-align: left;"><strong>설명</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>이름</strong></td>
+<td style="text-align: left;">생성할 쿠버네티스 클러스터 이름 입력</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>설명</strong></td>
+<td style="text-align: left;">클러스터 용도나 운영 목적에 대한 설명 입력</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Zone</strong></td>
+<td style="text-align: left;">쿠버네티스 클러스터가 배포될 Zone 선택</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>하이퍼바이저</strong></td>
+<td style="text-align: left;">쿠버네티스 노드 VM이 생성될 하이퍼 바이저 선택</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>쿠버네티스 버전</strong></td>
+<td style="text-align: left;">클러스터에 적용할 쿠버네티스 버전</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>컴퓨트 오퍼링</strong></td>
+<td style="text-align: left;">쿠버네티스 노드 VM 에 할당할 CPU/Memory 사양 선택</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>노드 루트 디스크 크기</strong></td>
+<td style="text-align: left;">쿠버네티스 노드 VM의 루트 디스크 크기 지정</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>네트워크</strong></td>
+<td style="text-align: left;">쿠버네티스 클러스터가 연결될 네트워크 선택</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>클러스터 크기</strong></td>
+<td style="text-align: left;">생성할 쿠버네티스 노드 수 입력</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>SSH 키 쌍</strong></td>
+<td style="text-align: left;">노드 VM 접속에 사용할 SSH Key Pair 선택</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>고급 설정 표시</strong></td>
+<td style="text-align: left;">추가 쿠버네티스 클러스터 설정 항목 표시 여부 선택</td>
+</tr>
+</tbody>
+</table>
+<p>고급 설정을 활성화하면 다음 항목을 추가로 설정할 수 있다.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>항목</strong></th>
+<th style="text-align: left;"><strong>설명</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>namuVIRT CSI 드라이버 활성화</strong></td>
+<td style="text-align: left;">쿠버네티스 클러스터에서 namuVIRT Storage 연동용 CSI Driver 사용 여부
+선택</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>제어 노드용 서비스 오퍼링</strong></td>
+<td style="text-align: left;">Control Plane 노드에 적용할 Service Offering 선택</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>제어 노드용 템플릿</strong></td>
+<td style="text-align: left;">Control Plane 노드 생성에 사용할 템플릿 선택</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>워커 노드용 서비스 오퍼링</strong></td>
+<td style="text-align: left;">워커 노드에 적용할 Service Offering 선택</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>워커 노드용 템플릿</strong></td>
+<td style="text-align: left;">워커 노드 생성에 사용할 템플릿 선택</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Etcd 노드</strong></td>
+<td style="text-align: left;">Etcd 전용 노드 수 지정</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>CNI 구성</strong></td>
+<td style="text-align: left;">쿠버네티스 네트워크 구성을 위한 CNI 설정 선택</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>사용자 데이터</strong></td>
+<td style="text-align: left;">쿠버네티스 노드에 전달할 사용자 데이터 선택</td>
+</tr>
+</tbody>
+</table>
+<p>쿠버네티스 클러스터를 생성하게 되면 Master Node 와 Worker Node 가
+인스턴스 로 생성되게 된다. 이렇게 생성된 인스턴스 는 쿠버네티스
+상세화면에서 확인 가능하다.</p>
+<h3 id="쿠버네티스-클러스터-상세"><strong>쿠버네티스 클러스터
+상세</strong></h3>
+<p>쿠버네티스 상세 화면에서는 선택한 클러스터의 기본 정보, 리소스 구성,
+연결 네트워크, 노드 구성, 접근 정보, 방화벽, 포트 포워딩, 부하분산,
+이벤트 등을 확인하고 관리할 수 있다.</p>
+<p>좌측 요약 영역에서는 클러스터의 상태와 주요 구성 정보를 빠르게 확인할
+수 있으며, 우측 탭에서는 항목별 세부 정보와 운영 기능을 조회할 수
+있다.</p>
+<p>우측 영역의 탭에 대한 설명은 다음과 같다</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>항목</strong></th>
+<th style="text-align: left;"><strong>설명</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>상세</strong></td>
+<td style="text-align: left;">클러스터의 이름, 설명, Zone 정보등 쿠버네티스 클러스터 구성의 기본
+정보를 확인 가능</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>액세스</strong></td>
+<td style="text-align: left;">쿠버네티스에 접근하기 위한 가이드와 대시보드 구성방법을 가이드하고,
+실행가능한 파일 또는 설정파일의 다운로드 가능</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>가상머신</strong></td>
+<td style="text-align: left;">클러스터를 구성하는 노드 VM 목록 확인 가능</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>방화벽</strong></td>
+<td style="text-align: left;">클러스터 네트워크에 적용된 방화벽 정책 확인 및 관리</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>포트 포워딩</strong></td>
+<td style="text-align: left;">외부 클러스터에서 내부 서비스로 접근하기 위한 포트 포워딩 정책
+관리</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>부하 분산</strong></td>
+<td style="text-align: left;">클러스터 서비스 접근을 위한 로드 밸런싱 정책 관리</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>이벤트</strong></td>
+<td style="text-align: left;">클러스터 생성, 변경, 오류 등 이벤트 이력 확인 가능</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>코멘트</strong></td>
+<td style="text-align: left;">운영 메모 또는 코멘트 관리</td>
+</tr>
+</tbody>
+</table>
+<p>쿠버네티스 클러스터 상세 화면은 클러스터 운영 상태를 확인하고 장애를
+분석할 때 주로 사용한다. 운영자는 이 화면에서 클러스터가 정상 실행
+중인지, 어떤 비전과 리소스 사양으로 구성되어 있는지, 어떤 네트워크와 SSH
+Key 를 사용하는지 확인할 수 있다.</p>

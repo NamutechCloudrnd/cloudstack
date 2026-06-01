@@ -271,6 +271,10 @@ p > img {
   width: 50%;
 }
 
+.popup-img {
+  width: 600px;
+}
+
 a {
   color: var(--color-accent);
   text-decoration: none;

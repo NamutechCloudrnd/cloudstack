@@ -1,58 +1,48 @@
 <h1 id="backup">Backup</h1>
-<h2 id="개요">개요</h2>
 <p>Backup은 Instance 단위 데이터를 보관하고 필요 시 복원하는 기능이다. 사용 전 프레임워크 활성화와 제공자 설정을 확인해야 한다.</p>
-<h2 id="화면-구성">화면 구성</h2>
-<h3 id="백업-프레임워크-활성화-설정-화면">백업 프레임워크 활성화 설정 화면</h3>
-<p><img src="../../../images/02_storage/04_backups/backup_01.png" alt="백업 프레임워크 활성화 설정 화면" /></p>
+<p><img src="/guide/html/images/02_storage/04_backups/backup_01.png" alt="백업 프레임워크 활성화 설정 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Configuration &gt; Global Settings</code></li>
 <li><strong>설명:</strong> 백업 기능 사용 여부를 설정하는 글로벌 설정 화면이다.</li>
 </ul>
 <p>Global Settings 화면에서 backup 키워드로 설정 항목을 검색한 상태이다. 화면에는 백업 볼륨 연결/분리 허용 설정, 백업 프레임워크 활성화 여부, 백업 제공자 플러그인, 동기화 주기 등 백업 기능과 관련된 설정이 표시된다. 예시에서는 Backup framework enabled 항목이 활성화되어 있으며, 백업 기능을 사용하기 위한 기본 설정 상태를 확인할 수 있다.</p>
-<h3 id="인스턴스-목록에서-백업-대상-선택">인스턴스 목록에서 백업 대상 선택</h3>
-<p><img src="../../../images/02_storage/04_backups/backup_02.png" alt="인스턴스 목록에서 백업 대상 선택" /></p>
+<p><img src="/guide/html/images/02_storage/04_backups/backup_02.png" alt="인스턴스 목록에서 백업 대상 선택" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Compute &gt; Instances</code></li>
 <li><strong>설명:</strong> 백업을 생성할 인스턴스를 목록에서 선택하는 화면이다.</li>
 </ul>
 <p>인스턴스 목록 화면에서는 실행 중인 인스턴스의 이름, 상태, 내부 이름, IP 주소, 아키텍처, 호스트, 계정, Zone 정보를 확인할 수 있다. 백업을 생성하려면 목록에서 대상 인스턴스를 선택하여 상세 화면으로 이동한다. 화면 예시에서는 첫 번째 인스턴스가 강조되어 있으며, 해당 인스턴스를 대상으로 백업 작업을 진행하는 흐름을 보여줍니다.</p>
-<h3 id="인스턴스-상세-화면의-백업-시작-버튼">인스턴스 상세 화면의 백업 시작 버튼</h3>
-<p><img src="../../../images/02_storage/04_backups/backup_03.png" alt="인스턴스 상세 화면의 백업 시작 버튼" /></p>
+<p><img src="/guide/html/images/02_storage/04_backups/backup_03.png" alt="인스턴스 상세 화면의 백업 시작 버튼" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Compute &gt; Instances &gt; Instance Detail</code></li>
 <li><strong>설명:</strong> 인스턴스 상세 화면에서 백업 시작 작업을 실행하는 화면이다.</li>
 </ul>
 <p>인스턴스 상세 화면에서는 선택한 인스턴스의 기본 정보와 상태를 확인할 수 있다. 상단 작업 버튼 영역에서 Start Backup 버튼을 선택하면 해당 인스턴스에 대한 백업 생성을 요청할 수 있다. 화면 예시의 인스턴스는 Running 상태이며, 백업 시작 버튼이 강조되어 있다.</p>
-<h3 id="백업-목록-화면">백업 목록 화면</h3>
-<p><img src="../../../images/02_storage/04_backups/backup_04.png" alt="백업 목록 화면" /></p>
+<p><img src="/guide/html/images/02_storage/04_backups/backup_04.png" alt="백업 목록 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Storage &gt; Backups</code></li>
 <li><strong>설명:</strong> 생성된 백업 목록과 상태, 크기, 대상 인스턴스를 확인하는 화면이다.</li>
 </ul>
 <p>백업 목록 화면에서는 생성된 백업의 이름, 상태, 크기, 가상 크기, 대상 인스턴스 이름, 백업 오퍼링 이름, 생성 방식, 백업 유형, 생성 시각, 계정, 도메인, Zone 정보를 확인할 수 있다. 화면 예시에서는 testBackup 항목이 BackedUp 상태로 표시되어 있다. 목록에서 백업 이름을 선택하면 백업 상세 화면으로 이동할 수 있다.</p>
-<h3 id="여러-백업-항목이-표시된-목록-화면">여러 백업 항목이 표시된 목록 화면</h3>
-<p><img src="../../../images/02_storage/04_backups/backup_05.png" alt="여러 백업 항목이 표시된 목록 화면" /></p>
+<p><img src="/guide/html/images/02_storage/04_backups/backup_05.png" alt="여러 백업 항목이 표시된 목록 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Storage &gt; Backups</code></li>
 <li><strong>설명:</strong> 수동 백업과 정기 백업이 함께 표시된 백업 목록 화면이다.</li>
 </ul>
 <p>백업 목록에는 수동으로 생성된 백업과 스케줄에 의해 생성된 백업이 함께 표시될 수 있다. 화면 예시에서는 MANUAL 항목 1개와 DAILY 항목 2개가 BackedUp 상태로 표시된다. 사용자는 목록에서 백업별 크기, 가상 크기, 대상 인스턴스, 백업 오퍼링, 백업 유형, 생성 시각을 비교하여 복구에 사용할 백업본을 선택할 수 있다.</p>
-<h3 id="백업-상세-화면의-인스턴스-복원-버튼">백업 상세 화면의 인스턴스 복원 버튼</h3>
-<p><img src="../../../images/02_storage/04_backups/backup_06.png" alt="백업 상세 화면의 인스턴스 복원 버튼" /></p>
+<p><img src="/guide/html/images/02_storage/04_backups/backup_06.png" alt="백업 상세 화면의 인스턴스 복원 버튼" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Storage &gt; Backups &gt; Backup Detail</code></li>
 <li><strong>설명:</strong> 선택한 백업본에서 인스턴스 복원 작업을 실행하는 화면이다.</li>
 </ul>
 <p>백업 상세 화면에서는 선택한 백업본의 기본 정보와 상단 작업 버튼을 확인할 수 있다. 화면 예시에서는 Restore Instance backup 버튼이 강조되어 있으며, 이 작업은 선택한 백업본을 기준으로 인스턴스를 복원하는 기능이다. 복원 전에는 대상 인스턴스 상태, 백업본 시점, 포함된 볼륨 정보를 확인해야 한다.</p>
-<h3 id="백업-상세-정보-화면">백업 상세 정보 화면</h3>
-<p><img src="../../../images/02_storage/04_backups/backup_07.png" alt="백업 상세 정보 화면" /></p>
+<p><img src="/guide/html/images/02_storage/04_backups/backup_07.png" alt="백업 상세 정보 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Storage &gt; Backups &gt; Backup Detail &gt; Details</code></li>
 <li><strong>설명:</strong> 선택한 백업본의 상세 속성과 포함된 볼륨 정보를 확인하는 화면이다.</li>
 </ul>
 <p>백업 상세 화면의 Details 탭에서는 백업 이름, 설명, 대상 인스턴스 이름, ID, 생성 방식, 백업 유형, 외부 ID, 크기, 가상 크기, 포함된 볼륨, 백업 오퍼링 이름을 확인할 수 있다. 화면 예시의 백업은 FULL 유형이며, ROOT 볼륨과 DATADISK 볼륨이 함께 포함되어 있다. 백업 복원 또는 볼륨 복원 작업을 수행하기 전에 이 화면에서 백업 대상과 포함 볼륨을 확인한다.</p>
-<h3 id="백업의-인스턴스-메타데이터-탭-화면">백업의 인스턴스 메타데이터 탭 화면</h3>
-<p><img src="../../../images/02_storage/04_backups/backup_08.png" alt="백업의 인스턴스 메타데이터 탭 화면" /></p>
+<p><img src="/guide/html/images/02_storage/04_backups/backup_08.png" alt="백업의 인스턴스 메타데이터 탭 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Storage &gt; Backups &gt; Backup Detail &gt; Instance metadata</code></li>
 <li><strong>설명:</strong> 백업 시점의 인스턴스 구성 정보를 확인하는 화면이다.</li>
@@ -82,10 +72,6 @@
 <h2 id="입력-항목">입력 항목</h2>
 <h3 id="백업-프레임워크-활성화-설정-화면-1">백업 프레임워크 활성화 설정 화면</h3>
 <table>
-<colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
-</colgroup>
 <thead>
 <tr>
 <th>항목</th>
