@@ -253,6 +253,11 @@ h2 {
   margin-top: 2rem;
 }
 
+h3 {
+  font-size: 1.25rem;
+  margin-top: 1.5rem;
+}
+
 p {
   margin-bottom: 0.5rem;
   line-height: 1.5;
@@ -333,6 +338,11 @@ main > .content-frame > ul > li > ul > li {
 }
 
 main > .content-frame > table > tbody > tr > td > ul > li {
+  margin-left: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+main > .content-frame > table > tbody > tr > td > ul > li > ul > li {
   margin-left: 1.2rem;
   margin-bottom: 0.4rem;
 }

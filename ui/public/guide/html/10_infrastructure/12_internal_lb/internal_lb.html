@@ -1,13 +1,3 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/guide/html/style.css">
-</head>
-<body>
-  <div class="container">
-    <main class="content">
       <h1 id="내부-lb">내부 LB</h1>
       <p>내부 LB(Internal LB)는 VPC(Virtual Private Cloud) 내부에서만 트래픽을
       분산하는 로드밸런싱 기능이다. 내부 LB 규칙을 생성하고 인스턴스에
@@ -20,10 +10,10 @@
       있다.</p>
       <p>내부 LB는 VPC의 네트워크 티어(Network Tier) 내에서 동작한다. VPC의
       주요 구성 요소는 다음과 같다.</p>
-      <table style="width:99%;">
+      <table style="width:100%;">
       <colgroup>
-      <col style="width: 21%" />
-      <col style="width: 77%" />
+      <col style="width: 15%" />
+      <col style="width: 85%" />
       </colgroup>
       <thead>
       <tr>
@@ -85,40 +75,33 @@
       있는 VPC</p></li>
       <li><p>사설 게이트웨이만 있고 사이트 간 VPN 접근이 있는 VPC</p></li>
       </ul>
-      <hr />
       <h2 id="목록-조회">목록 조회</h2>
       <p>내부 LB 목록을 확인하는 화면이다. 생성된 내부 LB 인스턴스 목록을
       확인할 수 있다.</p>
-      <p><img src="/guide/html/images/10_infrastructure/12_internal_lb/image91.png" style="width:6.572916666666667in;height:3.1145833333333335in" /></p>
-      <hr />
+      <p><img src="/guide/html/images/10_infrastructure/12_internal_lb/image91.png" style="width:10in" /></p>
       <h2 id="상세-탭">상세 탭</h2>
       <p>내부 LB에 대한 상세 정보를 조회하는 화면이다. 해당 내부 LB의 이름,
       아이디, 버전, 업그레이드 필요 여부, 네트워크 이름, VPC, 게스트 IP 주소,
       로컬 연결 IP 주소, 컴퓨트 오퍼링, 네트워크 도메인, Redundant 라우터
       여부, Redundant 상태, 호스트, 계정, Zone, 생성일, 제어 영역 상태 등의
       정보를 확인할 수 있다.</p>
-      <hr />
       <h2 id="이벤트-탭">이벤트 탭</h2>
       <p>내부 LB에 관련된 이벤트 정보를 확인할 수 있는 화면이다. 내부 LB에서
       발생한 다양한 액션과 변경 사항을 파악할 수 있다.</p>
-      <hr />
       <h2 id="콘솔-보기">콘솔 보기</h2>
       <p>내부 LB의 콘솔에 접근하는 기능이다.</p>
       <p><strong>콘솔 보기</strong> 버튼을 클릭하여 내부 LB 콘솔 화면을
       호출한다.</p>
-      <hr />
       <h2 id="클립보드에-콘솔-url-복사">클립보드에 콘솔 URL 복사</h2>
       <p>내부 LB의 콘솔에 접근할 수 있는 URL을 클립보드에 복사한다.</p>
       <h2 id="라우터-정지">라우터 정지</h2>
       <p>내부 LB 인스턴스를 정지한다.</p>
       <p><strong>라우터 정지</strong> 버튼을 클릭하여 정지 화면을 호출한
       뒤 <strong>확인</strong> 버튼을 클릭한다.</p>
-      <hr />
       <h2 id="라우터-시작">라우터 시작</h2>
       <p>내부 LB 인스턴스를 시작한다.</p>
       <p><strong>라우터 시작</strong> 버튼을 클릭하여 시작 화면을 호출한
       뒤 <strong>확인</strong> 버튼을 클릭한다.</p>
-      <hr />
       <h2 id="라우터-마이그레이션">라우터 마이그레이션</h2>
       <p>내부 LB 인스턴스를 다른 호스트로 마이그레이션한다.</p>
       <p>시스템 VM은 동일한 클러스터 내의 호스트 간에만 마이그레이션할 수
@@ -127,14 +110,13 @@
       <p><strong>라우터 마이그레이션</strong> 버튼을 클릭하여 마이그레이션
       화면을 호출한다. 대상 <strong>호스트</strong>를 선택한
       후 <strong>확인</strong> 버튼을 클릭한다.</p>
-      <hr />
       <h2 id="내부-lb-규칙-생성-참고">내부 LB 규칙 생성 참고</h2>
       <p>내부 LB 인스턴스는 VPC 티어에 내부 LB 규칙을 추가할 때 자동으로
       생성된다. 내부 LB 규칙 생성 시 입력 항목은 다음과 같다.</p>
-      <table style="width:99%;">
+      <table style="width:100%;">
       <colgroup>
       <col style="width: 15%" />
-      <col style="width: 83%" />
+      <col style="width: 85%" />
       </colgroup>
       <thead>
       <tr>
@@ -179,10 +161,10 @@
       </tbody>
       </table>
       <p>지원하는 로드밸런싱 알고리즘:</p>
-      <table style="width:98%;">
+      <table style="width:100%;">
       <colgroup>
-      <col style="width: 28%" />
-      <col style="width: 68%" />
+      <col style="width: 15%" />
+      <col style="width: 85%" />
       </colgroup>
       <thead>
       <tr>
@@ -208,7 +190,3 @@
       </tr>
       </tbody>
       </table>
-    </main>
-  </div>
-</body>
-</html>

@@ -1,51 +1,50 @@
 <h1 id="primary-storage">Primary Storage</h1>
-<h2 id="개요">개요</h2>
 <p>Primary Storage는 Instance 디스크와 Volume이 실제로 배치되는 기본 스토리지 풀이다. 용량, 설정, 브라우저, 이벤트를 함께 점검한다.</p>
 <h2 id="화면-구성">화면 구성</h2>
 <h3 id="기본-스토리지-목록-화면">기본 스토리지 목록 화면</h3>
-<p><img src="../../../images/10_infrastructure/06_primary_storage/primary_storage_01.png" alt="기본 스토리지 목록 화면" /></p>
+<p><img src="/guide/html/images/10_infrastructure/06_primary_storage/primary_storage_01.png" alt="기본 스토리지 목록 화면" style="width: 10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Primary Storage</code></li>
 <li><strong>설명:</strong> 등록된 기본 스토리지의 상태, IP 주소, 범위, 유형, 경로, Cluster, Zone 정보를 확인하는 화면이다.</li>
 </ul>
 <p>기본 스토리지 목록 화면에서는 인스턴스 루트 디스크와 데이터 디스크가 저장되는 스토리지 풀 정보를 확인할 수 있다. 화면 예시에서는 Primary-Storage가 Up 상태이며, IP 주소는 10.10.14.129, Scope는 CLUSTER, Type은 NetworkFilesystem, Path는 /export/primary, Cluster는 namu_Cluster, Zone은 namu_zone으로 표시된다. 상단의 Add Primary Storage 버튼을 통해 신규 기본 스토리지를 추가할 수 있으며, 검색과 Metrics 토글을 사용해 조회 방식을 조정할 수 있다.</p>
 <h3 id="기본-스토리지-추가-입력-화면">기본 스토리지 추가 입력 화면</h3>
-<p><img src="../../../images/10_infrastructure/06_primary_storage/primary_storage_02.png" alt="기본 스토리지 추가 입력 화면" /></p>
+<p><img src="/guide/html/images/10_infrastructure/06_primary_storage/primary_storage_02.png" alt="기본 스토리지 추가 입력 화면" style="width: 10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Primary Storage &gt; Add Primary Storage</code></li>
 <li><strong>설명:</strong> 신규 기본 스토리지를 추가하기 위해 범위, Zone, Cluster, 프로토콜, 서버, 경로, Provider 정보를 입력하는 화면이다.</li>
 </ul>
 <p>기본 스토리지 추가 화면에서는 스토리지 적용 범위, Zone, Pod, Cluster, 이름, 프로토콜, 서버 주소, 경로, NFS 마운트 옵션, Provider, 스토리지 태그를 입력한다. 화면 예시에서는 Scope가 Cluster, Zone은 namu_zone, Pod는 namu_Pod, Cluster는 namu_Cluster, 이름은 Test-Primary-Storage로 입력되어 있다. 프로토콜은 nfs, 서버는 10.10.14.129, 경로는 /export/primary/로 설정되어 있으며 Provider는 DefaultPrimary로 선택되어 있다.</p>
 <h3 id="기본-스토리지-목록-반영-화면">기본 스토리지 목록 반영 화면</h3>
-<p><img src="../../../images/10_infrastructure/06_primary_storage/primary_storage_03.png" alt="기본 스토리지 목록 반영 화면" /></p>
+<p><img src="/guide/html/images/10_infrastructure/06_primary_storage/primary_storage_03.png" alt="기본 스토리지 목록 반영 화면" style="width: 10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Primary Storage</code></li>
 <li><strong>설명:</strong> 신규 기본 스토리지 추가 후 목록에 Up 상태로 표시되는 화면이다.</li>
 </ul>
 <p>기본 스토리지를 추가하면 목록에 신규 스토리지 풀이 표시된다. 화면 예시에서는 기존 Primary-Storage와 신규 Test-Primary-Storage가 모두 Up 상태로 표시된다. 신규 항목은 IP 주소 10.10.14.129, Scope CLUSTER, Type NetworkFilesystem, Path /export/primary/, Cluster namu_Cluster, Zone namu_zone으로 표시된다.</p>
 <h3 id="기본-스토리지-상세-정보-화면">기본 스토리지 상세 정보 화면</h3>
-<p><img src="../../../images/10_infrastructure/06_primary_storage/primary_storage_04.png" alt="기본 스토리지 상세 정보 화면" /></p>
+<p><img src="/guide/html/images/10_infrastructure/06_primary_storage/primary_storage_04.png" alt="기본 스토리지 상세 정보 화면" style="width: 10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Primary Storage &gt; Primary-Storage &gt; Details</code></li>
 <li><strong>설명:</strong> 선택한 기본 스토리지의 상세 정보와 용량 사용률을 확인하는 화면이다.</li>
 </ul>
 <p>기본 스토리지 상세 화면에서는 스토리지 이름, ID, IP 주소, 유형, Scope, 경로, 하이퍼바이저, 오버프로비저닝 계수, 디스크 총량, 할당량, 실제 사용량, Cluster 이름을 확인할 수 있다. 왼쪽 요약 영역에는 상태, IP 주소, 디스크 크기, 사용률, 할당률, Cluster, Pod, Zone, 생성 시각이 표시된다. 화면 예시의 Primary-Storage는 Up 상태이며, NetworkFilesystem 유형, KVM, CLUSTER 범위, /export/primary 경로를 사용한다.</p>
 <h3 id="기본-스토리지-설정-화면">기본 스토리지 설정 화면</h3>
-<p><img src="../../../images/10_infrastructure/06_primary_storage/primary_storage_05.png" alt="기본 스토리지 설정 화면" /></p>
+<p><img src="/guide/html/images/10_infrastructure/06_primary_storage/primary_storage_05.png" alt="기본 스토리지 설정 화면" style="width: 10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Primary Storage &gt; Primary-Storage &gt; Settings</code></li>
 <li><strong>설명:</strong> 선택한 기본 스토리지에 적용되는 용량 임계값과 스토리지 관련 설정을 확인하는 화면이다.</li>
 </ul>
 <p>Settings 탭에서는 선택한 기본 스토리지 풀에 적용되는 설정값을 확인하거나 수정할 수 있다. 화면 예시에는 스토리지 풀 I/O 정책, 할당 용량 비활성화 임계값, 볼륨 크기 변경 시 할당 용량 임계값, 전체 용량 비활성화 임계값, 대체 엔드포인트, 클러스터 위치 관련 설정이 표시된다. 이러한 설정은 스토리지 풀의 신규 볼륨 배치, 볼륨 크기 변경, 용량 초과 방지 동작에 영향을 줄 수 있다.</p>
 <h3 id="기본-스토리지-브라우저-화면">기본 스토리지 브라우저 화면</h3>
-<p><img src="../../../images/10_infrastructure/06_primary_storage/primary_storage_06.png" alt="기본 스토리지 브라우저 화면" /></p>
+<p><img src="/guide/html/images/10_infrastructure/06_primary_storage/primary_storage_06.png" alt="기본 스토리지 브라우저 화면" style="width: 10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Primary Storage &gt; Primary-Storage &gt; Browser</code></li>
 <li><strong>설명:</strong> 기본 스토리지 내부에 저장된 파일 또는 객체 목록과 연결 리소스를 확인하는 화면이다.</li>
 </ul>
 <p>Browser 탭에서는 선택한 기본 스토리지 내부의 저장 항목을 조회할 수 있다. 화면 예시에서는 여러 UUID 형식의 항목이 표시되며, 각 항목의 크기, 마지막 갱신 시각, 연결된 리소스가 함께 표시된다. 연결 리소스에는 ROOT 또는 DATA 볼륨 이름이 표시될 수 있으며, 일부 항목은 Unknown으로 표시된다.</p>
 <h3 id="기본-스토리지-이벤트-탭-화면">기본 스토리지 이벤트 탭 화면</h3>
-<p><img src="../../../images/10_infrastructure/06_primary_storage/primary_storage_07.png" alt="기본 스토리지 이벤트 탭 화면" /></p>
+<p><img src="/guide/html/images/10_infrastructure/06_primary_storage/primary_storage_07.png" alt="기본 스토리지 이벤트 탭 화면" style="width: 10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Primary Storage &gt; Primary-Storage &gt; Events</code></li>
 <li><strong>설명:</strong> 선택한 기본 스토리지와 관련된 이벤트 이력을 확인하는 화면이다.</li>
@@ -70,8 +69,8 @@
 <h3 id="기본-스토리지-추가-입력-화면-1">기본 스토리지 추가 입력 화면</h3>
 <table>
 <colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
+<col style="width: 15%" />
+<col style="width: 85%" />
 </colgroup>
 <thead>
 <tr>
@@ -129,8 +128,8 @@
 <h3 id="기본-스토리지-설정-화면-1">기본 스토리지 설정 화면</h3>
 <table>
 <colgroup>
-<col style="width: 50%" />
-<col style="width: 50%" />
+<col style="width: 20%" />
+<col style="width: 80%" />
 </colgroup>
 <thead>
 <tr>
