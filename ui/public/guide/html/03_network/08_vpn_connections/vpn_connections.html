@@ -41,25 +41,25 @@
       <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>사이트 간 고객 게이트웨이
+      <td><strong>사이트 간 고객 게이트웨이
       ID</strong></td>
-      <td style="text-align: left;">연결할 VPN 고객 게이트웨이를 선택한다.
+      <td>연결할 VPN 고객 게이트웨이를 선택한다.
       사전에 생성된 VPN 고객 게이트웨이 목록에서 선택한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>사이트 간 VPN 게이트웨이
+      <td><strong>사이트 간 VPN 게이트웨이
       ID</strong></td>
-      <td style="text-align: left;">연결할 VPN 게이트웨이를 선택한다.</td>
+      <td>연결할 VPN 게이트웨이를 선택한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>Passive 모드</strong></td>
-      <td style="text-align: left;">두 VPC 가상 라우터 간 연결을 설정할 때
+      <td><strong>Passive 모드</strong></td>
+      <td>두 VPC 가상 라우터 간 연결을 설정할 때
       사용한다. Passive로 설정된 가상 라우터는 상대방이 연결을 시작할 때까지
       대기한다. 두 VPC 중 한쪽에만 설정한다.</td>
       </tr>
@@ -100,40 +100,40 @@
       <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>IP 주소</strong></td>
-      <td style="text-align: left;">VPN 게이트웨이의 Public IP 주소이다.
+      <td><strong>IP 주소</strong></td>
+      <td>VPN 게이트웨이의 Public IP 주소이다.
       원격 측에서 이 주소로 IPsec 터널을 연결한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>게이트웨이</strong></td>
-      <td style="text-align: left;">연결된 VPN 고객 게이트웨이의 원격 IP
+      <td><strong>게이트웨이</strong></td>
+      <td>연결된 VPN 고객 게이트웨이의 원격 IP
       주소이다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>상태</strong></td>
-      <td style="text-align: left;">VPN 연결의 현재 상태이다.
+      <td><strong>상태</strong></td>
+      <td>VPN 연결의 현재 상태이다.
       Connected(연결됨), Disconnected(연결 해제), Error(오류) 상태를
       나타낸다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>IPSec 사전 공유 키</strong></td>
-      <td style="text-align: left;">해당 VPN 연결에 사용된 IPsec 사전 공유
+      <td><strong>IPSec 사전 공유 키</strong></td>
+      <td>해당 VPN 연결에 사용된 IPsec 사전 공유
       키이다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>IKE 정책</strong></td>
-      <td style="text-align: left;">해당 VPN 연결에 적용된 IKE 암호화 및 해시
+      <td><strong>IKE 정책</strong></td>
+      <td>해당 VPN 연결에 적용된 IKE 암호화 및 해시
       알고리즘 정책이다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>ESP 정책</strong></td>
-      <td style="text-align: left;">해당 VPN 연결에 적용된 ESP 암호화 및 해시
+      <td><strong>ESP 정책</strong></td>
+      <td>해당 VPN 연결에 적용된 ESP 암호화 및 해시
       알고리즘 정책이다.</td>
       </tr>
       </tbody>
@@ -176,62 +176,62 @@
       <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>용어</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>용어</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>VPN 연결 (VPN
+      <td><strong>VPN 연결 (VPN
       Connection)</strong></td>
-      <td style="text-align: left;">VPN 게이트웨이와 VPN 고객 게이트웨이를
+      <td>VPN 게이트웨이와 VPN 고객 게이트웨이를
       실제로 연결하는 IPsec 터널이다. namuVirt는 VPC당 최대 8개의 VPN 연결을
       지원한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>VPN 게이트웨이 (VPN
+      <td><strong>VPN 게이트웨이 (VPN
       Gateway)</strong></td>
-      <td style="text-align: left;">VPN 연결의 namuVirt VPC 측
+      <td>VPN 연결의 namuVirt VPC 측
       엔드포인트이다. VPC당 하나씩 생성되며 Public IP 주소를 가진다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>VPN 고객 게이트웨이 (VPN Customer
+      <td><strong>VPN 고객 게이트웨이 (VPN Customer
       Gateway)</strong></td>
-      <td style="text-align: left;">VPN 연결의 원격(고객) 측 엔드포인트 정보를
+      <td>VPN 연결의 원격(고객) 측 엔드포인트 정보를
       namuVirt에 등록한 객체이다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>Passive 모드</strong></td>
-      <td style="text-align: left;">VPN 연결 시 상대방이 연결을 시작할 때까지
+      <td><strong>Passive 모드</strong></td>
+      <td>VPN 연결 시 상대방이 연결을 시작할 때까지
       대기하는 모드이다. 두 VPC 간 연결 시 한쪽에만 설정한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>Connected</strong></td>
-      <td style="text-align: left;">VPN 터널이 정상적으로 설정되어 양쪽
+      <td><strong>Connected</strong></td>
+      <td>VPN 터널이 정상적으로 설정되어 양쪽
       엔드포인트 간에 트래픽이 흐르는 상태이다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>Disconnected</strong></td>
-      <td style="text-align: left;">VPN 연결이 생성되었으나 아직 터널이
+      <td><strong>Disconnected</strong></td>
+      <td>VPN 연결이 생성되었으나 아직 터널이
       설정되지 않은 상태이다. 상대방 VPN 연결 생성 후 자동으로 Connected
       상태로 전환된다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>IPsec (Internet Protocol
+      <td><strong>IPsec (Internet Protocol
       Security)</strong></td>
-      <td style="text-align: left;">인터넷 통신의 보안을 위한 프로토콜로,
+      <td>인터넷 통신의 보안을 위한 프로토콜로,
       데이터 암호화와 인증을 통해 기밀성, 무결성, 인증을 보장한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>IKE 정책 (IKE
+      <td><strong>IKE 정책 (IKE
       Policy)</strong></td>
-      <td style="text-align: left;">VPN 터널 Phase-1에서 적용되는 암호화
+      <td>VPN 터널 Phase-1에서 적용되는 암호화
       알고리즘 및 해시 알고리즘의 조합이다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>ESP 정책 (ESP
+      <td><strong>ESP 정책 (ESP
       Policy)</strong></td>
-      <td style="text-align: left;">VPN 터널 Phase-2에서 실제 데이터 트래픽
+      <td>VPN 터널 Phase-2에서 실제 데이터 트래픽
       보호에 적용되는 암호화 알고리즘 및 해시 알고리즘의 조합이다.</td>
       </tr>
       </tbody>

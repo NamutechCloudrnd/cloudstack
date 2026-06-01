@@ -43,27 +43,23 @@
       <p><strong>1단계: Core Zone 유형 선택</strong></p>
       <p>Zone의 네트워킹 유형을 선택한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image23.png" style="width:10in" /></p>
-      <table style="width:99%;">
-      <colgroup>
-      <col style="width: 11%" />
-      <col style="width: 87%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>유형</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>유형</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>기본(Basic)</strong></td>
-      <td style="text-align: left;">AWS Classic 스타일 네트워킹과 유사한다.
+      <td><strong>기본(Basic)</strong></td>
+      <td>AWS Classic 스타일 네트워킹과 유사한다.
       하이퍼바이저의 브리지 장치를 통해 레이어 3에서 게스트 격리가 제공되는
       단일 플랫 레이어 2 네트워크를 제공한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>고급(Advanced)</strong></td>
-      <td style="text-align: left;">일반적으로 VLAN과 같은 레이어 2 격리를
+      <td><strong>고급(Advanced)</strong></td>
+      <td>일반적으로 VLAN과 같은 레이어 2 격리를
       사용한다. Nicira NVP와 같은 SDN 기술도 이 범주에 포함된다.</td>
       </tr>
       </tbody>
@@ -72,35 +68,31 @@
       <p><strong>2단계: Zone 정보 입력</strong></p>
       <p>Zone에 대한 기본 정보를 입력한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image24.png" style="width:10in" /></p>
-      <table style="width:98%;">
-      <colgroup>
-      <col style="width: 22%" />
-      <col style="width: 75%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>이름</strong></td>
-      <td style="text-align: left;">Zone의 이름을 입력한다.</td>
+      <td><strong>이름</strong></td>
+      <td>Zone의 이름을 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>IPv4 DNS1</strong></td>
-      <td style="text-align: left;">게스트 인스턴스에서 사용할 외부 DNS 서버
+      <td><strong>IPv4 DNS1</strong></td>
+      <td>게스트 인스턴스에서 사용할 외부 DNS 서버
       주소를 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>내부 DNS 1</strong></td>
-      <td style="text-align: left;">관리 네트워크 내부에서 사용할 DNS 서버
+      <td><strong>내부 DNS 1</strong></td>
+      <td>관리 네트워크 내부에서 사용할 DNS 서버
       주소를 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>하이퍼바이저</strong></td>
-      <td style="text-align: left;">이 Zone에서 사용할 하이퍼바이저를
+      <td><strong>하이퍼바이저</strong></td>
+      <td>이 Zone에서 사용할 하이퍼바이저를
       선택한다. (KVM, VMware 등)</td>
       </tr>
       </tbody>
@@ -110,32 +102,28 @@
       <p>Zone에서 사용하는 물리 네트워크와 트래픽 유형을 설정한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image25.png" style="width:10in" /></p>
       <p><strong>기본(Basic) Zone의 트래픽 유형:</strong></p>
-      <table style="width:99%;">
-      <colgroup>
-      <col style="width: 7%" />
-      <col style="width: 91%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>트래픽 유형</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>트래픽 유형</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>Guest</strong></td>
-      <td style="text-align: left;">최종 사용자가 인스턴스를 실행할 때
+      <td><strong>Guest</strong></td>
+      <td>최종 사용자가 인스턴스를 실행할 때
       발생하는 트래픽이다. 기본 Zone에서는 각 Pod가 브로드캐스트 도메인이
       되며 Pod마다 다른 IP 범위를 가진다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>Management</strong></td>
-      <td style="text-align: left;">호스트, 시스템 VM, namuVIRT의 내부 통신
+      <td><strong>Management</strong></td>
+      <td>호스트, 시스템 VM, namuVIRT의 내부 통신
       트래픽이다. 시스템 VM이 사용할 IP 범위를 구성해야 한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>Storage</strong></td>
-      <td style="text-align: left;">2차 스토리지 VM과 2차 스토리지 서버
+      <td><strong>Storage</strong></td>
+      <td>2차 스토리지 VM과 2차 스토리지 서버
       사이에서 인스턴스 템플릿 및 스냅샷 전송 시 발생하는 트래픽이다. 고속
       템플릿 및 스냅샷 복사를 위해 높은 대역폭 네트워크에서 운영되는 별도의
       스토리지 NIC를 사용한다.</td>
@@ -145,40 +133,36 @@
       <p><strong>권장사항</strong>: 관리 트래픽과 게스트 트래픽은 별도의 NIC를
       사용하도록 강력히 권장한다.</p>
       <p><strong>고급(Advanced) Zone의 트래픽 유형:</strong></p>
-      <table style="width:99%;">
-      <colgroup>
-      <col style="width: 7%" />
-      <col style="width: 91%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>트래픽 유형</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>트래픽 유형</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>Guest</strong></td>
-      <td style="text-align: left;">최종 사용자 인스턴스 트래픽이다.
+      <td><strong>Guest</strong></td>
+      <td>최종 사용자 인스턴스 트래픽이다.
       격리(Isolated) 게스트 네트워크에서는 각 계정의 네트워크 격리를 위해 VLAN
       범위를 예약해야 한다. 공유(Shared) 게스트 네트워크에서는 모든 게스트
       인스턴스가 단일 네트워크를 공유한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>Management</strong></td>
-      <td style="text-align: left;">namuVirt 내부 자원 간 통신 트래픽이다.
+      <td><strong>Management</strong></td>
+      <td>namuVirt 내부 자원 간 통신 트래픽이다.
       시스템 VM이 사용할 IP 범위를 구성해야 한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>Public</strong></td>
-      <td style="text-align: left;">클라우드 내 인스턴스가 외부 시스템에
+      <td><strong>Public</strong></td>
+      <td>클라우드 내 인스턴스가 외부 시스템에
       접근할 때 발생하는 트래픽이다. 게스트 인스턴스는 Virtual Router를 통해
       외부 시스템에 접근한다. Public IP는 Virtual Router를 포함한 시스템
       VM의 Public 인터페이스에 할당된다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>Storage</strong></td>
-      <td style="text-align: left;">2차 스토리지 관련 트래픽이다. 기본
+      <td><strong>Storage</strong></td>
+      <td>2차 스토리지 관련 트래픽이다. 기본
       스토리지 트래픽에는 영향을 미치지 않는다.</td>
       </tr>
       </tbody>
@@ -189,40 +173,36 @@
       <p><strong>4단계: Public 네트워크 정보 입력 (고급 Zone)</strong></p>
       <p>Zone의 Public 서비스용 네트워크 정보를 입력한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image26.png" style="width:10in" /></p>
-      <table style="width:97%;">
-      <colgroup>
-      <col style="width: 34%" />
-      <col style="width: 63%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>게이트웨이</strong></td>
-      <td style="text-align: left;">Public 네트워크의 게이트웨이를
+      <td><strong>게이트웨이</strong></td>
+      <td>Public 네트워크의 게이트웨이를
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>넷마스크</strong></td>
-      <td style="text-align: left;">Public 네트워크의 서브넷 마스크를
+      <td><strong>넷마스크</strong></td>
+      <td>Public 네트워크의 서브넷 마스크를
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>가상 네트워크(VLAN)</strong></td>
-      <td style="text-align: left;">VLAN ID를 입력한다.</td>
+      <td><strong>가상 네트워크(VLAN)</strong></td>
+      <td>VLAN ID를 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>시작 IP 주소</strong></td>
-      <td style="text-align: left;">Public IP 범위의 시작 주소를
+      <td><strong>시작 IP 주소</strong></td>
+      <td>Public IP 범위의 시작 주소를
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>종료 IP 주소</strong></td>
-      <td style="text-align: left;">Public IP 범위의 종료 주소를
+      <td><strong>종료 IP 주소</strong></td>
+      <td>Public IP 범위의 종료 주소를
       입력한다.</td>
       </tr>
       </tbody>
@@ -234,44 +214,40 @@
       서브넷에 위치한다. Pod는 Zone에 포함되며 하나 이상의 호스트 클러스터와
       하나 이상의 기본 스토리지 서버로 구성된다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image27.png" style="width:10in" /></p>
-      <table style="width:98%;">
-      <colgroup>
-      <col style="width: 31%" />
-      <col style="width: 65%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>이름</strong></td>
-      <td style="text-align: left;">Pod의 이름을 입력한다.</td>
+      <td><strong>이름</strong></td>
+      <td>Pod의 이름을 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>예약된 시스템
+      <td><strong>예약된 시스템
       게이트웨이</strong></td>
-      <td style="text-align: left;">관리 네트워크(시스템 예약 IP 범위)의
+      <td>관리 네트워크(시스템 예약 IP 범위)의
       게이트웨이를 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>예약된 시스템
+      <td><strong>예약된 시스템
       넷마스크</strong></td>
-      <td style="text-align: left;">관리 네트워크의 서브넷 마스크를
+      <td>관리 네트워크의 서브넷 마스크를
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>예약된 시스템 시작
+      <td><strong>예약된 시스템 시작
       IP</strong></td>
-      <td style="text-align: left;">시스템 VM이 사용할 IP 범위의 시작 주소를
+      <td>시스템 VM이 사용할 IP 범위의 시작 주소를
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>예약된 시스템 종료
+      <td><strong>예약된 시스템 종료
       IP</strong></td>
-      <td style="text-align: left;">시스템 VM이 사용할 IP 범위의 종료 주소를
+      <td>시스템 VM이 사용할 IP 범위의 종료 주소를
       입력한다.</td>
       </tr>
       </tbody>
@@ -284,21 +260,17 @@
       <p><strong>6단계: 게스트 트래픽 설정</strong></p>
       <p>게스트 인스턴스용 네트워크 정보를 입력한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image28.png" style="width:10in" /></p>
-      <table style="width:98%;">
-      <colgroup>
-      <col style="width: 17%" />
-      <col style="width: 80%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>VLAN 범위</strong></td>
-      <td style="text-align: left;">게스트 네트워크 격리를 위해 사용할 VLAN
+      <td><strong>VLAN 범위</strong></td>
+      <td>게스트 네트워크 격리를 위해 사용할 VLAN
       범위를 입력한다. (고급 Zone)</td>
       </tr>
       </tbody>
@@ -311,21 +283,17 @@
       접근한다. 인스턴스는 서비스 중단 없이 동일한 클러스터 내의 호스트 간에
       실시간 마이그레이션(Live Migration)이 가능한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image29.png" style="width:10in" /></p>
-      <table style="width:97%;">
-      <colgroup>
-      <col style="width: 32%" />
-      <col style="width: 64%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>클러스터 이름</strong></td>
-      <td style="text-align: left;">클러스터의 이름을 입력한다.</td>
+      <td><strong>클러스터 이름</strong></td>
+      <td>클러스터의 이름을 입력한다.</td>
       </tr>
       </tbody>
       </table>
@@ -343,36 +311,32 @@
       <li><p>호스트가 namuVirt 관리 서버에 연결되어 있어야 한다.</p></li>
       </ul>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image30.png" style="width:10in" /></p>
-      <table style="width:97%;">
-      <colgroup>
-      <col style="width: 23%" />
-      <col style="width: 73%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>호스트 이름</strong></td>
-      <td style="text-align: left;">호스트의 호스트명 또는 IP 주소를
+      <td><strong>호스트 이름</strong></td>
+      <td>호스트의 호스트명 또는 IP 주소를
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>사용자 이름</strong></td>
-      <td style="text-align: left;">호스트 접근 시 사용할 사용자 이름을
+      <td><strong>사용자 이름</strong></td>
+      <td>호스트 접근 시 사용할 사용자 이름을
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>비밀번호</strong></td>
-      <td style="text-align: left;">호스트 접근 시 사용할 비밀번호를
+      <td><strong>비밀번호</strong></td>
+      <td>호스트 접근 시 사용할 비밀번호를
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>태그</strong></td>
-      <td style="text-align: left;">호스트를 식별하기 위한 태그를
+      <td><strong>태그</strong></td>
+      <td>호스트를 식별하기 위한 태그를
       입력한다.</td>
       </tr>
       </tbody>
@@ -386,34 +350,30 @@
       있으며, 최소 하나는 반드시 필요한다. namuVirt는 게스트 가상 디스크를
       특정 기본 스토리지 장치에 할당하는 것을 자동으로 관리한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image31.png" style="width:10in" /></p>
-      <table style="width:97%;">
-      <colgroup>
-      <col style="width: 18%" />
-      <col style="width: 78%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>이름</strong></td>
-      <td style="text-align: left;">기본 스토리지의 이름을 입력한다.</td>
+      <td><strong>이름</strong></td>
+      <td>기본 스토리지의 이름을 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>범위</strong></td>
-      <td style="text-align: left;">스토리지의 범위(Zone 범위 또는 클러스터
+      <td><strong>범위</strong></td>
+      <td>스토리지의 범위(Zone 범위 또는 클러스터
       범위)를 선택한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>제공자</strong></td>
-      <td style="text-align: left;">스토리지 제공자를 선택한다.</td>
+      <td><strong>제공자</strong></td>
+      <td>스토리지 제공자를 선택한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>프로토콜</strong></td>
-      <td style="text-align: left;">스토리지 프로토콜을 선택한다. (NFS,
+      <td><strong>프로토콜</strong></td>
+      <td>스토리지 프로토콜을 선택한다. (NFS,
       iSCSI, RBD 등)</td>
       </tr>
       </tbody>
@@ -433,35 +393,31 @@
       <p>2차 스토리지의 항목은 Zone 또는 Region 범위로 정의된 스코프 내의 모든
       호스트에서 사용 가능한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image32.png" style="width:10in" /></p>
-      <table style="width:97%;">
-      <colgroup>
-      <col style="width: 17%" />
-      <col style="width: 80%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>제공자</strong></td>
-      <td style="text-align: left;">2차 스토리지 제공자를 선택한다. (NFS,
+      <td><strong>제공자</strong></td>
+      <td>2차 스토리지 제공자를 선택한다. (NFS,
       S3, Swift 등)</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>이름</strong></td>
-      <td style="text-align: left;">2차 스토리지의 이름을 입력한다.</td>
+      <td><strong>이름</strong></td>
+      <td>2차 스토리지의 이름을 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>서버</strong></td>
-      <td style="text-align: left;">2차 스토리지 서버의 주소를
+      <td><strong>서버</strong></td>
+      <td>2차 스토리지 서버의 주소를
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>경로</strong></td>
-      <td style="text-align: left;">스토리지 경로를 입력한다.</td>
+      <td><strong>경로</strong></td>
+      <td>스토리지 경로를 입력한다.</td>
       </tr>
       </tbody>
       </table>
@@ -507,30 +463,26 @@
       유지 관리</strong> 버튼을 클릭하여 롤링 유지 관리 설정 화면을 호출한 뒤
       아래 항목을 입력한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image42.png" style="width:5in" /></p>
-      <table style="width:97%;">
-      <colgroup>
-      <col style="width: 20%" />
-      <col style="width: 76%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>시간초과</strong></td>
-      <td style="text-align: left;">타임아웃을 설정한다.</td>
+      <td><strong>시간초과</strong></td>
+      <td>타임아웃을 설정한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>페이로드</strong></td>
-      <td style="text-align: left;">호스트가 maintenance 중일 때 실행할
+      <td><strong>페이로드</strong></td>
+      <td>호스트가 maintenance 중일 때 실행할
       커맨드를 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>강제</strong></td>
-      <td style="text-align: left;">에러 상태 시 동작 여부를 설정한다.</td>
+      <td><strong>강제</strong></td>
+      <td>에러 상태 시 동작 여부를 설정한다.</td>
       </tr>
       </tbody>
       </table>
@@ -571,44 +523,40 @@
       네트워크 추가</strong> 버튼을 클릭하여 물리 네트워크 추가 화면을
       호출한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image47.png" style="width:5in" /></p>
-      <table style="width:98%;">
-      <colgroup>
-      <col style="width: 36%" />
-      <col style="width: 60%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>이름</strong></td>
-      <td style="text-align: left;">물리 네트워크의 이름을 입력한다.</td>
+      <td><strong>이름</strong></td>
+      <td>물리 네트워크의 이름을 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>분리 방법</strong></td>
-      <td style="text-align: left;">네트워크 격리 방식을 선택한다. (VLAN
+      <td><strong>분리 방법</strong></td>
+      <td>네트워크 격리 방식을 선택한다. (VLAN
       등)</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>VLAN/VNI</strong></td>
-      <td style="text-align: left;">VLAN 또는 VNI 범위를 입력한다.</td>
+      <td><strong>VLAN/VNI</strong></td>
+      <td>VLAN 또는 VNI 범위를 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>태그</strong></td>
-      <td style="text-align: left;">물리 네트워크를 식별하기 위한 태그를
+      <td><strong>태그</strong></td>
+      <td>물리 네트워크를 식별하기 위한 태그를
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>네트워크 속도</strong></td>
-      <td style="text-align: left;">물리 네트워크의 속도를 입력한다.</td>
+      <td><strong>네트워크 속도</strong></td>
+      <td>물리 네트워크의 속도를 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>브로드캐스트 도메인
+      <td><strong>브로드캐스트 도메인
       범위</strong></td>
-      <td style="text-align: left;">브로드캐스트 도메인의 범위를
+      <td>브로드캐스트 도메인의 범위를
       선택한다.</td>
       </tr>
       </tbody>
@@ -628,34 +576,30 @@
       된 네트워크용 IPv4 서브넷 추가</strong> 버튼을 클릭하여 IPv4 서브넷 추가
       화면을 호출한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image49.png" style="width:5in" /></p>
-      <table style="width:98%;">
-      <colgroup>
-      <col style="width: 30%" />
-      <col style="width: 67%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;">Subnet</td>
-      <td style="text-align: left;">추가할 서브넷을 입력한다.</td>
+      <td>Subnet</td>
+      <td>추가할 서브넷을 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>예약 설정</strong></td>
-      <td style="text-align: left;">이 서브넷과 연결할 도메인/계정을 지정할지
+      <td><strong>예약 설정</strong></td>
+      <td>이 서브넷과 연결할 도메인/계정을 지정할지
       여부이다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>계정</strong></td>
-      <td style="text-align: left;">이 서브넷과 연결할 계정을 지정한다.</td>
+      <td><strong>계정</strong></td>
+      <td>이 서브넷과 연결할 계정을 지정한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>도메인</strong></td>
-      <td style="text-align: left;">이 서브넷과 연결할 도메인을
+      <td><strong>도메인</strong></td>
+      <td>이 서브넷과 연결할 도메인을
       지정한다.</td>
       </tr>
       </tbody>
@@ -696,25 +640,21 @@
       번호 범위 추가</strong> 버튼을 클릭하여 AS 번호 범위 추가 화면을
       호출한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image54.png" style="width:5in" /></p>
-      <table style="width:97%;">
-      <colgroup>
-      <col style="width: 28%" />
-      <col style="width: 68%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>시작 AS 번호</strong></td>
-      <td style="text-align: left;">AS 번호 범위의 시작 값을 입력한다.</td>
+      <td><strong>시작 AS 번호</strong></td>
+      <td>AS 번호 범위의 시작 값을 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>종료 AS 번호</strong></td>
-      <td style="text-align: left;">AS 번호 범위의 종료 값을 입력한다.</td>
+      <td><strong>종료 AS 번호</strong></td>
+      <td>AS 번호 범위의 종료 값을 입력한다.</td>
       </tr>
       </tbody>
       </table>
@@ -735,29 +675,25 @@
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image55.png" style="width:1.2in" /><strong>BGP
       피어 추가</strong> 버튼을 클릭하여 BGP 피어 추가 화면을 호출한다.</p>
       <p><img src="/guide/html/images/10_infrastructure/02_zones/image56.png" style="width:5in" /></p>
-      <table style="width:97%;">
-      <colgroup>
-      <col style="width: 19%" />
-      <col style="width: 77%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>IP 주소</strong></td>
-      <td style="text-align: left;">BGP 피어의 IP 주소를 입력한다.</td>
+      <td><strong>IP 주소</strong></td>
+      <td>BGP 피어의 IP 주소를 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>AS 번호</strong></td>
-      <td style="text-align: left;">BGP 피어의 AS 번호를 입력한다.</td>
+      <td><strong>AS 번호</strong></td>
+      <td>BGP 피어의 AS 번호를 입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>비밀번호</strong></td>
-      <td style="text-align: left;">BGP 피어 세션 인증에 사용할 비밀번호를
+      <td><strong>비밀번호</strong></td>
+      <td>BGP 피어 세션 인증에 사용할 비밀번호를
       입력한다.</td>
       </tr>
       </tbody>

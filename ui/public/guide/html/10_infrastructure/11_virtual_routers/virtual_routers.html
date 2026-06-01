@@ -55,127 +55,114 @@
       가진다.</p>
       <p><img src="/guide/html/images/10_infrastructure/11_virtual_routers/image77.png" style="width:10in" /></p>
       <p><strong>기본(Basic) 헬스 체크 항목:</strong></p>
-      <table style="width:99%;">
-      <colgroup>
-      <col style="width: 12%" />
-      <col style="width: 80%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;">체크 항목</th>
-      <th style="text-align: left;">설명</th>
+      <th>체크 항목</th>
+      <th>설명</th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>서비스 체크</strong></td>
-      <td style="text-align: left;">SSH(sshd), DNS(dnsmasq), 웹서버(apache2),
+      <td><strong>서비스 체크</strong></td>
+      <td>SSH(sshd), DNS(dnsmasq), 웹서버(apache2),
       로드밸런서(haproxy) 등 데몬 서비스의 실행 여부를 확인한다. 서비스가
       중단된 경우 자동으로 재시작을 시도한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>디스크 공간 체크</strong></td>
-      <td style="text-align: left;">가상 라우터의 디스크 여유 공간이
+      <td><strong>디스크 공간 체크</strong></td>
+      <td>가상 라우터의 디스크 여유 공간이
       임계값(router.health.checks.free.disk.space.threshold, 기본값 100MB)
       이상인지 확인한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>CPU 사용량 체크</strong></td>
-      <td style="text-align: left;">CPU 사용률이 설정된
+      <td><strong>CPU 사용량 체크</strong></td>
+      <td>CPU 사용률이 설정된
       임계값(router.health.checks.max.cpu.usage.threshold) 이하인지
       확인한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>메모리 사용량 체크</strong></td>
-      <td style="text-align: left;">메모리 사용률이 설정된
+      <td><strong>메모리 사용량 체크</strong></td>
+      <td>메모리 사용률이 설정된
       임계값(router.health.checks.max.memory.usage.threshold) 이하인지
       확인한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>라우터 버전 체크</strong></td>
-      <td style="text-align: left;">가상 라우터의 템플릿 및 스크립트 버전이
+      <td><strong>라우터 버전 체크</strong></td>
+      <td>가상 라우터의 템플릿 및 스크립트 버전이
       관리 서버의 버전과 일치하는지 확인한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>게이트웨이 연결 체크</strong></td>
-      <td style="text-align: left;">관리 서버에서 전달한 게이트웨이 IP에 대한
+      <td><strong>게이트웨이 연결 체크</strong></td>
+      <td>관리 서버에서 전달한 게이트웨이 IP에 대한
       ping 성공 여부를 확인한다.</td>
       </tr>
       </tbody>
       </table>
       <p><strong>고급(Advanced) 헬스 체크 항목:</strong></p>
-      <table style="width:100%;">
-      <colgroup>
-      <col style="width: 12%" />
-      <col style="width: 88%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>체크 항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>체크 항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>DNS 구성 체크</strong></td>
-      <td style="text-align: left;">가상 라우터의 /etc/hosts 내용이 관리 서버
+      <td><strong>DNS 구성 체크</strong></td>
+      <td>가상 라우터의 /etc/hosts 내용이 관리 서버
       DB의 인스턴스 레코드와 일치하는지 확인한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>DHCP 구성 체크</strong></td>
-      <td style="text-align: left;">가상 라우터의 /etc/dhcphosts.txt 내용이
+      <td><strong>DHCP 구성 체크</strong></td>
+      <td>가상 라우터의 /etc/dhcphosts.txt 내용이
       관리 서버 DB의 인스턴스 레코드와 일치하는지 확인한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>HAProxy 구성 체크</strong></td>
-      <td style="text-align: left;">가상 라우터의 /etc/haproxy/haproxy.cfg가
+      <td><strong>HAProxy 구성 체크</strong></td>
+      <td>가상 라우터의 /etc/haproxy/haproxy.cfg가
       관리 서버 DB의 로드밸런싱 규칙과 일치하는지 확인한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>iptables 규칙 체크</strong></td>
-      <td style="text-align: left;">iptables 포트 포워딩 설정이 관리 서버 DB의
+      <td><strong>iptables 규칙 체크</strong></td>
+      <td>iptables 포트 포워딩 설정이 관리 서버 DB의
       레코드와 일치하는지 확인한다.</td>
       </tr>
       </tbody>
       </table>
       <p>헬스 체크 관련 주요 전역 설정 파라미터:</p>
-      <table style="width:100%;">
-      <colgroup>
-      <col style="width: 30%" />
-      <col style="width: 10%" />
-      <col style="width: 60%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>파라미터</strong></th>
-      <th style="text-align: left;"><strong>기본값</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>파라미터</strong></th>
+      <th><strong>기본값</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;">router.health.checks.enabled</td>
-      <td style="text-align: left;">true</td>
-      <td style="text-align: left;">헬스 체크 기능 활성화 여부</td>
+      <td>router.health.checks.enabled</td>
+      <td>true</td>
+      <td>헬스 체크 기능 활성화 여부</td>
       </tr>
       <tr>
-      <td style="text-align: left;">router.health.checks.basic.interval</td>
-      <td style="text-align: left;">3분</td>
-      <td style="text-align: left;">기본 헬스 체크 실행 주기(분). 0으로 설정
+      <td>router.health.checks.basic.interval</td>
+      <td>3분</td>
+      <td>기본 헬스 체크 실행 주기(분). 0으로 설정
       시 비활성화</td>
       </tr>
       <tr>
       <td
       style="text-align: left;">router.health.checks.advanced.interval</td>
-      <td style="text-align: left;">10분</td>
-      <td style="text-align: left;">고급 헬스 체크 실행 주기(분). 0으로 설정
+      <td>10분</td>
+      <td>고급 헬스 체크 실행 주기(분). 0으로 설정
       시 비활성화</td>
       </tr>
       <tr>
       <td
       style="text-align: left;">router.health.checks.failures.to.recreate.vr</td>
-      <td style="text-align: left;">(없음)</td>
-      <td style="text-align: left;">가상 라우터 재생성을 유발하는 헬스 체크
+      <td>(없음)</td>
+      <td>가상 라우터 재생성을 유발하는 헬스 체크
       실패 항목 지정</td>
       </tr>
       </tbody>
@@ -294,47 +281,42 @@
       <li><p>/var/log/cloud.log, /var/log/routerServiceMonitor.log, /var/log/daemon.log</p></li>
       </ul>
       <p>진단 데이터 관련 주요 전역 설정:</p>
-      <table style="width:98%;">
-      <colgroup>
-      <col style="width: 32%" />
-      <col style="width: 14%" />
-      <col style="width: 51%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>파라미터</strong></th>
-      <th style="text-align: left;"><strong>기본값</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>파라미터</strong></th>
+      <th><strong>기본값</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;">diagnostics.data.retrieval.timeout</td>
-      <td style="text-align: left;">1800초</td>
-      <td style="text-align: left;">시스템 VM 스크립트 실행 전체
+      <td>diagnostics.data.retrieval.timeout</td>
+      <td>1800초</td>
+      <td>시스템 VM 스크립트 실행 전체
       타임아웃(초)</td>
       </tr>
       <tr>
-      <td style="text-align: left;">diagnostics.data.disable.threshold</td>
-      <td style="text-align: left;">0.95 (95%)</td>
-      <td style="text-align: left;">2차 스토리지 사용률이 이 값 이하일 때만
+      <td>diagnostics.data.disable.threshold</td>
+      <td>0.95 (95%)</td>
+      <td>2차 스토리지 사용률이 이 값 이하일 때만
       파일 수집 허용</td>
       </tr>
       <tr>
-      <td style="text-align: left;">diagnostics.data.max.file.age</td>
-      <td style="text-align: left;">86400초 (1일)</td>
-      <td style="text-align: left;">파일이 스토리지에 유지되는 최대 시간</td>
+      <td>diagnostics.data.max.file.age</td>
+      <td>86400초 (1일)</td>
+      <td>파일이 스토리지에 유지되는 최대 시간</td>
       </tr>
       <tr>
-      <td style="text-align: left;">diagnostics.data.gc.enable</td>
-      <td style="text-align: left;">true</td>
-      <td style="text-align: left;">오래된 진단 파일을 자동으로 삭제하는 GC
+      <td>diagnostics.data.gc.enable</td>
+      <td>true</td>
+      <td>오래된 진단 파일을 자동으로 삭제하는 GC
       작업 활성화 여부</td>
       </tr>
       <tr>
-      <td style="text-align: left;">diagnostics.data.gc.interval</td>
-      <td style="text-align: left;">86400초 (1일)</td>
-      <td style="text-align: left;">GC 작업 실행 주기(초)</td>
+      <td>diagnostics.data.gc.interval</td>
+      <td>86400초 (1일)</td>
+      <td>GC 작업 실행 주기(초)</td>
       </tr>
       </tbody>
       </table>

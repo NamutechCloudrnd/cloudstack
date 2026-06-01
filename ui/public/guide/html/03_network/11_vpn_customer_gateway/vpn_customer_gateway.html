@@ -26,107 +26,103 @@
       </ol>
       <p><img src="/guide/html/images/03_network/11_vpn_customer_gateway/image124.png" style="width:6in" /></p>
       <table>
-      <colgroup>
-      <col style="width: 12%" />
-      <col style="width: 86%" />
-      </colgroup>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>항목</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>항목</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;"><strong>이름</strong></td>
-      <td style="text-align: left;">VPN 고객 게이트웨이의 고유 이름을
+      <td><strong>이름</strong></td>
+      <td>VPN 고객 게이트웨이의 고유 이름을
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>게이트웨이</strong></td>
-      <td style="text-align: left;">원격 게이트웨이의 IP 주소를
+      <td><strong>게이트웨이</strong></td>
+      <td>원격 게이트웨이의 IP 주소를
       입력한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>CIDR 목록</strong></td>
-      <td style="text-align: left;">원격 서브넷의 게스트 CIDR 목록을
+      <td><strong>CIDR 목록</strong></td>
+      <td>원격 서브넷의 게스트 CIDR 목록을
       입력한다. CIDR 또는 쉼표로 구분된 CIDR 목록을 입력한다. VPC의 CIDR
       또는 다른 게스트 CIDR과 겹치지 않아야 하며, RFC1918 규격을 준수해야
       한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>IPsec 사전 공유 키</strong></td>
-      <td style="text-align: left;">VPN 엔드포인트 간에 공유하는 비밀
+      <td><strong>IPsec 사전 공유 키</strong></td>
+      <td>VPN 엔드포인트 간에 공유하는 비밀
       키이다. 이 키는 고객 게이트웨이와 VPC VPN 게이트웨이 간의 상호 인증에
       사용된다. 줄바꿈 문자 또는 큰따옴표를 포함할 수 없다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>IKE 암호화</strong></td>
-      <td style="text-align: left;">IKE Phase-1에서 사용할 암호화 알고리즘을
+      <td><strong>IKE 암호화</strong></td>
+      <td>IKE Phase-1에서 사용할 암호화 알고리즘을
       선택한다. AES128, AES192, AES256, 3DES를 지원한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>IKE 해시</strong></td>
-      <td style="text-align: left;">IKE Phase-1에서 사용할 해시 알고리즘을
+      <td><strong>IKE 해시</strong></td>
+      <td>IKE Phase-1에서 사용할 해시 알고리즘을
       선택한다. SHA1, SHA256, SHA384, SHA512, MD5를 지원한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>IKE 버전</strong></td>
-      <td style="text-align: left;">사용할 IKE 버전을 선택한다. ike(자동
+      <td><strong>IKE 버전</strong></td>
+      <td>사용할 IKE 버전을 선택한다. ike(자동
       선택), ikev1, ikev2 중에서 선택한다. ike로 설정 시 연결 시작 시
       ikev2를 사용하며, 응답 시에는 모든 버전을 수락한다.
       기본값은 ike이다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>IKE DH</strong></td>
-      <td style="text-align: left;">Diffie-Hellman 그룹을 선택한다. IKE
+      <td><strong>IKE DH</strong></td>
+      <td>Diffie-Hellman 그룹을 선택한다. IKE
       내에서 세션 키를 교환하는 데 사용된다. Group-2(1024비트),
       Group-5(1536비트), Group-14(2048비트), Group-15(3072비트),
       Group-16(4096비트), Group-17(6144비트), Group-18(8192비트)을
       지원한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>ESP 암호화</strong></td>
-      <td style="text-align: left;">IKE Phase-2의 ESP(Encapsulating Security
+      <td><strong>ESP 암호화</strong></td>
+      <td>IKE Phase-2의 ESP(Encapsulating Security
       Payload) 암호화 알고리즘을 선택한다. AES128, AES192, AES256, 3DES를
       지원한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>ESP 해시</strong></td>
-      <td style="text-align: left;">IKE Phase-2의 ESP 해시 알고리즘을
+      <td><strong>ESP 해시</strong></td>
+      <td>IKE Phase-2의 ESP 해시 알고리즘을
       선택한다. SHA1, SHA256, SHA384, SHA512, MD5를 지원한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>Perfect Forward
+      <td><strong>Perfect Forward
       Secrecy</strong></td>
-      <td style="text-align: left;">PFS(완전 순방향 비밀성)를 위한 DH 그룹을
+      <td>PFS(완전 순방향 비밀성)를 위한 DH 그룹을
       선택한다. PFS는 새로운 Phase-2 SA 협상마다 새로운 Phase-1 키 세트를
       생성하도록 강제하여 보안을 강화한다. None, Group-2 ~ Group-18을
       지원한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>IKE 수명(초)</strong></td>
-      <td style="text-align: left;">Phase-1 보안 연결의 수명(초)이다.
+      <td><strong>IKE 수명(초)</strong></td>
+      <td>Phase-1 보안 연결의 수명(초)이다.
       기본값은 86400초(1일)이며, 시간이 만료되면 새로운 Phase-1 교환이
       수행된다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>ESP 수명(초)</strong></td>
-      <td style="text-align: left;">Phase-2 보안 연결의 수명(초)이다.
+      <td><strong>ESP 수명(초)</strong></td>
+      <td>Phase-2 보안 연결의 수명(초)이다.
       기본값은 3600초(1시간)이며, 값이 초과되면 새로운 IPsec 암호화 및 인증
       세션 키 제공을 위해 재키잉(re-key)이 시작된다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>Dead Peer Detection</strong></td>
-      <td style="text-align: left;">IKE 피어의 가용성을 주기적으로 확인하는
+      <td><strong>Dead Peer Detection</strong></td>
+      <td>IKE 피어의 가용성을 주기적으로 확인하는
       방법이다. 이 옵션을 활성화하면 가상 라우터가 IKE 피어의 활성 상태를
       주기적으로 확인한다. VPN 연결 양쪽에 동일하게 설정하는 것을
       권장한다.</td>
       </tr>
       <tr>
-      <td style="text-align: left;"><strong>ESP 패킷의 UDP 캡슐화
+      <td><strong>ESP 패킷의 UDP 캡슐화
       강제</strong></td>
-      <td style="text-align: left;">NAT 통과를 위한 강제 캡슐화를
+      <td>NAT 통과를 위한 강제 캡슐화를
       설정한다.</td>
       </tr>
       </tbody>

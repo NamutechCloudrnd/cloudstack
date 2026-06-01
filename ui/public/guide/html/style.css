@@ -327,9 +327,18 @@ a:hover {
 main > ul > li,
 main > .content-frame > ul > li,
 main > ol > li,
-main > ol > li > ul > li {
+main > ol > li > ul > li,
+blockquote > ul > li {
   margin-left: 2rem;
   margin-bottom: 1rem;
+}
+
+main > ul > li:last-child,
+main > .content-frame > ul > li:last-child,
+main > ol > li:last-child,
+main > ol > li > ul > li:last-child,
+blockquote > ul > li:last-child {
+  margin-bottom: 0;
 }
 
 main > .content-frame > ul > li > ul > li {
@@ -352,6 +361,7 @@ main > .content-frame > ol > li {
 }
 
 blockquote {
+  width: auto;
   margin: 2rem 0;
   padding: 1rem;
   border-radius: 10px;
@@ -367,7 +377,6 @@ blockquote {
 }
 
 .content table {
-  width: 60%;
   border-collapse: collapse;
   margin: 1rem 0 1.5rem;
   font-size: 0.875rem;
@@ -388,17 +397,6 @@ blockquote {
   text-align: left;
   font-size: 0.875rem;
   border: 1px solid #f0f0f0;
-}
-
-.content table thead th:nth-child(1) {
-  width: 20%;
-  text-align: center;
-}
-.content table thead th:nth-child(2) {
-  width: 30%;
-}
-.content table thead th:nth-child(3) {
-  width: 50%;
 }
 
 .content table tbody td {
@@ -422,7 +420,6 @@ blockquote {
 } */
 
 .content table tbody td:first-child {
-  text-align: center;
   font-variant-numeric: tabular-nums;
 }
 

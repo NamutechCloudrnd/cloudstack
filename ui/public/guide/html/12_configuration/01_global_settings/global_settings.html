@@ -1,5 +1,4 @@
 <h1 id="글로벌-설정">글로벌 설정</h1>
-<blockquote>
 <p>글로벌 설정은 namuVIRT 전체 환경에 적용되는 전역 구성 영역이다.
 관리자는 이 메뉴에서 인증, 컴퓨트, 스토리지, 네트워크 하이퍼 바이저,
 Management Server, System VM , 인프라 사용량 수집 등 namuVIRT 의 주요
@@ -10,7 +9,6 @@ Management Server, System VM , 인프라 사용량 수집 등 namuVIRT 의 주�
 System VM 재기동 또는 재 생성이 필요로 할 수 있다.</p>
 <p><img src="/guide/html/images/12_configuration/01_global_settings/image1.png" style="width:10in" /></p>
 
-</blockquote>
 <h2 id="글로벌-설정-분류"><strong>글로벌 설정 분류</strong></h2>
 <ul>
 <li>Access : namuVIRT 의 사용자 접근, 계정 권한, 인증 연동, 프로젝트
@@ -24,21 +22,17 @@ System VM 재기동 또는 재 생성이 필요로 할 수 있다.</p>
 된다.</p>
 </blockquote>
 
-<table style="width:100%;">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>분류</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>분류</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Account</strong></td>
-<td style="text-align: left;"><p>계정 단위의 접근 정책과 기본 리소스 사용한도를 설정</p>
+<td><strong>Account</strong></td>
+<td><p>계정 단위의 접근 정책과 기본 리소스 사용한도를 설정</p>
 <ul>
 <li><p>계정이 사용할 수 있는 CPU, GPU, 메모리, 백업 스토리지, Object Storage, Primary/Secondary Storage, 네트워크, Public IP, 프로젝트, VM, 볼륨, 스냅샷, 템플릿, VPC 등의 최대값을 정의</p></li>
 <li><p>삭제된 계정의 정리 주기 설정</p></li>
@@ -46,8 +40,8 @@ System VM 재기동 또는 재 생성이 필요로 할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Domain</strong></td>
-<td style="text-align: left;"><p>도메인 단위 접근 정책, 설정 상속, 내부 DNS 도메인 suffix, 리소스 사용한도를 설정</p>
+<td><strong>Domain</strong></td>
+<td><p>도메인 단위 접근 정책, 설정 상속, 내부 DNS 도메인 suffix, 리소스 사용한도를 설정</p>
 <ul>
 <li><p>태그 기반 오퍼링 생성 허용 여부</p></li>
 <li><p>동일 도메인 내 계정 조회 권한 및 상위 도메인 설정의 하위 도메인 상속 설정</p></li>
@@ -55,16 +49,16 @@ System VM 재기동 또는 재 생성이 필요로 할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Project</strong></td>
-<td style="text-align: left;"><p>프로젝트 단위 리소스 사용 한도와 프로젝트 초대 메일 발송 정책 설정</p>
+<td><strong>Project</strong></td>
+<td><p>프로젝트 단위 리소스 사용 한도와 프로젝트 초대 메일 발송 정책 설정</p>
 <ul>
 <li><p>프로젝트 단위로 CPU, GPU, 메모리, 스토리지, 네트워크, Public IP, VM, 볼륨 스냅샷, 템플릿, VPC 등 기본 최대값 정의</p></li>
 <li><p>프로젝트 초대 확인 필요 여부, 초대 만료 시간 등 초대를 위한 설정과 메일 발송을 위한 설정 가능</p></li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>LDAP</strong></td>
-<td style="text-align: left;"><p>외부 LDAP 디렉터리 서비스와 namuVIRT 를 연동하기 위한 설정</p>
+<td><strong>LDAP</strong></td>
+<td><p>외부 LDAP 디렉터리 서비스와 namuVIRT 를 연동하기 위한 설정</p>
 <ul>
 <li><p>LDAP Base DN</p></li>
 <li><p>바인드 계정, 바인드 비밀번호, 사용자명, 이메일, 이름, 성, 속성</p></li>
@@ -75,8 +69,8 @@ System VM 재기동 또는 재 생성이 필요로 할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>SAML</strong></td>
-<td style="text-align: left;"><p>외부 SAML2 Identity Provider와 namuVIRT 를 연동하여 SSO 를 제공하기 위한 설정</p>
+<td><strong>SAML</strong></td>
+<td><p>외부 SAML2 Identity Provider와 namuVIRT 를 연동하여 SSO 를 제공하기 위한 설정</p>
 <ul>
 <li><p>SAML 플러그인 활성화 여부</p></li>
 <li><p>idP 메타데이터 URL, 기본 idP, SAML 응답 서명 검증</p></li>
@@ -99,21 +93,17 @@ System VM 재기동 또는 재 생성이 필요로 할 수 있다.</p>
 </ul>
 <p>Compute 항목은 크게 Virtual Machine, 쿠버네티스, High Availability
 항목으로 구성된다.</p>
-<table style="width:100%;">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
+<table>
 <thead>
   <tr>
-<th style="text-align: left;"><strong>분류</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>분류</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Virtual Machine</strong></td>
-<td style="text-align: left;"><p>VM 생성, 배포, 운영과 관련된 전역 설정</p>
+<td><strong>Virtual Machine</strong></td>
+<td><p>VM 생성, 배포, 운영과 관련된 전역 설정</p>
 <ul>
 <li><p>VM 배포 방식 및 Host 선택 정책 설정</p></li>
 <li><p>CPU Overprovisioning, 동적 스케일링, VM Lease 설정</p></li>
@@ -124,16 +114,16 @@ System VM 재기동 또는 재 생성이 필요로 할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>쿠버네티스</strong></td>
-<td style="text-align: left;"><p>쿠버네티스 서비스 플러그인 사용 여부 설정</p>
+<td><strong>쿠버네티스</strong></td>
+<td><p>쿠버네티스 서비스 플러그인 사용 여부 설정</p>
 <ul>
 <li><p>활성화 : namuVIRT 에서 쿠버네티스 클러스터 생성 및 관리 기능 사용 가능</p></li>
 <li><p>설정 변경 시 <strong>Management Server 재시작</strong> 필요</p></li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>HA</strong></td>
-<td style="text-align: left;"><p>VM 고가용성 및 장애 복구 동작 설정</p>
+<td><strong>HA</strong></td>
+<td><p>VM 고가용성 및 장애 복구 동작 설정</p>
 <ul>
 <li><p>VM 장애 감지, Health Check, Fencing, Recovery 정책 설정</p></li>
 <li><p>HA 복구 시 스토리지 마이그레이션 허용 여부 설정</p></li>
@@ -155,21 +145,17 @@ System VM 재기동 또는 재 생성이 필요로 할 수 있다.</p>
 <p>Storage 는 크게 이미지, Volume, 스냅샷, VM 스냅샷 으로 분류할 수
 있다.</p>
 </blockquote>
-<table style="width:99%;">
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 74%" />
-</colgroup>
+<table>
 <thead>
   <tr>
-<th style="text-align: left;"><strong>분류</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>분류</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>이미지</strong></td>
-<td style="text-align: left;"><p>템플릿 및 ISO 이미지 관리 정책 설정</p>
+<td><strong>이미지</strong></td>
+<td><p>템플릿 및 ISO 이미지 관리 정책 설정</p>
 <ul>
 <li><p>사용자의 Public 템플릿 생성 허용 여부 설정</p></li>
 <li><p>스냅샷 또는 Volume 기반 Private 템플릿 생성 timeout 설정</p></li>
@@ -182,8 +168,8 @@ System VM 재기동 또는 재 생성이 필요로 할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Volume</strong></td>
-<td style="text-align: left;"><p>볼륨 생성, 복사, 복구, 할당 정책 설정</p>
+<td><strong>Volume</strong></td>
+<td><p>볼륨 생성, 복사, 복구, 할당 정책 설정</p>
 <ul>
 <li><p>VM Scale 작업 중 Root Volume의 Disk Offering 변경 허용 여부 설정</p></li>
 <li><p>사용자의 Volume 완전 삭제 및 복구 허용 여부 설정</p></li>
@@ -201,8 +187,8 @@ System VM 재기동 또는 재 생성이 필요로 할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>스냅샷</strong></td>
-<td style="text-align: left;"><p>Volume 스냅샷 생성, 보관 및 백업 정책 설정</p>
+<td><strong>스냅샷</strong></td>
+<td><p>Volume 스냅샷 생성, 보관 및 백업 정책 설정</p>
 <ul>
 <li><p>Primary Storage 스냅샷의 Secondary Storage 백업 여부 설정</p></li>
 <li><p>Full 스냅샷 사이에 허용되는 Delta 스냅샷 최대 개수 설정</p></li>
@@ -221,8 +207,8 @@ System VM 재기동 또는 재 생성이 필요로 할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>VM 스냅샷</strong></td>
-<td style="text-align: left;"><p>VM 스냅샷 생성, 만료 및 개수 제한 정책 설정</p>
+<td><strong>VM 스냅샷</strong></td>
+<td><p>VM 스냅샷 생성, 만료 및 개수 제한 정책 설정</p>
 <ul>
 <li><p>VM 스냅샷 생성 timeout 설정</p></li>
 <li><p>VM 스냅샷 만료 주기 설정</p></li>
@@ -243,21 +229,17 @@ Provider 정책 등을 설정할 수 있다.</li>
 <p>Network 는 크게 Network, DHCP, VPC, Load Balancer 로 분류할 수
 있다.</p>
 </blockquote>
-<table style="width:99%;">
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 74%" />
-</colgroup>
+<table>
 <thead>
   <tr>
-<th style="text-align: left;"><strong>분류</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>분류</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Network</strong></td>
-<td style="text-align: left;"><p>기본 네트워크 생성, 접근 권한 및 운영 정책 설정</p>
+<td><strong>Network</strong></td>
+<td><p>기본 네트워크 생성, 접근 권한 및 운영 정책 설정</p>
 <ul>
 <li><p>네트워크 생성 시 시작 IP와 종료 IP 입력 생략 허용 여부 설정</p></li>
 <li><p>Subdomain의 상위 Domain 전용 네트워크 사용 허용 여부 설정</p></li>
@@ -287,8 +269,8 @@ Provider 정책 등을 설정할 수 있다.</li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>DHCP</strong></td>
-<td style="text-align: left;"><p>DHCP Provider 및 외부 DHCP VM IP 조회 정책 설정</p>
+<td><strong>DHCP</strong></td>
+<td><p>DHCP Provider 및 외부 DHCP VM IP 조회 정책 설정</p>
 <ul>
 <li><p>DHCP Provider 제외 항목 설정</p></li>
 <li><p>External DHCP 환경에서 VM IP 조회 실패 시 최대 재시도 횟수 설정</p></li>
@@ -298,8 +280,8 @@ Provider 정책 등을 설정할 수 있다.</li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>VPC</strong></td>
-<td style="text-align: left;"><p>VPC 생성, CIDR 범위 및 Tier 이름 정책 설정</p>
+<td><strong>VPC</strong></td>
+<td><p>VPC 생성, CIDR 범위 및 Tier 이름 정책 설정</p>
 <ul>
 <li><p>Routed Mode에서 VPC CIDR 최소/최대 크기 설정</p></li>
 <li><p>비활성 VPC 정리 주기 설정</p></li>
@@ -310,8 +292,8 @@ Provider 정책 등을 설정할 수 있다.</li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Load Balancer</strong></td>
-<td style="text-align: left;"><p>외부 Load Balancer 및 GSLB Provider 정책 설정</p>
+<td><strong>Load Balancer</strong></td>
+<td><p>외부 Load Balancer 및 GSLB Provider 정책 설정</p>
 <ul>
 <li><p>외부 Load Balancer 장비당 허용 가능한 기본 Network 수 설정</p></li>
 <li><p>GSLB Service Provider 제외 항목 설정</p></li>
@@ -330,21 +312,17 @@ Migration, Hypervisor 별 세부 운영 정책 등을 설정할 수 있다.</li>
 <p>Hypervisor 는 크게 Hypervisor, KVM, VMware, XenServer, OVM, Bare
 Metal 로 분류할 수 있다.</p>
 </blockquote>
-<table style="width:99%;">
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 74%" />
-</colgroup>
+<table>
 <thead>
   <tr>
-<th style="text-align: left;"><strong>분류</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>분류</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Hypervisor</strong></td>
-<td style="text-align: left;"><p>Hypervisor 및 Host 운영 정책 설정</p>
+<td><strong>Hypervisor</strong></td>
+<td><p>Hypervisor 및 Host 운영 정책 설정</p>
 <ul>
 <li><p>KVM Agent 재시작 후 Host를 namuVIRT에 자동 재등록할지 여부 설정</p></li>
 <li><p>Hypervisor 명령 실행 방식 설정</p>
@@ -375,8 +353,8 @@ Metal 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>KVM</strong></td>
-<td style="text-align: left;"><p>KVM Hypervisor의 Host 상태 관리, HA, 스냅샷, Storage Migration 및 Import 정책 설정</p>
+<td><strong>KVM</strong></td>
+<td><p>KVM Hypervisor의 Host 상태 관리, HA, 스냅샷, Storage Migration 및 Import 정책 설정</p>
 <ul>
 <li><p>KVM Host Health Check 결과에 따른 Host 자동 Enable/Disable 여부 설정</p></li>
 <li><p>KVM VM Migration 시 Auto Convergence 사용 여부 설정</p></li>
@@ -412,8 +390,8 @@ Metal 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>VMware</strong></td>
-<td style="text-align: left;"><p>VMware Hypervisor 연동, VM 생성 방식 및 네트워크 정책 설정</p>
+<td><strong>VMware</strong></td>
+<td><p>VMware Hypervisor 연동, VM 생성 방식 및 네트워크 정책 설정</p>
 <ul>
 <li><p>VMware VM을 KVM으로 변환할 때 사용할 추가 파라미터 허용 여부 설정</p></li>
 <li><p>VMware → KVM 변환 작업 timeout 설정</p></li>
@@ -431,8 +409,8 @@ Metal 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>XenServer</strong></td>
-<td style="text-align: left;"><p>XenServer Hypervisor 연동, Self Fencing 및 VM 리소스 정책 설정</p>
+<td><strong>XenServer</strong></td>
+<td><p>XenServer Hypervisor 연동, Self Fencing 및 VM 리소스 정책 설정</p>
 <ul>
 <li><p>XAPI 응답 대기 시간 설정</p></li>
 <li><p>XenServer Self Fencing을 위한 Heartbeat Timeout 설정</p></li>
@@ -446,16 +424,16 @@ Metal 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>OVM</strong></td>
-<td style="text-align: left;"><p>OVM Hypervisor의 Heartbeat 및 Self Fencing 정책 설정</p>
+<td><strong>OVM</strong></td>
+<td><p>OVM Hypervisor의 Heartbeat 및 Self Fencing 정책 설정</p>
 <ul>
 <li><p>OVM3 Heartbeat 점검 주기 설정</p></li>
 <li><p>OVM3 Self Fencing 보호를 위한 Heartbeat Timeout 설정</p></li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Baremetal</strong></td>
-<td style="text-align: left;"><p>Baremetal Provisioning, IPMI 및 외부 Baremetal 시스템 연동 정책 설정</p>
+<td><strong>Baremetal</strong></td>
+<td><p>Baremetal Provisioning, IPMI 및 외부 Baremetal 시스템 연동 정책 설정</p>
 <ul>
 <li><p>Baremetal Provisioning에 사용할 내부 Storage Server IP 설정</p></li>
 <li><p>IPMI 명령 실패 시 재시도 횟수 설정</p></li>
@@ -482,21 +460,17 @@ Metal 로 분류할 수 있다.</p>
 <p>Management Server 는 크게 API, Alerts, Events, Security, Limits,
 Jobs, Agent 로 분류할 수 있다.</p>
 </blockquote>
-<table style="width:99%;">
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 74%" />
-</colgroup>
+<table>
 <thead>
   <tr>
-<th style="text-align: left;"><strong>분류</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>분류</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>API</strong></td>
-<td style="text-align: left;"><p>Management Server API 접근, 인증, 응답 및 Rate Limit 정책 설정</p>
+<td><strong>API</strong></td>
+<td><p>Management Server API 접근, 인증, 응답 및 Rate Limit 정책 설정</p>
 <ul>
 <li><p>API 호출을 허용할 Source CIDR 목록 설정</p></li>
 <li><p>API Source CIDR 검사 사용 여부 설정</p></li>
@@ -517,8 +491,8 @@ Jobs, Agent 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Alerts</strong></td>
-<td style="text-align: left;"><p>Management Server 알림 메일, SMTP 및 Alert Event 발행 정책 설정</p>
+<td><strong>Alerts</strong></td>
+<td><p>Management Server 알림 메일, SMTP 및 Alert Event 발행 정책 설정</p>
 <ul>
 <li><p>Alert 수신 이메일 주소 및 발신자 주소 설정</p></li>
 <li><p>오래된 Alert 삭제 기준 기간 설정</p></li>
@@ -537,8 +511,8 @@ Jobs, Agent 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Events</strong></td>
-<td style="text-align: left;"><p>Management Server Event 보관, 정리 및 Event Bus 발행 정책 설정</p>
+<td><strong>Events</strong></td>
+<td><p>Management Server Event 보관, 정리 및 Event Bus 발행 정책 설정</p>
 <ul>
 <li><p>Event Bus Provider 제외 항목 설정</p></li>
 <li><p>오래된 Event 삭제 기준 기간 설정</p></li>
@@ -548,8 +522,8 @@ Jobs, Agent 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Security</strong></td>
-<td style="text-align: left;"><p>Management Server 보안, 인증 방식, 비밀번호 정책 및 비밀번호 초기화 이메일 정책 설정</p>
+<td><strong>Security</strong></td>
+<td><p>Management Server 보안, 인증 방식, 비밀번호 정책 및 비밀번호 초기화 이메일 정책 설정</p>
 <ul>
 <li><p>HTTPS 사용 시 Secure Session Cookie 적용 여부 설정</p></li>
 <li><p>로그에 비밀번호를 숨길지 여부 설정</p></li>
@@ -589,8 +563,8 @@ Jobs, Agent 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Limits</strong></td>
-<td style="text-align: left;"><p>Management Server 의 용량 산정, 통계 수집, 정리 작업 및 리소스 임계값 정책 설정</p>
+<td><strong>Limits</strong></td>
+<td><p>Management Server 의 용량 산정, 통계 수집, 정리 작업 및 리소스 임계값 정책 설정</p>
 <ul>
 <li><p>AutoScale 통계 수집 주기 및 정리 지연 시간 설정</p></li>
 <li><p>Capacity 계산 Worker 수 및 Capacity 점검 주기 설정</p></li>
@@ -611,8 +585,8 @@ Jobs, Agent 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Jobs</strong></td>
-<td style="text-align: left;"><p>Management Server 비동기 작업, 작업 만료 및 Event 발행 정책 설정</p>
+<td><strong>Jobs</strong></td>
+<td><p>Management Server 비동기 작업, 작업 만료 및 Event 발행 정책 설정</p>
 <ul>
 <li><p>Expunged Resource DB 기록 삭제 작업의 실행 지연 시간 설정</p></li>
 <li><p>오래 실행 중인 Async Job의 강제 취소 기준 시간 설정</p></li>
@@ -621,8 +595,8 @@ Jobs, Agent 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Agent</strong></td>
-<td style="text-align: left;"><p>Management Server 와 Agent 간 연결, 부하 분산 및 Direct/Indirect Agent 처리 정책 설정</p>
+<td><strong>Agent</strong></td>
+<td><p>Management Server 와 Agent 간 연결, 부하 분산 및 Direct/Indirect Agent 처리 정책 설정</p>
 <ul>
 <li><p>신규 Agent 연결 모니터링 및 만료된 연결 정리 주기 설정</p></li>
 <li><p>Management Server 간 Direct Agent Load Balancing 사용 여부 설정</p></li>
@@ -654,21 +628,17 @@ Virtual Router, Diagnostics 와 관련된 전역 동작을 관리하는 설정�
 <p>System VMs 는 크게 ConsoleProxyVM, SecStorageVM, VirtualRouter,
 Diagnostics 로 분류할 수 있다.</p>
 </blockquote>
-<table style="width:99%;">
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 74%" />
-</colgroup>
+<table>
 <thead>
   <tr>
-<th style="text-align: left;"><strong>분류</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>분류</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>ConsoleProxy VM</strong></td>
-<td style="text-align: left;"><p>Console Proxy VM 의 콘솔 접속, 세션 처리 및 noVNC 동작 정책 설정</p>
+<td><strong>ConsoleProxy VM</strong></td>
+<td><p>Console Proxy VM 의 콘솔 접속, 세션 처리 및 noVNC 동작 정책 설정</p>
 <ul>
 <li><p>Console Proxy VM 에 전달할 사용자 데이터 설정</p></li>
 <li><p>Console Proxy Viewer Session 의 Standby Capacity 설정</p></li>
@@ -687,8 +657,8 @@ Diagnostics 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>SecStorageVM</strong></td>
-<td style="text-align: left;"><p>Secondary Storage VM 의 데이터 객체 처리, 용량 임계값 및 백업 정책 설정</p>
+<td><strong>SecStorageVM</strong></td>
+<td><p>Secondary Storage VM 의 데이터 객체 처리, 용량 임계값 및 백업 정책 설정</p>
 <ul>
 <li><p>Secondary Storage VM 이 동시에 처리할 수 있는 데이터 객체 Migration 작업 수 설정</p></li>
 <li><p>Secondary Storage 용량 임계값 설정</p></li>
@@ -698,8 +668,8 @@ Diagnostics 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>VirtualRouter</strong></td>
-<td style="text-align: left;"><p>Virtual Router 생성, 운영, 상태 점검 및 네트워크 서비스 정책 설정</p>
+<td><strong>VirtualRouter</strong></td>
+<td><p>Virtual Router 생성, 운영, 상태 점검 및 네트워크 서비스 정책 설정</p>
 <ul>
 <li><p>End User 의 Virtual Router MTU 직접 지정 허용 여부 설정</p></li>
 <li><p>비활성화된 Zone, Pod, Cluster 에 Virtual Router 배포 허용 여부 설정</p></li>
@@ -729,8 +699,8 @@ Diagnostics 로 분류할 수 있다.</p>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Diagnostics</strong></td>
-<td style="text-align: left;"><p>System VM 및 Virtual Router 의 진단 데이터 수집, 보관 및 조회 정책 설정</p>
+<td><strong>Diagnostics</strong></td>
+<td><p>System VM 및 Virtual Router 의 진단 데이터 수집, 보관 및 조회 정책 설정</p>
 <ul>
 <li><p>진단 데이터 조회 시 사용할 Secondary Storage 사용률 임계값 설정</p></li>
 <li><p>오래된 진단 데이터 파일 정리를 위한 Garbage Collection 사용 여부 설정</p></li>
@@ -753,21 +723,17 @@ Overprovisioning, 템플릿 다운로드, Secondary Storage VM 처리 용량,
 <p>Infrastructure 는 크게 Primary Storage, Secondary Storage 로 분류할
 수 있다.</p>
 </blockquote>
-<table style="width:99%;">
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 74%" />
-</colgroup>
+<table>
 <thead>
   <tr>
-<th style="text-align: left;"><strong>분류</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>분류</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Primary Storage</strong></td>
-<td style="text-align: left;"><p>Primary Storage 용량, Storage Pool 배치 및 운영 정책 설정</p>
+<td><strong>Primary Storage</strong></td>
+<td><p>Primary Storage 용량, Storage Pool 배치 및 운영 정책 설정</p>
 <ul>
 <li><p>Cluster 및 Storage Pool 의 용량 사용률 알림 임계값 설정</p></li>
 <li><p>Storage Pool 용량 부족 시 신규 할당 또는 Resize 작업 제한 기준 설정</p></li>
@@ -787,8 +753,8 @@ Overprovisioning, 템플릿 다운로드, Secondary Storage VM 처리 용량,
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Secondary Storage</strong></td>
-<td style="text-align: left;"><p>Secondary Storage 배치, SSVM 처리 용량 및 전송 정책 설정</p>
+<td><strong>Secondary Storage</strong></td>
+<td><p>Secondary Storage 배치, SSVM 처리 용량 및 전송 정책 설정</p>
 <ul>
 <li><p>이미지 Store 배치 알고리즘 및 Storage 불균형 임계값 설정</p></li>
 <li><p>Datacenter 내부에서 Secondary Storage 접근을 허용할 CIDR 설정</p></li>
@@ -817,21 +783,17 @@ Overprovisioning, 템플릿 다운로드, Secondary Storage VM 처리 용량,
 <blockquote>
 <p>Usage Server 는 Usage 로 분류할 수 있다.</p>
 </blockquote>
-<table style="width:99%;">
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 74%" />
-</colgroup>
+<table>
 <thead>
   <tr>
-<th style="text-align: left;"><strong>분류</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>분류</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Usage</strong></td>
-<td style="text-align: left;"><p>Usage Server 사용 여부, 사용량 Event 발행 및 사용량 통계 집계 정책 설정</p>
+<td><strong>Usage</strong></td>
+<td><p>Usage Server 사용 여부, 사용량 Event 발행 및 사용량 통계 집계 정책 설정</p>
 <ul>
 <li><p>Usage Server 기능 사용 여부 설정</p></li>
 <li><p>Usage Event 를 Event Bus 에 발행할지 여부 설정</p></li>
@@ -878,21 +840,17 @@ System VM, Storage, Webhook, 통계 수집 등 namuVIRT 운영 전반에 걸친 
 <li><p>System VM, 사용자 데이터, Control IP 반환 등 시스템 VM 보조 정책
 설정</p></li>
 </ul>
-<table style="width:99%;">
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 74%" />
-</colgroup>
+<table>
 <thead>
   <tr>
-<th style="text-align: left;"><strong>분류</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>분류</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Backup &amp; Recovery</strong></td>
-<td style="text-align: left;"><p>백업/복구 Framework, 백업 Plugin 연동 및 Backup Storage 용량 정책 설정</p>
+<td><strong>Backup &amp; Recovery</strong></td>
+<td><p>백업/복구 Framework, 백업 Plugin 연동 및 Backup Storage 용량 정책 설정</p>
 <ul>
 <li><p>Backup Framework 사용 여부 설정</p></li>
 <li><p>Backup Offering 이 할당된 VM 의 Volume Attach/Detach 허용 여부 설정</p></li>
@@ -913,8 +871,8 @@ System VM, Storage, Webhook, 통계 수집 등 namuVIRT 운영 전반에 걸친 
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Certificate Authority</strong></td>
-<td style="text-align: left;"><p>CA Framework, 인증서 자동 갱신 및 Management Server-Agent 보안 통신 정책 설정</p>
+<td><strong>Certificate Authority</strong></td>
+<td><p>CA Framework, 인증서 자동 갱신 및 Management Server-Agent 보안 통신 정책 설정</p>
 <ul>
 <li><p>CA Framework 백그라운드 작업 실행 주기 설정</p></li>
 <li><p>인증서 자동 갱신 및 Agent 인증서 자동 발급 여부 설정</p></li>
@@ -931,8 +889,8 @@ System VM, Storage, Webhook, 통계 수집 등 namuVIRT 운영 전반에 걸친 
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Quota</strong></td>
-<td style="text-align: left;"><p>Quota Plugin, 사용량 기반 과금/제한 및 Quota 알림 메일 정책 설정</p>
+<td><strong>Quota</strong></td>
+<td><p>Quota Plugin, 사용량 기반 과금/제한 및 Quota 알림 메일 정책 설정</p>
 <ul>
 <li><p>Account 단위 Quota Plugin 사용 여부 설정</p></li>
 <li><p>Quota Service 사용 여부 설정</p></li>
@@ -961,8 +919,8 @@ System VM, Storage, Webhook, 통계 수집 등 namuVIRT 운영 전반에 걸친 
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Cloudian</strong></td>
-<td style="text-align: left;"><p>Cloudian Object Storage 연동을 위한 Admin Server, Management Console 및 Connector 정책 설정</p>
+<td><strong>Cloudian</strong></td>
+<td><p>Cloudian Object Storage 연동을 위한 Admin Server, Management Console 및 Connector 정책 설정</p>
 <ul>
 <li><p>Cloudian Admin Server 접속 정보 설정</p>
 <ul>
@@ -986,8 +944,8 @@ System VM, Storage, Webhook, 통계 수집 등 namuVIRT 운영 전반에 걸친 
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>DRS</strong></td>
-<td style="text-align: left;"><p>Cluster 내 자원 불균형을 기준으로 VM Migration 을 수행하는 DRS 정책 설정</p>
+<td><strong>DRS</strong></td>
+<td><p>Cluster 내 자원 불균형을 기준으로 VM Migration 을 수행하는 DRS 정책 설정</p>
 <ul>
 <li><p>DRS 실행 알고리즘 설정</p>
 <ul>
@@ -1014,8 +972,8 @@ System VM, Storage, Webhook, 통계 수집 등 namuVIRT 운영 전반에 걸친 
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Other</strong></td>
-<td style="text-align: left;"><p>기타 공통 기능, 플러그인, 인증, 네트워크, Storage, System VM 및 운영 보조 정책 설정</p>
+<td><strong>Other</strong></td>
+<td><p>기타 공통 기능, 플러그인, 인증, 네트워크, Storage, System VM 및 운영 보조 정책 설정</p>
 <ul>
 <li><p>Root Admin 및 일반 사용자 권한 관련 정책 설정</p>
 <ul>

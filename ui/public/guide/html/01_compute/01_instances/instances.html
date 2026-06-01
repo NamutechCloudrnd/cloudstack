@@ -44,34 +44,30 @@ Volume, 스냅샷 중 하나를 부팅 소스로 지정하고, CPU/Memory 사양
 운영 목적에 따라 특정 계정이나 프로젝트를 지정하여 인스턴스 를 생성할 수
 있다.</p>
 <table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 66%" />
-</colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>항목</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>항목</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>소유자 유형</strong></td>
-<td style="text-align: left;"><p>인스턴스를 할당할 대상 유형을 선택</p>
+<td><strong>소유자 유형</strong></td>
+<td><p>인스턴스를 할당할 대상 유형을 선택</p>
 <ul>
 <li><p>계정 또는 프로젝트</p></li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>도메인</strong></td>
-<td style="text-align: left;"><p>인스턴스를 생성할 계정 또는 프로젝트가 속한 도메인 선택</p>
+<td><strong>도메인</strong></td>
+<td><p>인스턴스를 생성할 계정 또는 프로젝트가 속한 도메인 선택</p>
 <ul>
 <li><p>기본값 : ROOT</p></li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>계정/프로젝트</strong></td>
-<td style="text-align: left;"><p>인스턴스를 소유할 계정/프로젝트를 선택</p>
+<td><strong>계정/프로젝트</strong></td>
+<td><p>인스턴스를 소유할 계정/프로젝트를 선택</p>
 <ul>
 <li><p>소유자 유형에 따라 계정 또는 프로젝트 선택</p></li>
 </ul></td>
@@ -90,32 +86,28 @@ Volume, 스냅샷 중 하나를 부팅 소스로 지정하고, CPU/Memory 사양
 영역으로 여러 Zone을 구성하면 장애 영역을 분리할 수 있어 클라우드의
 안정성과 가용성을 높일 수 있다.</p>
 <table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 66%" />
-</colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>항목</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>항목</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Zone</strong></td>
-<td style="text-align: left;">인스턴스가 생성될 Zone 선택</td>
+<td><strong>Zone</strong></td>
+<td>인스턴스가 생성될 Zone 선택</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Pod</strong></td>
-<td style="text-align: left;">선택한 Zone 내부의 Pod 선택</td>
+<td><strong>Pod</strong></td>
+<td>선택한 Zone 내부의 Pod 선택</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Cluster</strong></td>
-<td style="text-align: left;">인스턴스가 배포될 Cluster 선택</td>
+<td><strong>Cluster</strong></td>
+<td>인스턴스가 배포될 Cluster 선택</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Host</strong></td>
-<td style="text-align: left;"><p>인스턴스를 배포할 Host 선택</p>
+<td><strong>Host</strong></td>
+<td><p>인스턴스를 배포할 Host 선택</p>
 <ul>
 <li><p>미지정 시 namuVIRT의 배치 정책과 가용 리소스에 따라 자동 선택</p></li>
 </ul></td>
@@ -132,27 +124,23 @@ Volume, 스냅샷 중 하나를 부팅 소스로 지정하고, CPU/Memory 사양
 <img src="/guide/html/images/01_compute/01_instances/image4.png" style="width:10in" />
 
 <table>
-<colgroup>
-<col style="width: 27%" />
-<col style="width: 72%" />
-</colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>항목</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>항목</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>유형</strong></td>
-<td style="text-align: left;"><p>인스턴스 생성에 사용할 부팅 소스 유형 선택</p>
+<td><strong>유형</strong></td>
+<td><p>인스턴스 생성에 사용할 부팅 소스 유형 선택</p>
 <ul>
 <li><p>템플릿 / ISO / Volume / 스냅샷 선택 가능</p></li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><p>선택된 유형에 따라 인스턴스 생성을 위한 제공 방식이 달라짐</p>
+<td></td>
+<td><p>선택된 유형에 따라 인스턴스 생성을 위한 제공 방식이 달라짐</p>
 <ul>
 <li><p>템플릿 : 사전에 등록된 OS 이미지 기반으로 인스턴스 생성</p></li>
 <li><p>ISO : ISO 이미지 선택하여 인스턴스 생성</p></li>
@@ -175,24 +163,20 @@ Volume, 스냅샷 중 하나를 부팅 소스로 지정하고, CPU/Memory 사양
 영향을 주므로 운영 목적에 맞게 CPU와 메모리 용량을 확인한 후
 선택한다.</p>
 <table>
-<colgroup>
-<col style="width: 26%" />
-<col style="width: 73%" />
-</colgroup>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>항목</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>항목</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>컴퓨트 오퍼링</strong></td>
-<td style="text-align: left;">인스턴스에 적용할 CPU/메모리 사양 선택</td>
+<td><strong>컴퓨트 오퍼링</strong></td>
+<td>인스턴스에 적용할 CPU/메모리 사양 선택</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Override root disk offering</strong></td>
-<td style="text-align: left;"><p>Root Disk Offering을 별도로 지정할지 여부 선택</p>
+<td><strong>Override root disk offering</strong></td>
+<td><p>Root Disk Offering을 별도로 지정할지 여부 선택</p>
 <ul>
 <li><p>비활성화 : 템플릿 또는 Compute Offering의 기본 Root Disk 구성 적용</p></li>
 <li><p>활성화 : Disk Offering 목록에서 Root Disk 크기와 성능 정책 별도 선택</p></li>
@@ -212,14 +196,14 @@ Disk 크기를 선택하는 단계이다. 이 단계는 선택한 이미지 또�
 <table>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>항목</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>항목</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>디스크 크기</strong></td>
-<td style="text-align: left;"><p>Root Disk에 적용할 Disk Offering 선택</p>
+<td><strong>디스크 크기</strong></td>
+<td><p>Root Disk에 적용할 Disk Offering 선택</p>
 <ul>
 <li><p>사전에 정의된 Disk Offering 를 선택</p></li>
 <li><p>Custom : 사용자가 직접 디스크 크기를 입력</p></li>
@@ -246,19 +230,19 @@ Disk 크기를 선택하는 단계이다. 이 단계는 선택한 이미지 또�
 <table>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>항목</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>항목</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>네트워크</strong></td>
-<td style="text-align: left;">인스턴스에 연결할 네트워크를 선택하며, 새로운 네트워크 생성이
+<td><strong>네트워크</strong></td>
+<td>인스턴스에 연결할 네트워크를 선택하며, 새로운 네트워크 생성이
 가능</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>IP / MAC 주소</strong></td>
-<td style="text-align: left;">필요한 경우 인스턴스에 할당할 IP 주소 또는 MAC 주소 직접 지정
+<td><strong>IP / MAC 주소</strong></td>
+<td>필요한 경우 인스턴스에 할당할 IP 주소 또는 MAC 주소 직접 지정
 가능</td>
 </tr>
 </tbody>
@@ -298,56 +282,56 @@ SSH로 접속해야 하는 경우에는 사전에 등록된 SSH Key Pair를 선�
 <table>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>항목</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>항목</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>부팅 유형</strong></td>
-<td style="text-align: left;"><p>인스턴스 부팅 방식을 선택</p>
+<td><strong>부팅 유형</strong></td>
+<td><p>인스턴스 부팅 방식을 선택</p>
 <ul>
 <li><p>BIOS, UEFI</p></li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>부팅 모드</strong></td>
-<td style="text-align: left;"><p>인스턴스 Boot Mode 선택</p>
+<td><strong>부팅 모드</strong></td>
+<td><p>인스턴스 Boot Mode 선택</p>
 <ul>
 <li><p>부팅 유형 BIOS : LEGACY</p></li>
 <li><p>부팅 유형 UEFI : SECURE, LEGACY</p></li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>동적 스케일링 활성화</strong></td>
-<td style="text-align: left;">VM 실행 중 리소스 동적 변경 기능 사용 여부 선택</td>
+<td><strong>동적 스케일링 활성화</strong></td>
+<td>VM 실행 중 리소스 동적 변경 기능 사용 여부 선택</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>사용자 데이터</strong></td>
-<td style="text-align: left;">인스턴스 생성 시 VM에 전달할 사용자 데이터 선택 또는 직접 입력</td>
+<td><strong>사용자 데이터</strong></td>
+<td>인스턴스 생성 시 VM에 전달할 사용자 데이터 선택 또는 직접 입력</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Affinity 그룹</strong></td>
-<td style="text-align: left;">인스턴스 가 속할 Affinity 그룹 선택</td>
+<td><strong>Affinity 그룹</strong></td>
+<td>인스턴스 가 속할 Affinity 그룹 선택</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>NIC 멀티큐 번호</strong></td>
-<td style="text-align: left;"><p>NIC Multi-Queue 사용 시 Queue 수 지정 가능</p>
+<td><strong>NIC 멀티큐 번호</strong></td>
+<td><p>NIC Multi-Queue 사용 시 Queue 수 지정 가능</p>
 <ul>
 <li><p>KVM 에서만 사용 가능</p></li>
 <li><p>-1 인 경우 NIC 멀티큐 번호가 인스턴스의 vCPU 수로 설정</p></li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>NIC 패킹된 가상 큐 활성화</strong></td>
-<td style="text-align: left;"><p>NIC 패킹된 가상 큐 활성화 여부</p>
+<td><strong>NIC 패킹된 가상 큐 활성화</strong></td>
+<td><p>NIC 패킹된 가상 큐 활성화 여부</p>
 <ul>
 <li><p>QUME &gt;= 4.2.0 및 Libvirt &gt;= 6.3.0 을 사용하는 KVM 에서만 지원</p></li>
 </ul></td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>IOThreads</strong></td>
-<td style="text-align: left;">KVM 하이퍼바이저에 대한 IOThreads 할당 활성화</td>
+<td><strong>IOThreads</strong></td>
+<td>KVM 하이퍼바이저에 대한 IOThreads 할당 활성화</td>
 </tr>
 </tbody>
 </table>
@@ -367,26 +351,26 @@ Host에 분산 배치해야 할 때 사용한다.</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>항목</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>항목</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>이름</strong></td>
-<td style="text-align: left;">인스턴스의 이름으로 미입력시 시스템 정책에 따라 자동 생성</td>
+<td><strong>이름</strong></td>
+<td>인스턴스의 이름으로 미입력시 시스템 정책에 따라 자동 생성</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>그룹</strong></td>
-<td style="text-align: left;">인스턴스를 분류할 그룹 명 입력</td>
+<td><strong>그룹</strong></td>
+<td>인스턴스를 분류할 그룹 명 입력</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>키보드 언어</strong></td>
-<td style="text-align: left;">인스턴스 콘솔에서 사용할 키보드 언어 선택</td>
+<td><strong>키보드 언어</strong></td>
+<td>인스턴스 콘솔에서 사용할 키보드 언어 선택</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>가상머신 시작</strong></td>
-<td style="text-align: left;">생성 완료 후 인스턴스를 자동으로 시작할지 여부 선택</td>
+<td><strong>가상머신 시작</strong></td>
+<td>생성 완료 후 인스턴스를 자동으로 시작할지 여부 선택</td>
 </tr>
 </tbody>
 </table>
@@ -405,51 +389,51 @@ Host에 분산 배치해야 할 때 사용한다.</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;"><strong>항목</strong></th>
-<th style="text-align: left;"><strong>설명</strong></th>
+<th><strong>항목</strong></th>
+<th><strong>설명</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>상세</strong></td>
-<td style="text-align: left;">인스턴스 이름, 상태, IP 등 기본 정보 확인</td>
+<td><strong>상세</strong></td>
+<td>인스턴스 이름, 상태, IP 등 기본 정보 확인</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>메트릭</strong></td>
-<td style="text-align: left;">인스턴스의 CPU, Memory, Network, Disk 등 사용량 지표 확인</td>
+<td><strong>메트릭</strong></td>
+<td>인스턴스의 CPU, Memory, Network, Disk 등 사용량 지표 확인</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>볼륨</strong></td>
-<td style="text-align: left;">인스턴스에 연결된 Root Volume 및 Data Volume 정보 확인</td>
+<td><strong>볼륨</strong></td>
+<td>인스턴스에 연결된 Root Volume 및 Data Volume 정보 확인</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>NIC</strong></td>
-<td style="text-align: left;">인스턴스에 연결된 네트워크 인터페이스 정보 확인 및 네트워크 추가
+<td><strong>NIC</strong></td>
+<td>인스턴스에 연결된 네트워크 인터페이스 정보 확인 및 네트워크 추가
 가능</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>VM 스냅샷</strong></td>
-<td style="text-align: left;">인스턴스 기준 VM 스냅샷 조회</td>
+<td><strong>VM 스냅샷</strong></td>
+<td>인스턴스 기준 VM 스냅샷 조회</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>백업</strong></td>
-<td style="text-align: left;">인스턴스에 설정된 백업 정책 및 백업 이력 확인</td>
+<td><strong>백업</strong></td>
+<td>인스턴스에 설정된 백업 정책 및 백업 이력 확인</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>스케쥴</strong></td>
-<td style="text-align: left;">인스턴스 동작(시작, 정지, 재시작 등)에 관련된 예약 정보 관리</td>
+<td><strong>스케쥴</strong></td>
+<td>인스턴스 동작(시작, 정지, 재시작 등)에 관련된 예약 정보 관리</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>설정</strong></td>
-<td style="text-align: left;">인스턴스별 세부 설정값(boot mode, nic 설정 등) 확인 및 관리</td>
+<td><strong>설정</strong></td>
+<td>인스턴스별 세부 설정값(boot mode, nic 설정 등) 확인 및 관리</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>이벤트</strong></td>
-<td style="text-align: left;">인스턴스와 관련된 이력 확인 가능</td>
+<td><strong>이벤트</strong></td>
+<td>인스턴스와 관련된 이력 확인 가능</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>코멘트</strong></td>
-<td style="text-align: left;">운영 메모 또는 코멘트 관리</td>
+<td><strong>코멘트</strong></td>
+<td>운영 메모 또는 코멘트 관리</td>
 </tr>
 </tbody>
 </table>

@@ -18,84 +18,79 @@
       </ul>
       <h2>이메일 알림 SMTP 설정</h2>
       <p>알림 이메일 발송을 위한 전역 설정 파라미터는 다음과 같다.</p>
-      <table style="width:100%">
-      <colgroup>
-      <col style="width: 20%" />
-      <col style="width: 10%" />
-      <col style="width: 70%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>전역 설정</strong></th>
-      <th style="text-align: left;"><strong>기본값</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>전역 설정</strong></th>
+      <th><strong>기본값</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;">alert.smtp.host</td>
-      <td style="text-align: left;">null</td>
-      <td style="text-align: left;">이메일 알림 발송에 사용할 SMTP
+      <td>alert.smtp.host</td>
+      <td>null</td>
+      <td>이메일 알림 발송에 사용할 SMTP
       호스트명</td>
       </tr>
       <tr>
-      <td style="text-align: left;">alert.smtp.port</td>
-      <td style="text-align: left;">465</td>
-      <td style="text-align: left;">SMTP 서버 리스닝 포트</td>
+      <td>alert.smtp.port</td>
+      <td>465</td>
+      <td>SMTP 서버 리스닝 포트</td>
       </tr>
       <tr>
-      <td style="text-align: left;">alert.smtp.useAuth</td>
-      <td style="text-align: left;">false</td>
-      <td style="text-align: left;">true로 설정 시 이메일 발송 시 SMTP 인증을
+      <td>alert.smtp.useAuth</td>
+      <td>false</td>
+      <td>true로 설정 시 이메일 발송 시 SMTP 인증을
       사용</td>
       </tr>
       <tr>
-      <td style="text-align: left;">alert.smtp.username</td>
-      <td style="text-align: left;">null</td>
-      <td style="text-align: left;">SMTP 인증용 사용자명 (alert.smtp.useAuth가
+      <td>alert.smtp.username</td>
+      <td>null</td>
+      <td>SMTP 인증용 사용자명 (alert.smtp.useAuth가
       true인 경우에만 적용)</td>
       </tr>
       <tr>
-      <td style="text-align: left;">alert.smtp.password</td>
-      <td style="text-align: left;">null</td>
-      <td style="text-align: left;">SMTP 인증용 비밀번호 (alert.smtp.useAuth가
+      <td>alert.smtp.password</td>
+      <td>null</td>
+      <td>SMTP 인증용 비밀번호 (alert.smtp.useAuth가
       true인 경우에만 적용)</td>
       </tr>
       <tr>
-      <td style="text-align: left;">alert.smtp.useStartTLS</td>
-      <td style="text-align: left;">false</td>
-      <td style="text-align: left;">true로 설정하고 alert.smtp.useAuth를 통해
+      <td>alert.smtp.useStartTLS</td>
+      <td>false</td>
+      <td>true로 설정하고 alert.smtp.useAuth를 통해
       보안을 활성화하면 StartTLS로 연결을 보호</td>
       </tr>
       <tr>
-      <td style="text-align: left;">alert.smtp.enabledSecurityProtocols</td>
-      <td style="text-align: left;">null</td>
-      <td style="text-align: left;">공백으로 구분된 보안 프로토콜 목록 (예:
+      <td>alert.smtp.enabledSecurityProtocols</td>
+      <td>null</td>
+      <td>공백으로 구분된 보안 프로토콜 목록 (예:
       "TLSv1 TLSv1.1"). 지원 프로토콜: SSLv2Hello, SSLv3, TLSv1, TLSv1.1,
       TLSv1.2</td>
       </tr>
       <tr>
-      <td style="text-align: left;">alert.smtp.connectiontimeout</td>
-      <td style="text-align: left;">30000</td>
-      <td style="text-align: left;">소켓 연결 타임아웃(밀리초). -1은 무한
+      <td>alert.smtp.connectiontimeout</td>
+      <td>30000</td>
+      <td>소켓 연결 타임아웃(밀리초). -1은 무한
       대기</td>
       </tr>
       <tr>
-      <td style="text-align: left;">alert.smtp.timeout</td>
-      <td style="text-align: left;">30000</td>
-      <td style="text-align: left;">소켓 I/O 타임아웃(밀리초). -1은 무한
+      <td>alert.smtp.timeout</td>
+      <td>30000</td>
+      <td>소켓 I/O 타임아웃(밀리초). -1은 무한
       대기</td>
       </tr>
       <tr>
-      <td style="text-align: left;">alert.email.addresses</td>
-      <td style="text-align: left;">null</td>
-      <td style="text-align: left;">알림 이메일을 수신할 이메일 주소 목록
+      <td>alert.email.addresses</td>
+      <td>null</td>
+      <td>알림 이메일을 수신할 이메일 주소 목록
       (쉼표로 구분)</td>
       </tr>
       <tr>
-      <td style="text-align: left;">alert.email.sender</td>
-      <td style="text-align: left;">null</td>
-      <td style="text-align: left;">알림 이메일의 발신자 주소 (이메일의 From
+      <td>alert.email.sender</td>
+      <td>null</td>
+      <td>알림 이메일의 발신자 주소 (이메일의 From
       헤더에 표시)</td>
       </tr>
       </tbody>
@@ -103,167 +98,162 @@
       <h2>알림 유형 목록</h2>
       <p>다음은 namuVirt에서 발생할 수 있는 알림 유형
       목록이다. listAlerts API 명령으로 최신 목록을 조회할 수 있다.</p>
-      <table style="width:98%;">
-      <colgroup>
-      <col style="width: 14%" />
-      <col style="width: 25%" />
-      <col style="width: 57%" />
-      </colgroup>
+      <table>
       <thead>
       <tr>
-      <th style="text-align: left;"><strong>유형 번호</strong></th>
-      <th style="text-align: left;"><strong>이름</strong></th>
-      <th style="text-align: left;"><strong>설명</strong></th>
+      <th><strong>유형 번호</strong></th>
+      <th><strong>이름</strong></th>
+      <th><strong>설명</strong></th>
       </tr>
       </thead>
       <tbody>
       <tr>
-      <td style="text-align: left;">0</td>
-      <td style="text-align: left;">MEMORY</td>
-      <td style="text-align: left;">사용 가능한 메모리가 설정된 임계값
+      <td>0</td>
+      <td>MEMORY</td>
+      <td>사용 가능한 메모리가 설정된 임계값
       이하</td>
       </tr>
       <tr>
-      <td style="text-align: left;">1</td>
-      <td style="text-align: left;">CPU</td>
-      <td style="text-align: left;">할당되지 않은 CPU가 설정된 임계값
+      <td>1</td>
+      <td>CPU</td>
+      <td>할당되지 않은 CPU가 설정된 임계값
       이하</td>
       </tr>
       <tr>
-      <td style="text-align: left;">2</td>
-      <td style="text-align: left;">STORAGE</td>
-      <td style="text-align: left;">사용 가능한 스토리지가 설정된 임계값
+      <td>2</td>
+      <td>STORAGE</td>
+      <td>사용 가능한 스토리지가 설정된 임계값
       이하</td>
       </tr>
       <tr>
-      <td style="text-align: left;">3</td>
-      <td style="text-align: left;">STORAGE_ALLOCATED</td>
-      <td style="text-align: left;">남은 미할당 스토리지가 설정된 임계값
+      <td>3</td>
+      <td>STORAGE_ALLOCATED</td>
+      <td>남은 미할당 스토리지가 설정된 임계값
       이하</td>
       </tr>
       <tr>
-      <td style="text-align: left;">4</td>
-      <td style="text-align: left;">PUBLIC_IP</td>
-      <td style="text-align: left;">할당되지 않은 가상 네트워크 공용 IP 수가
+      <td>4</td>
+      <td>PUBLIC_IP</td>
+      <td>할당되지 않은 가상 네트워크 공용 IP 수가
       설정된 임계값 이하</td>
       </tr>
       <tr>
-      <td style="text-align: left;">5</td>
-      <td style="text-align: left;">PRIVATE_IP</td>
-      <td style="text-align: left;">할당되지 않은 사설 IP 수가 설정된 임계값
+      <td>5</td>
+      <td>PRIVATE_IP</td>
+      <td>할당되지 않은 사설 IP 수가 설정된 임계값
       이하</td>
       </tr>
       <tr>
-      <td style="text-align: left;">6</td>
-      <td style="text-align: left;">SECONDARY_STORAGE</td>
-      <td style="text-align: left;">가용 Zone의 사용 가능한 2차 스토리지가
+      <td>6</td>
+      <td>SECONDARY_STORAGE</td>
+      <td>가용 Zone의 사용 가능한 2차 스토리지가
       설정된 임계값 이하</td>
       </tr>
       <tr>
-      <td style="text-align: left;">7</td>
-      <td style="text-align: left;">HOST</td>
-      <td style="text-align: left;">호스트 연결 끊김 등 호스트 관련 알림</td>
+      <td>7</td>
+      <td>HOST</td>
+      <td>호스트 연결 끊김 등 호스트 관련 알림</td>
       </tr>
       <tr>
-      <td style="text-align: left;">8</td>
-      <td style="text-align: left;">USERVM</td>
-      <td style="text-align: left;">사용자 인스턴스가 예기치 않게 중지됨</td>
+      <td>8</td>
+      <td>USERVM</td>
+      <td>사용자 인스턴스가 예기치 않게 중지됨</td>
       </tr>
       <tr>
-      <td style="text-align: left;">9</td>
-      <td style="text-align: left;">DOMAIN_ROUTER</td>
-      <td style="text-align: left;">도메인 라우터 VM이 예기치 않게 중지됨</td>
+      <td>9</td>
+      <td>DOMAIN_ROUTER</td>
+      <td>도메인 라우터 VM이 예기치 않게 중지됨</td>
       </tr>
       <tr>
-      <td style="text-align: left;">10</td>
-      <td style="text-align: left;">CONSOLE_PROXY</td>
-      <td style="text-align: left;">Console Proxy VM이 예기치 않게 중지됨</td>
+      <td>10</td>
+      <td>CONSOLE_PROXY</td>
+      <td>Console Proxy VM이 예기치 않게 중지됨</td>
       </tr>
       <tr>
-      <td style="text-align: left;">11</td>
-      <td style="text-align: left;">ROUTING</td>
-      <td style="text-align: left;">기본 경로(게이트웨이)로의 연결이
+      <td>11</td>
+      <td>ROUTING</td>
+      <td>기본 경로(게이트웨이)로의 연결이
       끊어짐</td>
       </tr>
       <tr>
-      <td style="text-align: left;">12</td>
-      <td style="text-align: left;">STORAGE_MISC</td>
-      <td style="text-align: left;">시스템 VM에서 스토리지 문제 발생</td>
+      <td>12</td>
+      <td>STORAGE_MISC</td>
+      <td>시스템 VM에서 스토리지 문제 발생</td>
       </tr>
       <tr>
-      <td style="text-align: left;">13</td>
-      <td style="text-align: left;">USAGE_SERVER</td>
-      <td style="text-align: left;">사용 서버 프로세스가 실행 중이지 않음</td>
+      <td>13</td>
+      <td>USAGE_SERVER</td>
+      <td>사용 서버 프로세스가 실행 중이지 않음</td>
       </tr>
       <tr>
-      <td style="text-align: left;">14</td>
-      <td style="text-align: left;">MANAGEMENT_NODE</td>
-      <td style="text-align: left;">관리 네트워크 CIDR이 초기에 설정되지
+      <td>14</td>
+      <td>MANAGEMENT_NODE</td>
+      <td>관리 네트워크 CIDR이 초기에 설정되지
       않음</td>
       </tr>
       <tr>
-      <td style="text-align: left;">15</td>
-      <td style="text-align: left;">DOMAIN_ROUTER_MIGRATE</td>
-      <td style="text-align: left;">도메인 라우터 VM 마이그레이션 실패</td>
+      <td>15</td>
+      <td>DOMAIN_ROUTER_MIGRATE</td>
+      <td>도메인 라우터 VM 마이그레이션 실패</td>
       </tr>
       <tr>
-      <td style="text-align: left;">16</td>
-      <td style="text-align: left;">CONSOLE_PROXY_MIGRATE</td>
-      <td style="text-align: left;">Console Proxy VM 마이그레이션 실패</td>
+      <td>16</td>
+      <td>CONSOLE_PROXY_MIGRATE</td>
+      <td>Console Proxy VM 마이그레이션 실패</td>
       </tr>
       <tr>
-      <td style="text-align: left;">17</td>
-      <td style="text-align: left;">USERVM_MIGRATE</td>
-      <td style="text-align: left;">사용자 인스턴스 마이그레이션 실패</td>
+      <td>17</td>
+      <td>USERVM_MIGRATE</td>
+      <td>사용자 인스턴스 마이그레이션 실패</td>
       </tr>
       <tr>
-      <td style="text-align: left;">18</td>
-      <td style="text-align: left;">VLAN</td>
-      <td style="text-align: left;">가용 Zone에서 할당되지 않은 VLAN 수가
+      <td>18</td>
+      <td>VLAN</td>
+      <td>가용 Zone에서 할당되지 않은 VLAN 수가
       설정된 임계값 이하</td>
       </tr>
       <tr>
-      <td style="text-align: left;">19</td>
-      <td style="text-align: left;">SSVM</td>
-      <td style="text-align: left;">SSVM(Secondary Storage VM)이 예기치 않게
+      <td>19</td>
+      <td>SSVM</td>
+      <td>SSVM(Secondary Storage VM)이 예기치 않게
       중지됨</td>
       </tr>
       <tr>
-      <td style="text-align: left;">20</td>
-      <td style="text-align: left;">USAGE_SERVER_RESULT</td>
-      <td style="text-align: left;">사용량 집계 작업 실패</td>
+      <td>20</td>
+      <td>USAGE_SERVER_RESULT</td>
+      <td>사용량 집계 작업 실패</td>
       </tr>
       <tr>
-      <td style="text-align: left;">21</td>
-      <td style="text-align: left;">STORAGE_DELETE</td>
-      <td style="text-align: left;">스토리지 풀 삭제 실패</td>
+      <td>21</td>
+      <td>STORAGE_DELETE</td>
+      <td>스토리지 풀 삭제 실패</td>
       </tr>
       <tr>
-      <td style="text-align: left;">22</td>
-      <td style="text-align: left;">UPDATE_RESOURCE_COUNT</td>
-      <td style="text-align: left;">자원 사용량 카운트 업데이트 실패</td>
+      <td>22</td>
+      <td>UPDATE_RESOURCE_COUNT</td>
+      <td>자원 사용량 카운트 업데이트 실패</td>
       </tr>
       <tr>
-      <td style="text-align: left;">23</td>
-      <td style="text-align: left;">USAGE_SANITY_RESULT</td>
-      <td style="text-align: left;">사용량 정합성 검사 실패</td>
+      <td>23</td>
+      <td>USAGE_SANITY_RESULT</td>
+      <td>사용량 정합성 검사 실패</td>
       </tr>
       <tr>
-      <td style="text-align: left;">24</td>
-      <td style="text-align: left;">DIRECT_ATTACHED_PUBLIC_IP</td>
-      <td style="text-align: left;">가용 Zone에서 할당되지 않은 공유 네트워크
+      <td>24</td>
+      <td>DIRECT_ATTACHED_PUBLIC_IP</td>
+      <td>가용 Zone에서 할당되지 않은 공유 네트워크
       IP 수가 부족</td>
       </tr>
       <tr>
-      <td style="text-align: left;">25</td>
-      <td style="text-align: left;">LOCAL_STORAGE</td>
-      <td style="text-align: left;">남은 미할당 로컬 스토리지가 설정된 임계값
+      <td>25</td>
+      <td>LOCAL_STORAGE</td>
+      <td>남은 미할당 로컬 스토리지가 설정된 임계값
       이하</td>
       </tr>
       <tr>
-      <td style="text-align: left;">26</td>
-      <td style="text-align: left;">RESOURCE_LIMIT_EXCEEDED</td>
-      <td style="text-align: left;">자원 한도 초과 (현재 반복 스냅샷에만
+      <td>26</td>
+      <td>RESOURCE_LIMIT_EXCEEDED</td>
+      <td>자원 한도 초과 (현재 반복 스냅샷에만
       사용)</td>
       </tr>
       </tbody>
