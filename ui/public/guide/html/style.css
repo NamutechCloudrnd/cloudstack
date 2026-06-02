@@ -332,15 +332,6 @@ blockquote > ul > li {
   margin-left: 2rem;
   margin-bottom: 1rem;
 }
-
-main > ul > li:last-child,
-main > .content-frame > ul > li:last-child,
-main > ol > li:last-child,
-main > ol > li > ul > li:last-child,
-blockquote > ul > li:last-child {
-  margin-bottom: 0;
-}
-
 main > .content-frame > ul > li > ul > li {
   margin-left: 1.2rem;
   margin-bottom: 0.4rem;
