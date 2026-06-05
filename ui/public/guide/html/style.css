@@ -325,7 +325,6 @@ a:hover {
 }
 
 main > ul > li,
-main > .content-frame > ul > li,
 main > ol > li,
 main > ol > li > ul > li,
 blockquote > ul > li {
@@ -347,10 +346,17 @@ main > .content-frame > table > tbody > tr > td > ul > li > ul > li {
   margin-bottom: 0.4rem;
 }
 
-main > .content-frame > ol > li {
+main > .content-frame > ol > li,
+main > .content-frame > ul > li{
   margin: 1rem 0 0.5rem 1rem;
 }
 
+main > .content-frame > ol {
+  margin: 1rem 0 1rem 1rem;
+}
+main > .content-frame > ul {
+  margin: 1rem 0 1rem 1.2rem;
+}
 blockquote {
   width: auto;
   margin: 2rem 0;

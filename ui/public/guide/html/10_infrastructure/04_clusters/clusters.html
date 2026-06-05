@@ -1,63 +1,63 @@
 <h1 id="clusters">Clusters</h1>
 <p>Clusters는 인프라의 Host를 같은 운영 경계로 묶어 Instance 배치와 리소스 관리를 수행하는 기능이다. 하나의 Cluster는 Zone과 Pod에 속하며, Hypervisor, CPU 아키텍처, Primary Storage 접근 조건과 함께 관리된다. 운영자는 Cluster의 Allocation state, 리소스 사용량, 설정값, 이벤트를 확인해 신규 배치 가능 여부와 유지보수 영향을 판단한다.</p>
 <h2 id="클러스터-목록-화면">클러스터 목록 화면</h2
-<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_01.png" alt="클러스터 목록 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_01.webp" alt="클러스터 목록 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Clusters</code></li>
 <li><strong>설명:</strong> 등록된 클러스터의 이름, 할당 상태, 클러스터 유형, 아키텍처, 하이퍼바이저, Pod, Zone 정보를 확인하는 화면이다.</li>
 </ul>
 <p>클러스터 목록 화면에서는 인프라에 등록된 Cluster를 표 형태로 조회한다. 화면에는 Name, Allocation state, Cluster type, Arch, Hypervisor, Pod name, Zone 컬럼이 표시된다. 예시 화면에서는 KVM 기반 x86_64 Cluster가 <code>Enabled</code> 상태로 표시되며, 각 Cluster가 특정 Pod와 Zone에 연결되어 있음을 확인할 수 있다. 상단의 <code>Add Cluster</code> 버튼을 통해 신규 Cluster 추가 작업을 시작할 수 있다.</p>
 <h2 id="클러스터-추가-입력-화면">클러스터 추가 입력 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_02.png" alt="클러스터 추가 입력 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_02.webp" alt="클러스터 추가 입력 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Clusters &gt; Add Cluster</code></li>
 <li><strong>설명:</strong> Zone, Pod, 클러스터 이름, Hypervisor, Arch, Dedicated 여부를 입력하여 신규 Cluster를 추가하는 화면이다.</li>
 </ul>
 <p>클러스터 추가 화면에서는 Cluster가 속할 Zone과 Pod를 선택한 뒤 <code>cluster name</code>, <code>hypervisor</code>, <code>Arch</code> 값을 지정한다. 화면 예시에서는 KVM Hypervisor와 Intel/AMD 64비트 아키텍처가 선택되어 있으며, <code>Dedicated</code> 옵션은 비활성화되어 있다. 입력값을 확인한 뒤 <code>OK</code>를 선택하면 신규 Cluster 생성 요청이 진행된다.</p>
 <h2 id="클러스터-상세-정보-화면">클러스터 상세 정보 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_03.png" alt="클러스터 상세 정보 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_03.webp" alt="클러스터 상세 정보 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Clusters &gt; Cluster Detail &gt; Details</code></li>
 <li><strong>설명:</strong> 선택한 Cluster의 상태, ID, 관리 상태, 아키텍처, Hypervisor, Pod, Zone 정보를 확인하는 화면이다.</li>
 </ul>
 <p>클러스터 상세 정보 화면에서는 선택한 Cluster의 기본 속성과 리소스 요약을 확인한다. 왼쪽 요약 영역에는 Status, Allocation state, ID, CPU, Memory, Pod, Zone 정보가 표시되며, 오른쪽 Details 탭에는 Name, ID, Allocation state, Cluster type, Managed state, Arch, Hypervisor, Pod name, Zone, Dedicated 값이 표시된다. <code>View Hosts</code> 버튼을 사용하면 해당 Cluster에 속한 Host 목록으로 이동할 수 있다.</p>
 <h2 id="클러스터-리소스-탭-화면">클러스터 리소스 탭 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_04.png" alt="클러스터 리소스 탭 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_04.webp" alt="클러스터 리소스 탭 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Clusters &gt; Cluster Detail &gt; Resources</code></li>
 <li><strong>설명:</strong> 선택한 Cluster의 Primary Storage 사용량을 확인하는 화면이다.</li>
 </ul>
 <p>Resources 탭에서는 Cluster와 연결된 리소스 사용량을 확인한다. 화면 예시에서는 <code>Primary Storage used</code> 항목과 <code>Allocated</code> 값이 표시된다. 사용량이 0으로 표시되는 경우에도 Host 연결 상태, Primary Storage 연결 상태, 리소스 수집 시점을 함께 확인해야 한다.</p>
 <h2 id="클러스터-설정-탭-화면">클러스터 설정 탭 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_05.png" alt="클러스터 설정 탭 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_05.webp" alt="클러스터 설정 탭 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Clusters &gt; Cluster Detail &gt; Settings</code></li>
 <li><strong>설명:</strong> Cluster 단위 인증서 자동 갱신, CPU/Memory 할당 임계값 등 설정값을 확인하고 조정하는 화면이다.</li>
 </ul>
 <p>Settings 탭에서는 Cluster 단위로 적용되는 설정값을 조회하거나 수정할 수 있다. 화면 예시에는 인증서 자동 갱신, 인증서 만료 알림 기간, CPU 할당 용량 비활성화 임계값, CPU 할당 용량 알림 임계값, Memory 할당 용량 비활성화 임계값, Memory 할당 용량 알림 임계값이 표시된다. 이러한 설정은 Cluster의 신규 리소스 배치 가능 여부, 사전 경고, 인증서 관리 동작에 영향을 줄 수 있다.</p>
 <h2 id="클러스터-drs-탭-화면">클러스터 DRS 탭 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_06.png" alt="클러스터 DRS 탭 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_06.webp" alt="클러스터 DRS 탭 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Clusters &gt; Cluster Detail &gt; DRS</code></li>
 <li><strong>설명:</strong> Cluster 내 Host 간 Instance 재배치 계획을 생성하고 DRS 실행 이력을 확인하는 화면이다.</li>
 </ul>
 <p>DRS 탭에서는 Cluster 내 Instance 배치 최적화를 위한 DRS 계획을 생성하고 실행 이력을 확인한다. 화면에는 최대 live migration 수를 입력하는 <code>Max. migrations</code> 항목과 <code>Generate DRS plan</code> 버튼이 표시된다. 현재 알고리즘은 <code>balanced</code>로 표시되며, 하단 표에는 Type, Successful migrations, Status, Created, Events 컬럼이 제공된다. 데이터가 없는 경우 아직 생성된 DRS 계획이나 실행 이력이 없는 상태로 볼 수 있다.</p>
 <h2 id="클러스터-댓글-탭-화면">클러스터 댓글 탭 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_07.png" alt="클러스터 댓글 탭 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_07.webp" alt="클러스터 댓글 탭 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Clusters &gt; Cluster Detail &gt; Comments</code></li>
 <li><strong>설명:</strong> Cluster에 운영 메모를 추가하고 관리자 전용 공개 여부를 지정하는 화면이다.</li>
 </ul>
 <p>Comments 탭에서는 Cluster 리소스에 대한 운영 메모를 등록한다. 화면에는 댓글 수, 댓글 입력란, <code>Only visible to administrators</code> 체크박스, <code>Submit</code> 버튼이 표시된다. 운영자는 Cluster 증설, 유지보수, 테스트 목적, 장애 이력 등 관리상 필요한 정보를 댓글로 남길 수 있다.</p>
 <h2 id="클러스터-이벤트-탭-화면">클러스터 이벤트 탭 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_08.png" alt="클러스터 이벤트 탭 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_08.webp" alt="클러스터 이벤트 탭 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Clusters &gt; Cluster Detail &gt; Events</code></li>
 <li><strong>설명:</strong> Cluster와 관련된 이벤트 수준, 유형, 상태, 사용자, 계정, 도메인, 생성 시각을 조회하는 화면이다.</li>
 </ul>
 <p>Events 탭에서는 선택한 Cluster와 관련된 작업 이력과 이벤트를 조회한다. 화면에는 Level, Type, State, Username, Account, Domain, Created 컬럼이 표시된다. Cluster 추가, 수정, 비활성화, 삭제, DRS 계획 생성 등 주요 작업 이후 이 탭을 통해 이벤트 발생 여부를 확인할 수 있다.</p>
 <h2 id="클러스터-상세-화면의-작업-버튼-영역">클러스터 상세 화면의 작업 버튼 영역</h2>
-<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_09.png" alt="클러스터 상세 화면의 작업 버튼 영역" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/04_clusters/cluster_09.webp" alt="클러스터 상세 화면의 작업 버튼 영역" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Clusters &gt; Cluster Detail</code></li>
 <li><strong>설명:</strong> Cluster 상세 화면 우측 상단의 작업 버튼을 통해 수정, 상태 제어, 삭제 등 관리 작업을 수행하는 영역이다.</li>

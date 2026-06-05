@@ -1,31 +1,31 @@
 <h1 id="volume-snapshot">Volume Snapshot</h1>
 <p>Volume Snapshot은 Volume의 특정 시점 데이터를 보관하는 복사본이다. 복구 지점 확인, Template 생성, Zone별 보관 상태 점검에 사용한다.</p>
 <br />
-<p><img src="/guide/html/images/02_storage/02_volume_snapshots/volume_snapshot_01.png" alt="스냅샷 상세 화면의 작업 버튼" style="width:10in" /></p>
+<p><img src="/guide/html/images/02_storage/02_volume_snapshots/volume_snapshot_01.webp" alt="스냅샷 상세 화면의 작업 버튼" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Storage &gt; Volume Snapshots &gt; Snapshot Detail</code></li>
 <li><strong>설명:</strong> 선택한 볼륨 스냅샷의 상세 정보와 상단 작업 버튼을 확인하는 화면이다.</li>
 </ul>
 <p>스냅샷 상세 화면에서는 선택한 볼륨 스냅샷의 상태, ID, 원본 볼륨, Zone, 계정, 도메인, 생성 시각을 확인할 수 있다. 화면 오른쪽 상단에는 스냅샷을 기반으로 수행할 수 있는 작업 버튼이 표시된다. 예시 화면에서는 Create Template 버튼이 강조되어 있으며, 스냅샷을 기반으로 템플릿을 생성하는 작업으로 연결된다.</p>
-<p><img src="/guide/html/images/02_storage/02_volume_snapshots/volume_snapshot_02.png" alt="볼륨 스냅샷 목록 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/02_storage/02_volume_snapshots/volume_snapshot_02.webp" alt="볼륨 스냅샷 목록 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Storage &gt; Volume Snapshots</code></li>
 <li><strong>설명:</strong> 생성된 볼륨 스냅샷 목록과 상태, 원본 볼륨, 생성 시각을 확인하는 화면이다.</li>
 </ul>
 <p>볼륨 스냅샷 목록 화면에서는 생성된 스냅샷의 이름, 상태, 원본 볼륨 이름, 생성 주기, 물리 크기, 생성 시각, 계정, 도메인, Zone 정보를 확인할 수 있다. 화면 예시에서는 ROOT-5, DATA-5, ROOT-6 볼륨에서 생성된 스냅샷이 BackedUp 상태로 표시된다. 목록에서 스냅샷 이름을 선택하면 해당 스냅샷의 상세 화면으로 이동할 수 있다.</p>
-<p><img src="/guide/html/images/02_storage/02_volume_snapshots/volume_snapshot_03.png" alt="볼륨 스냅샷 상세 정보 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/02_storage/02_volume_snapshots/volume_snapshot_03.webp" alt="볼륨 스냅샷 상세 정보 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Storage &gt; Volume Snapshots &gt; Snapshot Detail &gt; Details</code></li>
 <li><strong>설명:</strong> 선택한 볼륨 스냅샷의 기본 속성과 크기 정보를 확인하는 화면이다.</li>
 </ul>
 <p>스냅샷 상세 화면의 Details 탭에서는 스냅샷 이름, ID, 원본 볼륨 이름, 볼륨 유형, 생성 주기, 물리 크기, 가상 크기, 계정, 도메인, 생성 시각을 확인할 수 있다. 왼쪽 요약 영역에는 상태, ID, 원본 볼륨, Zone, 계정, 도메인 정보가 함께 표시된다. 이 정보는 스냅샷 복원, 템플릿 생성, Zone 복사 또는 삭제 작업 전 대상 스냅샷을 확인하는 데 사용된다.</p>
-<p><img src="/guide/html/images/02_storage/02_volume_snapshots/volume_snapshot_04.png" alt="볼륨 스냅샷 Zone 탭 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/02_storage/02_volume_snapshots/volume_snapshot_04.webp" alt="볼륨 스냅샷 Zone 탭 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Storage &gt; Volume Snapshots &gt; Snapshot Detail &gt; Zones</code></li>
 <li><strong>설명:</strong> 선택한 스냅샷이 등록된 Zone과 준비 상태를 확인하는 화면이다.</li>
 </ul>
 <p>Zones 탭에서는 선택한 스냅샷이 어느 Zone에 존재하는지와 해당 Zone에서 사용할 준비가 되었는지 확인할 수 있다. 화면 예시에서는 namu_zone에 스냅샷이 존재하며, Status는 BackedUp, Ready는 Yes로 표시된다. 다중 Zone 환경에서는 이 정보를 통해 스냅샷 복사, Zone별 삭제, 재해 복구용 복제 상태를 확인할 수 있다.</p>
-<p><img src="/guide/html/images/02_storage/02_volume_snapshots/volume_snapshot_05.png" alt="볼륨 스냅샷 이벤트 탭 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/02_storage/02_volume_snapshots/volume_snapshot_05.webp" alt="볼륨 스냅샷 이벤트 탭 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Storage &gt; Volume Snapshots &gt; Snapshot Detail &gt; Events</code></li>
 <li><strong>설명:</strong> 선택한 스냅샷과 관련된 이벤트 이력을 확인하는 화면이다.</li>

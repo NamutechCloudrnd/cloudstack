@@ -2,21 +2,21 @@
 <p>System VMs는 클라우드 플랫폼이 내부 관리 기능을 수행하기 위해 생성하고 관리하는 시스템 가상머신이다. 일반 사용자 Instance처럼 업무 애플리케이션을 실행하기 위한 대상이 아니며, 플랫폼 기능을 유지하기 위한 관리용 VM으로 이해해야 한다. 관리자는 System VM을 임의로 생성하거나 삭제하기보다 목록과 상세 화면에서 State, Agent state, System VM type, IP 주소, Host, Zone, 이벤트를 확인하여 플랫폼 상태를 점검한다.</p>
 <p>System VM 유형에는 웹 콘솔 접속을 중계하는 <code>consoleproxy</code>와 템플릿, ISO, 스냅샷 등 Secondary Storage 관련 작업을 지원하는 <code>secondarystoragevm</code>이 포함된다. System VM은 필요에 따라 플랫폼이 생성, 시작, 중지, 재시작할 수 있으므로 장애 분석 시 각 VM의 역할과 현재 상태를 함께 확인하는 것이 중요하다. 사용자 가이드에서는 조작 방법보다 역할, 조회 위치, 상태 확인 방법, 장애 시 확인 포인트를 중심으로 설명한다.</p>
 <h2 id="system-vm-목록-화면">System VM 목록 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/10_system_vms/system_vm_01.png" alt="System VM 목록 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/10_system_vms/system_vm_01.webp" alt="System VM 목록 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>System VMs</code></li>
 <li><strong>설명:</strong> Zone에 생성된 System VM의 이름, 실행 상태, Agent 상태, 유형, IP 주소, Version, Host, 아키텍처, Zone 정보를 확인하는 화면이다.</li>
 </ul>
 <p>System VM 목록 화면에서는 클라우드 운영에 필요한 관리용 VM을 표 형태로 조회한다. 화면에는 Name, State, Agent state, System VM type, IP address, Private IP address, Link-local/Control IP address, Version, Host, Arch, Zone 컬럼이 표시된다. 예시 화면에는 <code>consoleproxy</code> 유형의 <code>v-60-VM</code>과 <code>secondarystoragevm</code> 유형의 <code>s-61-VM</code>이 표시되며, 두 System VM 모두 <code>Running</code> 상태이고 Agent state가 <code>Up</code>으로 표시된다. 상단의 <code>Refresh</code> 버튼으로 목록을 갱신할 수 있고, 필터와 검색 기능을 사용해 특정 System VM을 좁혀 조회할 수 있다.</p>
 <h2 id="secondary-storage-vm-상세-정보-화면">Secondary Storage VM 상세 정보 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/10_system_vms/system_vm_02.png" alt="Secondary Storage VM 상세 정보 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/10_system_vms/system_vm_02.webp" alt="Secondary Storage VM 상세 정보 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>System VMs &gt; s-61-VM &gt; Details</code></li>
 <li><strong>설명:</strong> 선택한 Secondary Storage VM의 상태, Agent 상태, IP 주소, Gateway, Host, Zone, Template, System Offering 정보를 확인하는 화면이다.</li>
 </ul>
 <p>Secondary Storage VM 상세 정보 화면에서는 <code>secondarystoragevm</code> 유형 System VM의 기본 정보를 확인한다. 왼쪽 요약 영역에는 Status, ID, Public IP address, Template, System Offering, Host, Pod, Zone, Created 정보가 표시된다. 오른쪽 Details 탭에는 Name, ID, Agent state, System VM type, IP address, Private IP address, Link-local/Control IP address, Gateway, Host, Arch, Version, Zone 정보가 표시된다. Secondary Storage VM은 템플릿, ISO, 스냅샷 등 Secondary Storage 관련 작업을 지원하므로 해당 기능에 문제가 발생하면 이 화면에서 State, Agent state, Host, IP 주소, Zone을 먼저 확인한다.</p>
 <h2 id="console-proxy-vm-상세-정보-화면">Console Proxy VM 상세 정보 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/10_system_vms/system_vm_03.png" alt="Console Proxy VM 상세 정보 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/10_system_vms/system_vm_03.webp" alt="Console Proxy VM 상세 정보 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>System VMs &gt; v-60-VM &gt; Details</code></li>
 <li><strong>설명:</strong> 선택한 Console Proxy VM의 상태, Agent 상태, IP 주소, Gateway, Host, Zone, Template, System Offering 정보를 확인하는 화면이다.</li>

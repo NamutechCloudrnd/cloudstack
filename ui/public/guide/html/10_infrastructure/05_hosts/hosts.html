@@ -1,42 +1,42 @@
 <h1 id="hosts">Hosts</h1>
 <p>Hosts는 인프라에서 Instance를 실행하는 물리 서버 또는 Hypervisor 노드를 관리하는 기능이다. Host는 Zone, Pod, Cluster에 속하며 CPU, Memory, Network, GPU, Storage 접근성, Agent 연결 상태를 기반으로 Instance 배치 후보가 된다. 운영자는 Host의 State와 Resource state를 구분해 확인하고, 추가·유지보수·보안 키 배포·이벤트 조회 작업을 수행한다.</p>
 <h2 id="호스트-목록-화면">호스트 목록 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_01.png" alt="호스트 목록 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_01.webp" alt="호스트 목록 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Hosts</code></li>
 <li><strong>설명:</strong> 등록된 Host의 상태, 리소스 상태, IP, 아키텍처, Hypervisor, 버전, Cluster, Zone, Management Server 정보를 확인하는 화면이다.</li>
 </ul>
 <p>호스트 목록 화면에서는 등록된 Host를 표 형태로 조회한다. 화면에는 Name, State, Resource state, IP Address, Arch, Hypervisor, System VMs, Version, Cluster name, Zone, Management server 컬럼이 표시된다. 예시 화면에서는 KVM 기반 x86_64 Host 1대가 표시되며, Resource state는 <code>Enabled</code>로 표시된다. 상단의 <code>Add Host</code> 버튼을 통해 신규 Host 추가 작업을 시작할 수 있다.</p>
 <h2 id="호스트-추가-입력-화면">호스트 추가 입력 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_02.png" alt="호스트 추가 입력 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_02.webp" alt="호스트 추가 입력 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Hosts &gt; Add Host</code></li>
 <li><strong>설명:</strong> Zone, Pod, Cluster, Host 주소, 사용자명, 인증 방식, Host Tag, Dedicated 여부를 입력하여 신규 Host를 추가하는 화면이다.</li>
 </ul>
 <p>호스트 추가 화면에서는 신규 Host가 속할 Zone, Pod, Cluster를 선택하고 Host name 또는 관리 IP, username, 인증 방식을 입력한다. 화면 예시에서는 <code>Password</code> 인증 방식이 선택되어 있으며, <code>System SSH Key</code> 방식도 선택할 수 있다. <code>Host tags</code> 입력란을 통해 Host Tag를 지정할 수 있고, <code>Dedicated</code> 옵션을 통해 Host를 특정 계정 또는 도메인 전용 리소스로 사용할 수 있다.</p>
 <h2 id="호스트-상세-정보-화면">호스트 상세 정보 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_03.png" alt="호스트 상세 정보 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_03.webp" alt="호스트 상세 정보 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Hosts &gt; Host Detail &gt; Details</code></li>
 <li><strong>설명:</strong> 선택한 Host의 상태, 리소스 상태, IP, Hypervisor, 아키텍처, 유형, Cluster, Pod, Zone, Management Server 정보를 확인하는 화면이다.</li>
 </ul>
 <p>호스트 상세 정보 화면에서는 선택한 Host의 기본 속성과 리소스 사용량을 확인한다. 왼쪽 요약 영역에는 Status, Resource state, ID, IP address, CPU, Memory, Network, Cluster 정보가 표시되며, 오른쪽 Details 탭에는 Name, ID, Resource state, IP Address, Hypervisor, Arch, Type, Cluster name, Pod name, Zone, Management server 등의 항목이 표시된다. Host Type이 <code>Routing</code>으로 표시되면 일반 Instance 실행 리소스로 사용하는 Host임을 확인할 수 있다.</p>
 <h2 id="호스트-gpu-탭-화면">호스트 GPU 탭 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_04.png" alt="호스트 GPU 탭 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_04.webp" alt="호스트 GPU 탭 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Hosts &gt; Host Detail &gt; GPU</code></li>
 <li><strong>설명:</strong> Host에서 GPU 장치를 검색하거나 등록하고, GPU 자원 요약과 장치 목록을 확인하는 화면이다.</li>
 </ul>
 <p>GPU 탭에서는 Host에 연결된 GPU 장치를 검색하고 자원으로 등록할 수 있다. 화면에는 <code>Discover GPU devices</code> 버튼과 <code>Add GPU Device</code> 버튼이 표시되며, Summary와 GPU Devices 하위 탭이 제공된다. Summary 표에는 GPU 이름, 전체 수량, 할당 수량, 사용 가능 수량, 연결된 Instance 수를 표시할 수 있다. 예시 화면에서는 GPU 데이터가 없는 상태로 표시된다.</p>
 <h2 id="호스트-이벤트-탭-화면">호스트 이벤트 탭 화면</h2>
-<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_05.png" alt="호스트 이벤트 탭 화면" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_05.webp" alt="호스트 이벤트 탭 화면" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Hosts &gt; Host Detail &gt; Events</code></li>
 <li><strong>설명:</strong> Host와 관련된 이벤트 수준, 유형, 상태, 사용자, 계정, 도메인, 생성 시각을 조회하는 화면이다.</li>
 </ul>
 <p>Events 탭에서는 선택한 Host와 관련된 작업 이력과 이벤트를 조회한다. 화면에는 Level, Type, State, Username, Account, Domain, Created 컬럼이 표시된다. Host 추가, 활성화/비활성화, 유지보수 전환, 보안 키 배포, GPU 검색, 삭제 등의 작업 이후 이 탭에서 관련 이벤트 발생 여부를 확인할 수 있다.</p>
 <h2 id="호스트-댓글-탭과-보안-키-배포-작업-버튼">호스트 댓글 탭과 보안 키 배포 작업 버튼</h2>
-<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_06.png" alt="호스트 댓글 탭과 보안 키 배포 작업 버튼" style="width:10in" /></p>
+<p><img src="/guide/html/images/10_infrastructure/05_hosts/host_06.webp" alt="호스트 댓글 탭과 보안 키 배포 작업 버튼" style="width:10in" /></p>
 <ul>
 <li><strong>화면 위치:</strong> <code>Infrastructure &gt; Hosts &gt; Host Detail &gt; Comments / Action Icons</code></li>
 <li><strong>설명:</strong> Host 운영 메모를 등록하고, 상단 작업 버튼에서 Host security key 배포 기능을 확인하는 화면이다.</li>
