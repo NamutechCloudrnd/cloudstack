@@ -190,4 +190,4 @@ override_dh_strip_nondeterminism:
 	# Disable dh_strip_nondeterminism to speed up the build
 
 override_dh_installdocs:
-	dh_installdocs -A tools/whisker/LICENSE tools/whisker/NOTICE INSTALL.md
+	dh_installdocs -A tools/whisker/LICENSE tools/whisker/NOTICE THIRD-PARTY-LICENSES INSTALL.md

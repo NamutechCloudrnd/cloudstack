@@ -401,18 +401,25 @@ fi
 #License files from whisker
 install -D tools/whisker/NOTICE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-management-%{version}/NOTICE
 install -D tools/whisker/LICENSE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-management-%{version}/LICENSE
+install -D THIRD-PARTY-LICENSES ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-management-%{version}/THIRD-PARTY-LICENSES
 install -D tools/whisker/NOTICE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-common-%{version}/NOTICE
 install -D tools/whisker/LICENSE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-common-%{version}/LICENSE
+install -D THIRD-PARTY-LICENSES ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-common-%{version}/THIRD-PARTY-LICENSES
 install -D tools/whisker/NOTICE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-agent-%{version}/NOTICE
 install -D tools/whisker/LICENSE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-agent-%{version}/LICENSE
+install -D THIRD-PARTY-LICENSES ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-agent-%{version}/THIRD-PARTY-LICENSES
 install -D tools/whisker/NOTICE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-usage-%{version}/NOTICE
 install -D tools/whisker/LICENSE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-usage-%{version}/LICENSE
+install -D THIRD-PARTY-LICENSES ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-usage-%{version}/THIRD-PARTY-LICENSES
 install -D tools/whisker/NOTICE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-ui-%{version}/NOTICE
 install -D tools/whisker/LICENSE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-ui-%{version}/LICENSE
+install -D THIRD-PARTY-LICENSES ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-ui-%{version}/THIRD-PARTY-LICENSES
 install -D tools/whisker/NOTICE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-marvin-%{version}/NOTICE
 install -D tools/whisker/LICENSE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-marvin-%{version}/LICENSE
+install -D THIRD-PARTY-LICENSES ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-marvin-%{version}/THIRD-PARTY-LICENSES
 install -D tools/whisker/NOTICE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-integration-tests-%{version}/NOTICE
 install -D tools/whisker/LICENSE ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-integration-tests-%{version}/LICENSE
+install -D THIRD-PARTY-LICENSES ${RPM_BUILD_ROOT}%{_defaultdocdir}/%{name}-integration-tests-%{version}/THIRD-PARTY-LICENSES
 
 %clean
 [ ${RPM_BUILD_ROOT} != "/" ] && rm -rf ${RPM_BUILD_ROOT}
@@ -633,6 +640,7 @@ pip3 install --upgrade /usr/share/cloudstack-marvin/Marvin-*.tar.gz
 %dir %attr(0770,root,root) %{_localstatedir}/log/%{name}/ipallocator
 %{_defaultdocdir}/%{name}-management-%{version}/LICENSE
 %{_defaultdocdir}/%{name}-management-%{version}/NOTICE
+%{_defaultdocdir}/%{name}-management-%{version}/THIRD-PARTY-LICENSES
 %{_datadir}/%{name}-management/setup/wheel/*.whl
 %dir %attr(0755,cloud,cloud) %{_sysconfdir}/%{name}/extensions
 %attr(0755,cloud,cloud) %{_sysconfdir}/%{name}/extensions/*
@@ -656,6 +664,7 @@ pip3 install --upgrade /usr/share/cloudstack-marvin/Marvin-*.tar.gz
 %dir %{_datadir}/%{name}-agent/plugins
 %{_defaultdocdir}/%{name}-agent-%{version}/LICENSE
 %{_defaultdocdir}/%{name}-agent-%{version}/NOTICE
+%{_defaultdocdir}/%{name}-agent-%{version}/THIRD-PARTY-LICENSES
 
 %files common
 %dir %attr(0755,root,root) %{_datadir}/%{name}-common/python-site/cloudutils
@@ -672,12 +681,14 @@ pip3 install --upgrade /usr/share/cloudstack-marvin/Marvin-*.tar.gz
 %attr(0644, root, root) %{_datadir}/%{name}-common/lib/%{name}-utils.jar
 %{_defaultdocdir}/%{name}-common-%{version}/LICENSE
 %{_defaultdocdir}/%{name}-common-%{version}/NOTICE
+%{_defaultdocdir}/%{name}-common-%{version}/THIRD-PARTY-LICENSES
 
 %files ui
 %config(noreplace) %attr(0640,root,cloud) %{_sysconfdir}/%{name}/ui/config.json
 %{_datadir}/%{name}-ui/*
 %{_defaultdocdir}/%{name}-ui-%{version}/LICENSE
 %{_defaultdocdir}/%{name}-ui-%{version}/NOTICE
+%{_defaultdocdir}/%{name}-ui-%{version}/THIRD-PARTY-LICENSES
 
 %files usage
 %attr(0644,root,root) %{_unitdir}/%{name}-usage.service
@@ -690,16 +701,19 @@ pip3 install --upgrade /usr/share/cloudstack-marvin/Marvin-*.tar.gz
 %attr(0644,root,root) %{_sysconfdir}/%{name}/usage/log4j-cloud.xml
 %{_defaultdocdir}/%{name}-usage-%{version}/LICENSE
 %{_defaultdocdir}/%{name}-usage-%{version}/NOTICE
+%{_defaultdocdir}/%{name}-usage-%{version}/THIRD-PARTY-LICENSES
 
 %files marvin
 %attr(0644,root,root) %{_datadir}/%{name}-marvin/Marvin*.tar.gz
 %{_defaultdocdir}/%{name}-marvin-%{version}/LICENSE
 %{_defaultdocdir}/%{name}-marvin-%{version}/NOTICE
+%{_defaultdocdir}/%{name}-marvin-%{version}/THIRD-PARTY-LICENSES
 
 %files integration-tests
 %attr(0755,root,root) %{_datadir}/%{name}-integration-tests/*
 %{_defaultdocdir}/%{name}-integration-tests-%{version}/LICENSE
 %{_defaultdocdir}/%{name}-integration-tests-%{version}/NOTICE
+%{_defaultdocdir}/%{name}-integration-tests-%{version}/THIRD-PARTY-LICENSES
 
 %if "%{_ossnoss}" == "noredist"
 %files mysql-ha

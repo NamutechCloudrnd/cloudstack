@@ -29,7 +29,7 @@
 [![Simulator CI](https://github.com/apache/cloudstack/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/apache/cloudstack/actions/workflows/ci.yml)
 [![UI Build](https://github.com/apache/cloudstack/actions/workflows/ui.yml/badge.svg?branch=main)](https://github.com/apache/cloudstack/actions/workflows/ui.yml)
 
-[![Apache CloudStack](tools/logo/apache_cloudstack.png)](https://cloudstack.apache.org/)
+[![namuVirt](ui/public/assets/logo.svg)](https://cloudstack.apache.org/)
 
 Apache CloudStack is open source software designed to deploy and manage large
 networks of virtual machines, as a highly available, highly scalable
@@ -42,6 +42,14 @@ CloudStack is a turnkey solution that includes the entire "stack" of features
 most organizations want with an IaaS cloud: compute orchestration,
 Network-as-a-Service, user and account management, a full and open native API,
 resource accounting, and a first-class User Interface (UI).
+
+## namuVirt Attribution
+
+namuVirt is based on Apache CloudStack. This product includes modified software
+based on Apache CloudStack, and changes have been made by NAMU.
+
+This product is powered by Apache CloudStack. Apache CloudStack is a trademark
+of The Apache Software Foundation.
 
 CloudStack currently supports the most popular hypervisors:
 VMware vSphere, KVM, XenServer, XenProject and Hyper-V as well as

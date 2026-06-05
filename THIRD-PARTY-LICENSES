@@ -1,0 +1,14 @@
+Third-Party License Notices
+===========================
+
+namuVirt is based on Apache CloudStack and includes third-party components
+distributed with Apache CloudStack.
+
+Third-party license notices are collected in the project NOTICE files:
+
+* NOTICE
+* tools/whisker/NOTICE
+
+Package builds also install tools/whisker/LICENSE and tools/whisker/NOTICE
+with the generated Debian and RPM artifacts. Dependency metadata is maintained
+in the Maven POM files and the UI npm package metadata.
