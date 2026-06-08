@@ -29,7 +29,7 @@
         <img class="center" src="assets/bg-what-is-cloudstack.png">
         <pre>{{ $t('message.installwizard.cloudstack.helptext.header') }}</pre>
         <!-- <pre>{{ $t('message.installwizard.cloudstack.helptext.website') }}<a href="https://cloudstack.apache.org" target="_blank">https://cloudstack.apache.org</a></pre> -->
-        <pre>{{ $t('message.installwizard.cloudstack.helptext.document') }}<a :href="'http://10.10.14.129:8080/guide/html/'" target="_blank">http://10.10.14.129:8080/guide/html/</a></pre>
+        <pre>{{ $t('message.installwizard.cloudstack.helptext.document') }}<a :href="'http://10.10.14.130:8080/guide/html/'" target="_blank">http://10.10.14.130:8080/guide/html/</a></pre>
         <!-- <pre>{{ $t('message.installwizard.cloudstack.helptext.releasenotes') }}<a :href="'https://docs.cloudstack.apache.org/en/' + cloudstackminorversion + '/releasenotes/'" target="_blank">https://docs.cloudstack.apache.org/en/{{ cloudstackminorversion }}/releasenotes/</a></pre> -->
 
         <!-- <pre>{{ $t('message.installwizard.cloudstack.helptext.mailinglists') }}<a href="https://cloudstack.apache.org/mailing-lists.html" target="_blank">https://cloudstack.apache.org/mailing-lists.html</a></pre> -->
