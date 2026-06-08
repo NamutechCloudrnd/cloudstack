@@ -1617,6 +1617,7 @@
     "label.monitor.timeout": "Timeout (sec)",
     "label.monitor.type": "Monitor Type",
     "label.monitor.url": "URL Path",
+    "label.monitoring":  "Monitoring",
     "label.monthly": "Monthly",
     "label.more.access.dashboard.ui": "More about accessing dashboard UI",
     "label.mount.cks.iso.on.vr": "Use CKS packages from Virtual Router",
