@@ -7,7 +7,7 @@
       "apiBase": "/client/api"
     }
   ],
-  "docBase": "http://10.10.14.130:8080/guide/html",
+  "docBase": "/guide/html",
   "grafanaBase": "http://10.10.14.130:3000/dashboards",
   "appTitle": "namuVirt",
   "footer": "",
