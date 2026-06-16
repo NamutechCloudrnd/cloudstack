@@ -103,7 +103,7 @@
             </a-alert>
             <a-result
               status="success"
-              :title="$t('label.download') + ' CloudStack CloudMonkey CLI'"
+              :title="$t('label.download') + ' CloudMonkey CLI'"
               sub-title="For API automation and orchestration"
             >
               <template #extra>
@@ -198,6 +198,7 @@ export default {
     }
   },
   created () {
+    this.selectFirstApi()
     if (!('getUserKeys' in this.$store.getters.apis)) {
       return
     }
@@ -209,6 +210,12 @@ export default {
     })
   },
   methods: {
+    selectFirstApi () {
+      const firstApi = Object.keys(this.$store.getters.apis).sort()[0]
+      if (firstApi) {
+        this.showApi(firstApi)
+      }
+    },
     showApi (api) {
       this.selectedApi = api
       this.selectedParams = this.$store.getters.apis[api].params
