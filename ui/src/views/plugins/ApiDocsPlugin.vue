@@ -101,7 +101,7 @@
                 <a href="https://docs.cloudstack.apache.org/en/latest/developersguide/dev.html" target="_blank">{{ $t('label.api.docs.description') }}</a>
               </template>
             </a-alert>
-            <a-result
+            <!-- <a-result
               status="success"
               :title="$t('label.download') + ' CloudMonkey CLI'"
               sub-title="For API automation and orchestration"
@@ -145,7 +145,7 @@
                   </div>
                 </div>
               </template>
-            </a-result>
+            </a-result> -->
           </span>
         </a-card>
       </template>
