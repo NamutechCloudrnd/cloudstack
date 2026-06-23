@@ -20,13 +20,6 @@ function renderMenu() {
   sidebar.innerHTML = ''
   sidebar.classList.add('menu-sidebar')
 
-  const installLink = document.createElement('a')
-  installLink.className = 'sidebar-top-link'
-  installLink.href = '#/install'
-  installLink.dataset.path = 'install'
-  installLink.innerHTML = '<i class="fa fa-download"></i><span>설치 가이드</span>'
-  sidebar.appendChild(installLink)
-
   const sidebarTitle = document.createElement('div')
   sidebarTitle.className = 'sidebar-top-link sidebar-top-link--static'
   sidebarTitle.innerHTML = '<i class="fa fa-book"></i><span>사용자 설명서</span>'
@@ -36,6 +29,13 @@ function renderMenu() {
     const accordion = createAccordionItem(category)
     sidebar.appendChild(accordion)
   })
+
+  const usecaseLink = document.createElement('a')
+  usecaseLink.className = 'sidebar-top-link'
+  usecaseLink.href = '#/usecase'
+  usecaseLink.dataset.path = 'usecase'
+  usecaseLink.innerHTML = '<i class="fa fa-download"></i><span>Use Case</span>'
+  sidebar.appendChild(usecaseLink)
 }
 
 function createAccordionItem(category) {
