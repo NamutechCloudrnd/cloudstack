@@ -1,0 +1,95 @@
+<h1 id="object-storage">Object Storage</h1>
+<p>Object Storage는 Bucket을 제공하는 객체 저장소 연결을 관리한다. URL과 인증 정보를 등록하고, 생성된 버킷 사용 가능 여부를 검증한다.</p>
+<h2 id="객체-스토리지-목록-화면">객체 스토리지 목록 화면</h2>
+<p><img src="/guide/html/images/manual/10_infrastructure/09_object_storage/object_storage_02.webp" alt="객체 스토리지 목록 화면" style="width: 10in" /></p>
+<ul>
+<li><strong>화면 위치:</strong> <code>Infrastructure &gt; Object Storage</code></li>
+<li><strong>설명:</strong> 등록된 객체 스토리지 풀 목록과 추가 버튼을 확인하는 화면이다.</li>
+</ul>
+<p>객체 스토리지 목록 화면에서는 등록된 객체 스토리지 풀의 이름, URL, Provider 정보를 확인할 수 있다. 화면 예시에서는 아직 등록된 객체 스토리지가 없어 데이터 없음 상태로 표시된다. 상단의 Add Object Storage 버튼을 통해 외부 객체 스토리지를 등록할 수 있으며, 검색 입력창을 사용해 등록된 항목을 조회할 수 있다.</p>
+<h2 id="객체-스토리지-추가-입력-화면">객체 스토리지 추가 입력 화면</h2>
+<p><img src="/guide/html/images/manual/10_infrastructure/09_object_storage/object_storage_03.webp" alt="객체 스토리지 추가 입력 화면" style="width: 10in" /></p>
+<ul>
+<li><strong>화면 위치:</strong> <code>Infrastructure &gt; Object Storage &gt; Add Object Storage</code></li>
+<li><strong>설명:</strong> 외부 객체 스토리지를 등록하기 위해 이름, Provider, URL, 접근 키, 비밀 키, 크기를 입력하는 화면이다.</li>
+</ul>
+<p>객체 스토리지 추가 화면에서는 객체 스토리지 이름, Provider, 접속 URL, Access Key, Secret Key, Size를 입력한다. 화면 예시에서는 이름이 hpBucket, Provider는 MinIO, URL은 http://10.10.3.104:9000, Access Key는 minio_admin, Secret Key는 minio_password, Size는 20으로 입력되어 있다. 입력값을 확인한 뒤 OK 버튼을 선택하면 객체 스토리지 등록을 요청한다.</p>
+<h2 id="생성된-객체-스토리지-목록-화면">생성된 객체 스토리지 목록 화면</h2>
+<p><img src="/guide/html/images/manual/10_infrastructure/09_object_storage/object_storage_04.webp" alt="생성된 객체 스토리지 목록 화면" style="width: 10in" /></p>
+<ul>
+<li><strong>화면 위치:</strong> <code>Infrastructure &gt; Object Storage</code></li>
+<li><strong>설명:</strong> 객체 스토리지 등록 후 목록에 이름, URL, Provider가 표시되는 화면이다.</li>
+</ul>
+<p>객체 스토리지를 추가하면 목록에 신규 객체 스토리지 풀이 표시된다. 화면 예시에서는 hpBucket 항목이 등록되어 있으며, URL은 http://10.10.3.104:9000, Provider는 MinIO로 표시된다. 우측 상단에는 Add Object Storage 성공 알림이 표시되어 등록 작업이 완료되었음을 확인할 수 있다.</p>
+<h2 id="객체-스토리지-상세-정보-화면">객체 스토리지 상세 정보 화면</h2>
+<p><img src="/guide/html/images/manual/10_infrastructure/09_object_storage/object_storage_05.webp" alt="객체 스토리지 상세 정보 화면" style="width: 10in" /></p>
+<ul>
+<li><strong>화면 위치:</strong> <code>Infrastructure &gt; Object Storage &gt; Object Storage Detail &gt; Details</code></li>
+<li><strong>설명:</strong> 선택한 객체 스토리지 풀의 이름, URL, Provider, 용량 정보를 확인하는 화면이다.</li>
+</ul>
+<p>객체 스토리지 상세 화면에서는 선택한 객체 스토리지 풀의 이름, ID, URL, Provider, Total size, Allocated size, Used size를 확인할 수 있다. 화면 예시에서는 hpBucket이 등록되어 있으며, URL은 http://10.10.3.104:9000, Provider는 MinIO, Used size는 0으로 표시된다. 상단의 작업 버튼을 통해 객체 스토리지 정보를 수정하거나 삭제할 수 있다.</p>
+<h2 id="주요-작업">주요 작업</h2>
+<h2 id="object-storage-등록">Object Storage 등록</h2>
+<ol type="1">
+<li><code>Infrastructure &gt; Object Storage</code>로 이동한다.</li>
+<li><code>Add Object Storage</code>를 선택한다.</li>
+<li>Name, Provider, URL, Access Key, Secret Key, Size를 입력한다.</li>
+<li>저장 후 목록에서 신규 Object Storage가 표시되는지 확인한다.</li>
+</ol>
+<h2 id="object-storage-상세-조회">Object Storage 상세 조회</h2>
+<ol type="1">
+<li>목록에서 대상 Object Storage를 선택한다.</li>
+<li>상세 화면에서 URL, Provider, Total size, Allocated size, Used size를 확인한다.</li>
+<li>등록 후 Bucket 생성과 객체 업로드 테스트로 실제 사용 가능 여부를 검증한다.</li>
+</ol>
+<h2 id="입력-항목">입력 항목</h2>
+<h2 id="객체-스토리지-추가-입력-화면-1">객체 스토리지 추가 입력 화면</h2>
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Name</td>
+<td>등록할 객체 스토리지 풀 이름을 입력한다.</td>
+</tr>
+<tr>
+<td>Provider</td>
+<td>객체 스토리지 제공자를 선택한다. 화면 예시에서는 MinIO가 선택되어 있다.</td>
+</tr>
+<tr>
+<td>URL</td>
+<td>객체 스토리지 서비스 접속 URL을 입력한다.</td>
+</tr>
+<tr>
+<td>Access Key</td>
+<td>객체 스토리지 접근에 사용할 액세스 키를 입력한다.</td>
+</tr>
+<tr>
+<td>Secret Key</td>
+<td>객체 스토리지 접근에 사용할 비밀 키를 입력한다.</td>
+</tr>
+<tr>
+<td>Size</td>
+<td>객체 스토리지 풀의 사용 가능 크기 또는 할당 크기를 입력한다.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="상태-및-제약-조건">상태 및 제약 조건</h2>
+<ul>
+<li>목록에는 Name, URL, Provider가 표시된다.</li>
+<li>상세 화면에서는 전체 용량, 할당 용량, 사용 용량을 확인할 수 있다.</li>
+<li>입력한 URL은 관리 서버와 사용자 접근 경로에서 연결 가능해야 한다.</li>
+<li>삭제나 접속 정보 변경은 해당 Object Storage를 사용하는 Bucket과 객체 접근에 영향을 줄 수 있다.</li>
+</ul>
+<h2 id="주의사항">주의사항</h2>
+<ul>
+<li>외부 객체 스토리지 콘솔은 별도 접근 권한과 인증 정보를 사용할 수 있으므로, 사용자 가이드에 연결 정보를 작성할 때 실제 운영 계정 정보가 노출되지 않도록 주의해야 한다.</li>
+<li>입력한 URL은 관리 서버와 사용자 접근 경로에서 연결 가능해야 한다.</li>
+<li>객체 스토리지 Provider가 제공하는 버킷, 버전 관리, 암호화, 객체 잠금 지원 범위를 사전에 확인해야 한다.</li>
+<li>객체 스토리지 등록 후에는 버킷 생성과 객체 업로드 테스트를 통해 실제 사용 가능 여부를 검증해야 한다.</li>
+<li>객체 스토리지를 삭제하거나 접속 정보를 변경하면 해당 스토리지를 사용하는 버킷과 객체 접근에 영향을 줄 수 있다.</li>
+</ul>

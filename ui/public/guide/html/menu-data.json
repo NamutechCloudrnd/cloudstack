@@ -1,5 +1,5 @@
 {
-  "menu": [
+  "manual": [
     {
       "id": "01_compute",
       "label": "Compute",
@@ -8,47 +8,47 @@
         {
           "id": "01_instances",
           "label": "Instances",
-          "path": "01_compute/01_instances/instances.html"
+          "path": "manual/01_compute/01_instances/instances.html"
         },
         {
           "id": "02_instances_snapshots",
           "label": "Instances Snapshots",
-          "path": "01_compute/02_instances_snapshots/instances_snapshots.html"
+          "path": "manual/01_compute/02_instances_snapshots/instances_snapshots.html"
         },
         {
           "id": "03_kubernetes",
           "label": "Kubernetes",
-          "path": "01_compute/03_kubernetes/kubernetes.html"
+          "path": "manual/01_compute/03_kubernetes/kubernetes.html"
         },
         {
           "id": "04_autoscaling_groups",
           "label": "Autoscaling Groups",
-          "path": "01_compute/04_autoscaling_groups/autoscaling_groups.html"
+          "path": "manual/01_compute/04_autoscaling_groups/autoscaling_groups.html"
         },
         {
           "id": "05_instance_groups",
           "label": "Instance Groups",
-          "path": "01_compute/05_instance_groups/instance_groups.html"
+          "path": "manual/01_compute/05_instance_groups/instance_groups.html"
         },
         {
           "id": "06_ssh_key_pairs",
           "label": "SSH Key Pairs",
-          "path": "01_compute/06_ssh_key_pairs/ssh_key_pairs.html"
+          "path": "manual/01_compute/06_ssh_key_pairs/ssh_key_pairs.html"
         },
         {
           "id": "07_user_data_library",
           "label": "User Data Library",
-          "path": "01_compute/07_user_data_library/user_data_library.html"
+          "path": "manual/01_compute/07_user_data_library/user_data_library.html"
         },
         {
           "id": "08_cni_configuration",
           "label": "CNI Configuration",
-          "path": "01_compute/08_cni_configuration/cni_configuration.html"
+          "path": "manual/01_compute/08_cni_configuration/cni_configuration.html"
         },
         {
           "id": "09_affinity_groups",
           "label": "Affinity Groups",
-          "path": "01_compute/09_affinity_groups/affinity_groups.html"
+          "path": "manual/01_compute/09_affinity_groups/affinity_groups.html"
         }
       ]
     },
@@ -60,37 +60,37 @@
         {
           "id": "01_volumes",
           "label": "Volumes",
-          "path": "02_storage/01_volumes/volumes.html"
+          "path": "manual/02_storage/01_volumes/volumes.html"
         },
         {
           "id": "02_volume_snapshots",
           "label": "Volume Snapshots",
-          "path": "02_storage/02_volume_snapshots/volume_snapshots.html"
+          "path": "manual/02_storage/02_volume_snapshots/volume_snapshots.html"
         },
         {
           "id": "03_snapshot_policies",
           "label": "Snapshot Policies",
-          "path": "02_storage/03_snapshot_policies/snapshot_policies.html"
+          "path": "manual/02_storage/03_snapshot_policies/snapshot_policies.html"
         },
         {
           "id": "04_backups",
           "label": "Backups",
-          "path": "02_storage/04_backups/backups.html"
+          "path": "manual/02_storage/04_backups/backups.html"
         },
         {
           "id": "05_backup_schedules",
           "label": "Backup Schedules",
-          "path": "02_storage/05_backup_schedules/backup_schedules.html"
+          "path": "manual/02_storage/05_backup_schedules/backup_schedules.html"
         },
         {
           "id": "06_buckets",
           "label": "Buckets",
-          "path": "02_storage/06_buckets/buckets.html"
+          "path": "manual/02_storage/06_buckets/buckets.html"
         },
         {
           "id": "07_shared_filesystems",
           "label": "Shared Filesystems",
-          "path": "02_storage/07_shared_filesystems/shared_filesystems.html"
+          "path": "manual/02_storage/07_shared_filesystems/shared_filesystems.html"
         }
       ]
     },
@@ -102,67 +102,67 @@
         {
           "id": "01_guest_networks",
           "label": "Guest Networks",
-          "path": "03_network/01_guest_networks/guest_networks.html"
+          "path": "manual/03_network/01_guest_networks/guest_networks.html"
         },
         {
           "id": "02_vpc",
           "label": "VPC",
-          "path": "03_network/02_vpc/vpc.html"
+          "path": "manual/03_network/02_vpc/vpc.html"
         },
         {
           "id": "03_security_group",
           "label": "Security Group",
-          "path": "03_network/03_security_group/security_group.html"
+          "path": "manual/03_network/03_security_group/security_group.html"
         },
         {
           "id": "04_vnf_appliances",
           "label": "VNF Appliances",
-          "path": "03_network/04_vnf_appliances/vnf_appliances.html"
+          "path": "manual/03_network/04_vnf_appliances/vnf_appliances.html"
         },
         {
           "id": "05_public_ip_addresses",
           "label": "Public IP Addresses",
-          "path": "03_network/05_public_ip_addresses/public_ip_addresses.html"
+          "path": "manual/03_network/05_public_ip_addresses/public_ip_addresses.html"
         },
         {
           "id": "06_as_numbers",
           "label": "AS Numbers",
-          "path": "03_network/06_as_numbers/as_numbers.html"
+          "path": "manual/03_network/06_as_numbers/as_numbers.html"
         },
         {
           "id": "07_site_to_site_vpn",
           "label": "Site to Site VPN",
-          "path": "03_network/07_site_to_site_vpn/site_to_site_vpn.html"
+          "path": "manual/03_network/07_site_to_site_vpn/site_to_site_vpn.html"
         },
         {
           "id": "08_vpn_connections",
           "label": "VPN Connections",
-          "path": "03_network/08_vpn_connections/vpn_connections.html"
+          "path": "manual/03_network/08_vpn_connections/vpn_connections.html"
         },
         {
           "id": "09_network_acls",
           "label": "Network ACLs",
-          "path": "03_network/09_network_acls/network_acls.html"
+          "path": "manual/03_network/09_network_acls/network_acls.html"
         },
         {
           "id": "10_vpn_users",
           "label": "VPN Users",
-          "path": "03_network/10_vpn_users/vpn_users.html"
+          "path": "manual/03_network/10_vpn_users/vpn_users.html"
         },
         {
           "id": "11_vpn_customer_gateway",
           "label": "VPN Customer Gateway",
-          "path": "03_network/11_vpn_customer_gateway/vpn_customer_gateway.html"
+          "path": "manual/03_network/11_vpn_customer_gateway/vpn_customer_gateway.html"
         },
         {
           "id": "12_guest_vlan",
           "label": "Guest VLAN",
-          "path": "03_network/12_guest_vlan/guest_vlan.html"
+          "path": "manual/03_network/12_guest_vlan/guest_vlan.html"
         },
         {
           "id": "13_ipv4_subnets",
           "label": "IPv4 Subnets",
-          "path": "03_network/13_ipv4_subnets/ipv4_subnets.html"
+          "path": "manual/03_network/13_ipv4_subnets/ipv4_subnets.html"
         }
       ]
     },
@@ -174,17 +174,17 @@
         {
           "id": "01_templates",
           "label": "Templates",
-          "path": "04_images/01_templates/templates.html"
+          "path": "manual/04_images/01_templates/templates.html"
         },
         {
           "id": "02_isos",
           "label": "ISOs",
-          "path": "04_images/02_isos/isos.html"
+          "path": "manual/04_images/02_isos/isos.html"
         },
         {
           "id": "03_kubernetes_isos",
           "label": "Kubernetes ISOs",
-          "path": "04_images/03_kubernetes_isos/kubernetes_isos.html"
+          "path": "manual/04_images/03_kubernetes_isos/kubernetes_isos.html"
         }
       ]
     },
@@ -196,7 +196,7 @@
         {
           "id": "01_events",
           "label": "Events",
-          "path": "05_events/01_events/events.html"
+          "path": "manual/05_events/01_events/events.html"
         }
       ]
     },
@@ -208,7 +208,7 @@
         {
           "id": "01_projects",
           "label": "Projects",
-          "path": "06_projects/01_projects/projects.html"
+          "path": "manual/06_projects/01_projects/projects.html"
         }
       ]
     },
@@ -220,7 +220,7 @@
         {
           "id": "01_roles",
           "label": "Roles",
-          "path": "07_roles/01_roles/roles.html"
+          "path": "manual/07_roles/01_roles/roles.html"
         }
       ]
     },
@@ -232,7 +232,7 @@
         {
           "id": "01_accounts",
           "label": "Accounts",
-          "path": "08_accounts/01_accounts/accounts.html"
+          "path": "manual/08_accounts/01_accounts/accounts.html"
         }
       ]
     },
@@ -244,7 +244,7 @@
         {
           "id": "01_domains",
           "label": "Domains",
-          "path": "09_domains/01_domains/domains.html"
+          "path": "manual/09_domains/01_domains/domains.html"
         }
       ]
     },
@@ -256,82 +256,82 @@
         {
           "id": "01_summary",
           "label": "Summary",
-          "path": "10_infrastructure/01_summary/summary.html"
+          "path": "manual/10_infrastructure/01_summary/summary.html"
         },
         {
           "id": "02_zones",
           "label": "Zones",
-          "path": "10_infrastructure/02_zones/zones.html"
+          "path": "manual/10_infrastructure/02_zones/zones.html"
         },
         {
           "id": "03_pods",
           "label": "Pods",
-          "path": "10_infrastructure/03_pods/pods.html"
+          "path": "manual/10_infrastructure/03_pods/pods.html"
         },
         {
           "id": "04_clusters",
           "label": "Clusters",
-          "path": "10_infrastructure/04_clusters/clusters.html"
+          "path": "manual/10_infrastructure/04_clusters/clusters.html"
         },
         {
           "id": "05_hosts",
           "label": "Hosts",
-          "path": "10_infrastructure/05_hosts/hosts.html"
+          "path": "manual/10_infrastructure/05_hosts/hosts.html"
         },
         {
           "id": "06_primary_storage",
           "label": "Primary Storage",
-          "path": "10_infrastructure/06_primary_storage/primary_storage.html"
+          "path": "manual/10_infrastructure/06_primary_storage/primary_storage.html"
         },
         {
           "id": "07_secondary_storage",
           "label": "Secondary Storage",
-          "path": "10_infrastructure/07_secondary_storage/secondary_storage.html"
+          "path": "manual/10_infrastructure/07_secondary_storage/secondary_storage.html"
         },
         {
           "id": "08_backup_repository",
           "label": "Backup Repository",
-          "path": "10_infrastructure/08_backup_repository/backup_repository.html"
+          "path": "manual/10_infrastructure/08_backup_repository/backup_repository.html"
         },
         {
           "id": "09_object_storage",
           "label": "Object Storage",
-          "path": "10_infrastructure/09_object_storage/object_storage.html"
+          "path": "manual/10_infrastructure/09_object_storage/object_storage.html"
         },
         {
           "id": "10_system_vms",
           "label": "System VMs",
-          "path": "10_infrastructure/10_system_vms/system_vms.html"
+          "path": "manual/10_infrastructure/10_system_vms/system_vms.html"
         },
         {
           "id": "11_virtual_routers",
           "label": "Virtual Routers",
-          "path": "10_infrastructure/11_virtual_routers/virtual_routers.html"
+          "path": "manual/10_infrastructure/11_virtual_routers/virtual_routers.html"
         },
         {
           "id": "12_internal_lb",
           "label": "Internal LB",
-          "path": "10_infrastructure/12_internal_lb/internal_lb.html"
+          "path": "manual/10_infrastructure/12_internal_lb/internal_lb.html"
         },
         {
           "id": "13_management_servers",
           "label": "Management Servers",
-          "path": "10_infrastructure/13_management_servers/management_servers.html"
+          "path": "manual/10_infrastructure/13_management_servers/management_servers.html"
         },
         {
           "id": "14_cpu_sockets",
           "label": "CPU Sockets",
-          "path": "10_infrastructure/14_cpu_sockets/cpu_sockets.html"
+          "path": "manual/10_infrastructure/14_cpu_sockets/cpu_sockets.html"
         },
         {
           "id": "15_dbusage_server",
           "label": "DB Usage Server",
-          "path": "10_infrastructure/15_dbusage_server/dbusage_server.html"
+          "path": "manual/10_infrastructure/15_dbusage_server/dbusage_server.html"
         },
         {
           "id": "16_alerts",
           "label": "Alerts",
-          "path": "10_infrastructure/16_alerts/alerts.html"
+          "path": "manual/10_infrastructure/16_alerts/alerts.html"
         }
       ]
     },
@@ -343,32 +343,32 @@
         {
           "id": "01_compute_offerings",
           "label": "Compute Offerings",
-          "path": "11_offerings/01_compute_offerings/compute_offerings.html"
+          "path": "manual/11_offerings/01_compute_offerings/compute_offerings.html"
         },
         {
           "id": "02_system_offerings",
           "label": "System Offerings",
-          "path": "11_offerings/02_system_offerings/system_offerings.html"
+          "path": "manual/11_offerings/02_system_offerings/system_offerings.html"
         },
         {
           "id": "03_disk_offerings",
           "label": "Disk Offerings",
-          "path": "11_offerings/03_disk_offerings/disk_offerings.html"
+          "path": "manual/11_offerings/03_disk_offerings/disk_offerings.html"
         },
         {
           "id": "04_backup_offerings",
           "label": "Backup Offerings",
-          "path": "11_offerings/04_backup_offerings/backup_offerings.html"
+          "path": "manual/11_offerings/04_backup_offerings/backup_offerings.html"
         },
         {
           "id": "05_network_offerings",
           "label": "Network Offerings",
-          "path": "11_offerings/05_network_offerings/network_offerings.html"
+          "path": "manual/11_offerings/05_network_offerings/network_offerings.html"
         },
         {
           "id": "06_vpc_offerings",
           "label": "VPC Offerings",
-          "path": "11_offerings/06_vpc_offerings/vpc_offerings.html"
+          "path": "manual/11_offerings/06_vpc_offerings/vpc_offerings.html"
         }
       ]
     },
@@ -380,42 +380,42 @@
         {
           "id": "01_global_settings",
           "label": "Global Settings",
-          "path": "12_configuration/01_global_settings/global_settings.html"
+          "path": "manual/12_configuration/01_global_settings/global_settings.html"
         },
         {
           "id": "02_ldap_configuration",
           "label": "LDAP Configuration",
-          "path": "12_configuration/02_ldap_configuration/ldap_configuration.html"
+          "path": "manual/12_configuration/02_ldap_configuration/ldap_configuration.html"
         },
         {
           "id": "03_oauth_configuration",
           "label": "OAuth Configuration",
-          "path": "12_configuration/03_oauth_configuration/oauth_configuration.html"
+          "path": "manual/12_configuration/03_oauth_configuration/oauth_configuration.html"
         },
         {
           "id": "04_hypervisor_capabilities",
           "label": "Hypervisor Capabilities",
-          "path": "12_configuration/04_hypervisor_capabilities/hypervisor_capabilities.html"
+          "path": "manual/12_configuration/04_hypervisor_capabilities/hypervisor_capabilities.html"
         },
         {
           "id": "05_guest_os_categories",
           "label": "Guest OS Categories",
-          "path": "12_configuration/05_guest_os_categories/guest_os_categories.html"
+          "path": "manual/12_configuration/05_guest_os_categories/guest_os_categories.html"
         },
         {
           "id": "06_guest_os",
           "label": "Guest OS",
-          "path": "12_configuration/06_guest_os/guest_os.html"
+          "path": "manual/12_configuration/06_guest_os/guest_os.html"
         },
         {
           "id": "07_guest_os_mappings",
           "label": "Guest OS Mappings",
-          "path": "12_configuration/07_guest_os_mappings/guest_os_mappings.html"
+          "path": "manual/12_configuration/07_guest_os_mappings/guest_os_mappings.html"
         },
         {
           "id": "08_gpu_card_types",
           "label": "GPU Card Types",
-          "path": "12_configuration/08_gpu_card_types/gpu_card_types.html"
+          "path": "manual/12_configuration/08_gpu_card_types/gpu_card_types.html"
         }
       ]
     },
@@ -427,7 +427,7 @@
         {
           "id": "01_extensions",
           "label": "Extensions",
-          "path": "13_extensions/01_extensions/extensions.html"
+          "path": "manual/13_extensions/01_extensions/extensions.html"
         }
       ]
     },
@@ -439,29 +439,49 @@
         {
           "id": "01_comments",
           "label": "Comments",
-          "path": "14_tools/01_comments/comments.html"
+          "path": "manual/14_tools/01_comments/comments.html"
         },
         {
           "id": "02_usage",
           "label": "Usage",
-          "path": "14_tools/02_usage/usage.html"
+          "path": "manual/14_tools/02_usage/usage.html"
         },
         {
           "id": "03_import_export_instances",
           "label": "Import Export Instances",
-          "path": "14_tools/03_import_export_instances/import_export_instances.html"
+          "path": "manual/14_tools/03_import_export_instances/import_export_instances.html"
         },
         {
           "id": "04_import_data_volumes",
           "label": "Import Data Volumes",
-          "path": "14_tools/04_import_data_volumes/import_data_volumes.html"
+          "path": "manual/14_tools/04_import_data_volumes/import_data_volumes.html"
         },
         {
           "id": "05_webhooks",
           "label": "Webhooks",
-          "path": "14_tools/05_webhooks/webhooks.html"
+          "path": "manual/14_tools/05_webhooks/webhooks.html"
         }
       ]
+    }
+  ],
+  "tutorial": [
+    {
+      "id": "tutorial_compute",
+      "label": "Compute",
+      "icon": "fa-microchip",
+      "path": "tutorial/01_compute.html"
+    },
+    {
+      "id": "tutorial_network",
+      "label": "Network",
+      "icon": "fa-globe",
+      "path": "tutorial/02_network.html"
+    },
+    {
+      "id": "tutorial_infrastructure",
+      "label": "Infrastructure",
+      "icon": "fa-server",
+      "path": "tutorial/03_infrastructure.html"
     }
   ]
 }

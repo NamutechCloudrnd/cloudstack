@@ -1,0 +1,54 @@
+<h1 id="cni-설정">CNI 설정</h1>
+<p>CNI 구성은 쿠버네티스 클러스터에서 사용할 네트워크 플러그인 설정을
+등록하고 관리하는 기능이다. CNI는 쿠버네티스 Pod 간 통신, Pod IP 할당,
+네트워크 라우팅, 네트워크 정책 적용 등에 사용되는 핵심 네트워크 구성
+요소이다.</p>
+<p>namuVIRT 에서는 CNI 구성을 사용자 데이터 형태로 등록해 두고,
+쿠버네티스 Cluster 생성 시 선택하여 적용할 수 있다 이를 통해
+클러스터마다 필요한 CNI 설정을 표준화하고, 동일한 네트워크 구성을 반복
+적용할 수 있다.</p>
+<h2 id="cni-설정-목록">CNI 설정 목록</h2>
+<p>목록 화면에서는 CNI 설정 에 등록된 CNI 목록을 확인할 수 있다.</p>
+<img src="/guide/html/images/manual/01_compute/08_cni_configuration/image1.webp" style="width:10in" />
+
+<h2 id="cni-설정-생성">CNI 설정 생성</h2>
+<p>쿠버네티스 Cluster에 등록할 CNI 설정 내용을 등록할 수 있다.</p>
+<img src="/guide/html/images/manual/01_compute/08_cni_configuration/image2.webp" style="width:10in" />
+
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>이름</strong></td>
+<td>등록할 CNI 설정 이름 입력</td>
+</tr>
+<tr>
+<td><strong>CNI 구성</strong></td>
+<td>쿠버네티스 클러스터에 적용할 CNI 설정 내용 입력</td>
+</tr>
+<tr>
+<td><strong>Base64 인코딩됨</strong></td>
+<td>입력한 CNI 구성이 Base64로 인코딩되어 있는지 여부 선택</td>
+</tr>
+<tr>
+<td><strong>CNI 구성 매개변수</strong></td>
+<td>CNI 구성 내용에서 사용할 변수 목록 입력</td>
+</tr>
+<tr>
+<td><strong>도메인 아이디</strong></td>
+<td>CNI 구성을 등록할 도메인 선택</td>
+</tr>
+</tbody>
+</table>
+<p>CNI 구성에는 쿠버네티스 네트워크 플러그인 설치 스크립트, 매니페스트
+적용 명령, 네트워크 CIDR 설정 등이 포함될 수 있어 운영 환경에서는
+클러스터 버전과 네트워크 정책에 맞는 CNI 구성을 등록해야 한다.</p>
+<h2 id="cni-설정-상세">CNI 설정 상세</h2>
+<p>CNI 설정 상세 화면에서는 CNI 구성의 기본 정보와 등록된 설정 내용을
+확인할 수 있다.</p>
+<img src="/guide/html/images/manual/01_compute/08_cni_configuration/image3.webp" style="width:10in" />
