@@ -22,7 +22,7 @@ export default {
   name: 'ilbvm',
   title: 'label.internal.lb',
   icon: 'share-alt-outlined',
-  docHelp: '#/10_infrastructure/12_internal_lb/internal_lb.html',
+  docHelp: '#/manual/10_infrastructure/12_internal_lb/internal_lb.html',
   permission: ['listInternalLoadBalancerVMs'],
   params: { projectid: '-1' },
   columns: ['name', 'state', 'publicip', 'guestnetworkname', 'vpcname', 'version', 'softwareversion', 'hostname', 'account', 'zonename', 'requiresupgrade'],

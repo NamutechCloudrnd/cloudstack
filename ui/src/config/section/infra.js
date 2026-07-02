@@ -34,14 +34,14 @@ export default {
   name: 'infra',
   title: 'label.infrastructure',
   icon: 'BankOutlined',
-  docHelp: '#/10_infrastructure/01_summary/summary.html',
+  docHelp: '#/manual/10_infrastructure/01_summary/summary.html',
   permission: ['listInfrastructure'],
   children: [
     {
       name: 'infrasummary',
       title: 'label.summary',
       icon: 'ReadOutlined',
-      docHelp: '#/10_infrastructure/01_summary/summary.html',
+      docHelp: '#/manual/10_infrastructure/01_summary/summary.html',
       permission: ['listInfrastructure'],
       component: () => import('@/views/infra/InfraSummary.vue')
     },
@@ -63,7 +63,7 @@ export default {
       name: 'cpusocket',
       title: 'label.cpu.sockets',
       icon: 'InboxOutlined',
-      docHelp: '#/10_infrastructure/14_cpu_sockets/cpu_sockets.html',
+      docHelp: '#/manual/10_infrastructure/14_cpu_sockets/cpu_sockets.html',
       permission: ['listHosts'],
       component: () => import('@/views/infra/CpuSockets.vue')
     },
@@ -92,7 +92,7 @@ export default {
       name: 'metric',
       title: 'label.db.usage.metrics',
       icon: 'bar-chart-outlined',
-      docHelp: '#/10_infrastructure/15_dbusage_server/dbusage_server.html',
+      docHelp: '#/manual/10_infrastructure/15_dbusage_server/dbusage_server.html',
       permission: ['listDbMetrics', 'listUsageServerMetrics'],
       component: () => import('@/views/infra/Metrics.vue')
     },
@@ -100,7 +100,7 @@ export default {
       name: 'alert',
       title: 'label.alerts',
       icon: 'FlagOutlined',
-      docHelp: '#/10_infrastructure/16_alerts/alerts.html',
+      docHelp: '#/manual/10_infrastructure/16_alerts/alerts.html',
       permission: ['listAlerts'],
       columns: ['name', 'description', 'type', 'sent'],
       details: ['name', 'id', 'type', 'sent', 'description'],

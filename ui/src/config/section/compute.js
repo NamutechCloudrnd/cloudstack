@@ -31,7 +31,7 @@ export default {
       name: 'vm',
       title: 'label.instances',
       icon: 'cloud-server-outlined',
-      docHelp: '#/01_compute/01_instances/instances.html',
+      docHelp: '#/manual/01_compute/01_instances/instances.html',
       permission: ['listVirtualMachinesMetrics'],
       resourceType: 'UserVm',
       params: () => {
@@ -470,7 +470,7 @@ export default {
       name: 'vmsnapshot',
       title: 'label.vm.snapshots',
       icon: 'camera-outlined',
-      docHelp: '#/01_compute/02_instances_snapshots/instances_snapshots.html',
+      docHelp: '#/manual/01_compute/02_instances_snapshots/instances_snapshots.html',
       permission: ['listVMSnapshot'],
       resourceType: 'VMSnapshot',
       columns: () => {
@@ -552,7 +552,7 @@ export default {
       name: 'kubernetes',
       title: 'label.kubernetes',
       icon: kubernetesIcon,
-      docHelp: '#/01_compute/03_kubernetes/kubernetes.html',
+      docHelp: '#/manual/01_compute/03_kubernetes/kubernetes.html',
       searchFilters: ['name', 'domainid', 'account', 'state'],
       permission: ['listKubernetesClusters'],
       columns: (store) => {
@@ -868,7 +868,7 @@ export default {
       name: 'autoscalevmgroup',
       title: 'label.autoscale.vm.groups',
       icon: 'fullscreen-outlined',
-      docHelp: '#/01_compute/04_autoscaling_groups/autoscaling_groups.html',
+      docHelp: '#/manual/01_compute/04_autoscaling_groups/autoscaling_groups.html',
       resourceType: 'AutoScaleVmGroup',
       permission: ['listAutoScaleVmGroups'],
       searchFilters: ['name', 'zoneid', 'domainid', 'account'],
@@ -980,7 +980,7 @@ export default {
       name: 'vmgroup',
       title: 'label.instance.groups',
       icon: 'gold-outlined',
-      docHelp: '#/01_compute/05_instance_groups/instance_groups.html',
+      docHelp: '#/manual/01_compute/05_instance_groups/instance_groups.html',
       resourceType: 'VMInstanceGroup',
       permission: ['listInstanceGroups'],
       searchFilters: ['name', 'zoneid', 'domainid', 'account'],
@@ -1040,7 +1040,7 @@ export default {
       name: 'ssh',
       title: 'label.ssh.key.pairs',
       icon: 'key-outlined',
-      docHelp: '#/01_compute/06_ssh_key_pairs/ssh_key_pairs.html',
+      docHelp: '#/manual/01_compute/06_ssh_key_pairs/ssh_key_pairs.html',
       permission: ['listSSHKeyPairs'],
       searchFilters: ['name', 'domainid', 'account', 'fingerprint'],
       columns: () => {
@@ -1078,7 +1078,7 @@ export default {
           api: 'createSSHKeyPair',
           icon: 'plus-outlined',
           label: 'label.create.ssh.key.pair',
-          // docHelp: '#/01_compute/06_ssh_key_pairs/ssh_key_pairs.html',
+          // docHelp: '#/manual/01_compute/06_ssh_key_pairs/ssh_key_pairs.html',
           listView: true,
           popup: true,
           component: shallowRef(defineAsyncComponent(() => import('@/views/compute/CreateSSHKeyPair.vue')))
@@ -1124,7 +1124,7 @@ export default {
       name: 'userdata',
       title: 'label.user.data.library',
       icon: 'solution-outlined',
-      docHelp: '#/01_compute/07_user_data_library/user_data_library.html',
+      docHelp: '#/manual/01_compute/07_user_data_library/user_data_library.html',
       permission: ['listUserData'],
       columns: () => {
         var fields = ['name', 'id']
@@ -1207,7 +1207,7 @@ export default {
       name: 'cniconfiguration',
       title: 'label.cniconfiguration',
       icon: 'solution-outlined',
-      docHelp: '#/01_compute/08_cni_configuration/cni_configuration.html',
+      docHelp: '#/manual/01_compute/08_cni_configuration/cni_configuration.html',
       permission: ['listCniConfiguration'],
       columns: () => {
         var fields = ['name', 'id']
@@ -1290,7 +1290,7 @@ export default {
       name: 'affinitygroup',
       title: 'label.affinity.groups',
       icon: 'swap-outlined',
-      docHelp: '#/01_compute/09_affinity_groups/affinity_groups.html',
+      docHelp: '#/manual/01_compute/09_affinity_groups/affinity_groups.html',
       permission: ['listAffinityGroups'],
       searchFilters: ['name', 'zoneid', 'domainid', 'account', 'type'],
       columns: () => {

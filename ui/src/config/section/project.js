@@ -22,7 +22,7 @@ export default {
   name: 'project',
   title: 'label.projects',
   icon: 'project-outlined',
-  docHelp: '#/06_projects/01_projects/projects.html',
+  docHelp: '#/manual/06_projects/01_projects/projects.html',
   permission: ['listProjects'],
   resourceType: 'Project',
   columns: ['name', 'state', 'displaytext', 'account', 'domain'],

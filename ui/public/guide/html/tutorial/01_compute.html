@@ -232,5 +232,98 @@ Management서버를 재시작 해야 한다.</span></strong></p>
 완료된다.</p>
 <h1>VMware to KVM 마이그레이션</h1>
 <p>준비 중입니다.</p>
-<h1>GPU Passthrough</h1>
-<p>준비 중입니다.</p>
+<h1 id="gpu-passthrough">GPU Passthrough</h1>
+<h2 id="kvm-호스트-사전-작업">KVM 호스트 사전 작업</h2>
+<p>호스트에 관리자 권한으로 접속하여 GPU Passthrough를 위한 사전 작업을
+진행한다.</p>
+<h3 id="immou-활성화">IMMOU 활성화</h3>
+<p>IOMMU가 활성화되어있는지 확인힌다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image1.png"
+style="width:6.57813in;height:0.47222in" /></p>
+<p>비활성화 상태라면 grub 파일의 “GRUB_CMDLINE_LINUX_DEFAULT”에 값을
+추가한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image2.png"
+style="width:6.57813in;height:0.34722in" /></p>
+<p>설정 값은 Intel의 경우 "intel_iommu=on", AMD의 경우 "amd_iommu=on"로
+작성한다. grub 파일 수정 후 “update-grub” 명령어로 변경 사항을
+적용한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image3.png"
+style="width:6.57813in;height:1.34722in" /></p>
+<h3 id="gpu-확인">GPU 확인</h3>
+<p>Passthrough로 사용할 GPU의 ID와 PCI 주소를 확인한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image4.png"
+style="width:6.57813in;height:0.79167in" /></p>
+<h3 id="vfio-드라이버-설정">VFIO 드라이버 설정</h3>
+<p>vfio 모듈이 로드되었는지 확인한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image5.png"
+style="width:6.57813in;height:0.95833in" /></p>
+<p>모듈이 없는 경우 “modprobe” 명령어로 모듈을 추가한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image6.png"
+style="width:6.57813in;height:0.5in" /></p>
+<p>RHEL 계열의 OS인 경우 재부팅 시 vfio 모듈이 자동으로 로드 될 수
+있도록 설정을 추가한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image7.png"
+style="width:6.57813in;height:1.38889in" /></p>
+<p>GPU ID를 vfio-pci에 바인딩한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image8.png"
+style="width:6.57813in;height:0.29167in" /></p>
+<p>(선택) vifo-pci가 드라이버를 점유할 수 있도록 다른 선택지들을
+블랙리스트 처리한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image9.png"
+style="width:6.57813in;height:0.26389in" /></p>
+<p>initramfs를 업데이트한다. Ubuntu의 경우 “update-initramfs -u”
+명령어를 사용하고, RHEL 계열의 경우 “dracut -f” 명령어를 사용한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image10.png"
+style="width:6.57813in;height:0.23611in" /></p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image11.png"
+style="width:6.57813in;height:0.23611in" /></p>
+<p>호스트를 재부팅한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image12.png"
+style="width:6.57813in;height:0.23611in" /></p>
+<h3 id="설정-확인">설정 확인</h3>
+<p>pci 주소를 통해 vifo 모듈이 드라이버를 점유한 내용을 확인한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image13.png"
+style="width:6.57813in;height:0.91667in" /></p>
+<h2 id="vm-생성-전-사전-작업">VM 생성 전 사전 작업</h2>
+<h3 id="host-확인">Host 확인</h3>
+<p>사전에 설정한 호스트에 GPU가 인식되는지 확인한다.</p>
+<p><strong>Infrastructure &gt; Hosts</strong> 메뉴에서 호스트 상세
+페이지의GPU 탭에서 자동으로 등록된 디바이스를 확인할 수
+있다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image14.png"
+style="width:6.57813in;height:3.18056in" /></p>
+<h3 id="gpu-card-등록-확인">GPU Card 등록 확인</h3>
+<p>Configuration &gt; GPU Card Types 메뉴에서 자동으로 등록된 디바이스를
+확인할 수 있다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image15.png"
+style="width:6.57813in;height:3.20833in" /></p>
+<h3 id="gpu-compute-offering-생성">GPU Compute Offering 생성</h3>
+<p>GPU를 지원하는 VM을 생성하기 위해서는 GPU 지원 가능한 Compute
+Offering을 생성해야 한다. Compute Offering을 추가할 때 GPU Card에서
+등록된 디바이스를 선택하여 생성한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image16.png"
+style="width:6.57813in;height:3.20833in" /></p>
+<p>여기서 주의할 점은 GPU Driver 를 설치하기 위한 절절한 크기의 Root
+Disk Offering 을 선택해야 한다.</p>
+<ul>
+<li>최소 20GB 이상 권장 100GB</li>
+</ul>
+<h2 id="vm-생성">VM 생성</h2>
+<p>GPU를 지원하는 가상머신을 생성하기 위해서는 앞에서 생성한 GPU Compute
+Offering 을 기반으로 인스턴스를 생성요청 하면 된다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image17.png"
+style="width:6.57813in;height:3.20833in" /></p>
+<h2 id="gpu-pci-passthrough-인식-확인">GPU PCI Passthrough 인식
+확인</h2>
+<p>GPU Compute Offering으로 생성한 VM에 접속한 후 <strong>lspci</strong>
+명령을 실행하여, 물리 GPU 장치가 게스트 운영체제의 PCI 장치로 정상
+전달되었는지 확인한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image18.png"
+style="width:6.57847in;"/></p>
+<p>위 결과는 KVM 호스트의 NVIDIA A100 GPU가 해당 VM PCI Passthrough
+방식으로 정상 연결되었음을 의미한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image19.png"
+style="width:6.46875in;height:3.30208in" /></p>
+<p>위 사진은 nvidia driver 및 nvidia utils 를 설치한 후 nvidia-smi 를
+이용해서 GPU 정보를 조회한 결과이다.</p>
+<p>정상적으로 GPU 장치를 가져오는 것을 확인할 수 있다.</p>

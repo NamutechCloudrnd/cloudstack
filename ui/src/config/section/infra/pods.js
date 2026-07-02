@@ -22,7 +22,7 @@ export default {
   name: 'pod',
   title: 'label.pods',
   icon: 'appstore-outlined',
-  docHelp: '#/10_infrastructure/03_pods/pods.html',
+  docHelp: '#/manual/10_infrastructure/03_pods/pods.html',
   permission: ['listPods'],
   searchFilters: ['name', 'zoneid'],
   columns: ['name', 'allocationstate', 'gateway', 'netmask', 'zonename'],

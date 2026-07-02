@@ -19,7 +19,7 @@ export default {
   name: 'backuprepository',
   title: 'label.backup.repository',
   icon: 'inbox-outlined',
-  docHelp: '#/10_infrastructure/08_backup_repository/backup_repository.html',
+  docHelp: '#/manual/10_infrastructure/08_backup_repository/backup_repository.html',
   permission: ['listBackupRepositories'],
   searchFilters: ['zoneid'],
   columns: ['name', 'provider', 'type', 'address', 'zonename'],

@@ -22,7 +22,7 @@ export default {
   name: 'cluster',
   title: 'label.clusters',
   icon: 'cluster-outlined',
-  docHelp: '#/10_infrastructure/04_clusters/clusters.html',
+  docHelp: '#/manual/10_infrastructure/04_clusters/clusters.html',
   permission: ['listClustersMetrics'],
   searchFilters: ['name', 'zoneid', 'podid', 'arch', 'hypervisor'],
   columns: () => {

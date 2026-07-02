@@ -22,7 +22,7 @@ export default {
   name: 'managementserver',
   title: 'label.management.servers',
   icon: 'CloudServerOutlined',
-  docHelp: '#/10_infrastructure/13_management_servers/management_servers.html',
+  docHelp: '#/manual/10_infrastructure/13_management_servers/management_servers.html',
   permission: ['listManagementServersMetrics'],
   resourceType: 'ManagementServer',
   columns: () => {

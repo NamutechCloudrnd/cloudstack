@@ -22,7 +22,7 @@ export default {
   name: 'zone',
   title: 'label.zones',
   icon: 'global-outlined',
-  docHelp: '#/10_infrastructure/02_zones/zones.html',
+  docHelp: '#/manual/10_infrastructure/02_zones/zones.html',
   permission: ['listZonesMetrics'],
   searchFilters: ['name', 'domainid', 'tags'],
   columns: () => {

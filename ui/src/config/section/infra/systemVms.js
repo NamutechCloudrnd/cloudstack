@@ -22,7 +22,7 @@ export default {
   name: 'systemvm',
   title: 'label.system.vms',
   icon: 'thunderbolt-outlined',
-  docHelp: '#/10_infrastructure/10_system_vms/system_vms.html',
+  docHelp: '#/manual/10_infrastructure/10_system_vms/system_vms.html',
   permission: ['listSystemVms'],
   searchFilters: ['name', 'zoneid', 'podid', 'hostid', 'systemvmtype', 'storageid', 'arch'],
   columns: ['name', 'state', 'agentstate', 'systemvmtype', 'publicip', 'privateip', 'linklocalip', 'version', 'hostname', 'arch', 'zonename'],

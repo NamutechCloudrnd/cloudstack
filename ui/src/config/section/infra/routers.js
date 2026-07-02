@@ -22,7 +22,7 @@ export default {
   name: 'router',
   title: 'label.virtual.routers',
   icon: 'fork-outlined',
-  docHelp: '#/10_infrastructure/11_virtual_routers/virtual_routers.html',
+  docHelp: '#/manual/10_infrastructure/11_virtual_routers/virtual_routers.html',
   permission: ['listRouters'],
   params: { projectid: '-1' },
   columns: () => {

@@ -22,7 +22,7 @@ export default {
   name: 'imagestore',
   title: 'label.secondary.storage',
   icon: 'picture-outlined',
-  docHelp: '#/10_infrastructure/07_secondary_storage/secondary_storage.html',
+  docHelp: '#/manual/10_infrastructure/07_secondary_storage/secondary_storage.html',
   permission: ['listImageStores'],
   searchFilters: ['name', 'zoneid', 'provider'],
   columns: () => {
