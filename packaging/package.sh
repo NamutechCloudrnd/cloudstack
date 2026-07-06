@@ -167,7 +167,10 @@ function packaging() {
     mkdir -p "$RPMDIR/SOURCES/$PACK_PROJECT-$VERSION"
 
     echo ". preparing source tarball"
-    (cd $PWD/../; tar -c --exclude .git --exclude dist . | tar -C "$RPMDIR/SOURCES/$PACK_PROJECT-$VERSION" -x )
+    (cd $PWD/../; tar -c --exclude .git --exclude dist --exclude vendor \
+        --exclude build/packages --exclude build/logs --exclude build/lib \
+        --exclude build/rocky.sh --exclude build/ubuntu.sh --exclude build/README.md \
+        . | tar -C "$RPMDIR/SOURCES/$PACK_PROJECT-$VERSION" -x )
     (cd "$RPMDIR/SOURCES/"; tar -czf "$PACK_PROJECT-$VERSION.tgz" "$PACK_PROJECT-$VERSION")
 
     echo ". executing rpmbuild"
