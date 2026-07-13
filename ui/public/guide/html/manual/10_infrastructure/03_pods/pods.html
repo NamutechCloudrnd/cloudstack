@@ -1,0 +1,140 @@
+      <h1 id="pod">Pod</h1>
+      <p>Pod는 Zone에 속하는 조직 단위이다. Pod는 일반적으로 단일 랙, 또는
+      레이어 2 스위치와 하나 이상의 클러스터를 포함하는 랙의 열(row of
+      racks)에 해당한다. 동일한 Pod 내의 호스트는 동일한 서브넷에
+      위치한다.</p>
+      <p>Pod는 하나 이상의 호스트 클러스터와 하나 이상의 기본 스토리지 서버로
+      구성된다.</p>
+      <p>Pod는 최종 사용자에게 노출되지 않는다.</p>
+      <h2 id="목록-조회">목록 조회</h2>
+      <p>Pod 목록을 확인하는 화면이다. 생성된 Pod 목록을
+      확인하거나 <strong>Pod 추가</strong> 버튼을 클릭하여 새로운 Pod를 생성할
+      수 있다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image61.webp" style="width:10in" /></p>
+      <h2 id="pod-추가">Pod 추가</h2>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image62.webp" style="width:1in" /><strong>Pod
+      추가</strong> 버튼을 클릭하여 Pod 추가 팝업을 호출한다.</p>
+      <p>각 Zone에는 관리 네트워크를 위한 예약된 IP 주소 범위를 구성해야
+      한다. 이 네트워크는 namuVIRT 관리 서버와 Secondary Storage VM, Console
+      Proxy VM, DHCP 등 다양한 시스템 VM 간의 통신을 담당한다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image63.webp" style="width:5in" /></p>
+      <table>
+      <thead>
+      <tr>
+      <th>항목</th>
+      <th>설명</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+      <td><strong>Zone</strong></td>
+      <td>Pod가 속할 Zone을 선택한다.</td>
+      </tr>
+      <tr>
+      <td><strong>Pod 이름</strong></td>
+      <td>Pod의 이름을 입력한다.</td>
+      </tr>
+      <tr>
+      <td><strong>예약된 시스템
+      게이트웨이</strong></td>
+      <td>관리 네트워크의 게이트웨이를
+      입력한다.</td>
+      </tr>
+      <tr>
+      <td><strong>예약된 시스템
+      넷마스크</strong></td>
+      <td>관리 네트워크의 서브넷 마스크를
+      입력한다.</td>
+      </tr>
+      <tr>
+      <td><strong>예약된 시스템 시작 IP
+      주소</strong></td>
+      <td>시스템 VM이 사용할 예약된 IP 범위의 시작
+      주소를 입력한다.</td>
+      </tr>
+      <tr>
+      <td><strong>예약된 시스템 종료 IP
+      주소</strong></td>
+      <td>시스템 VM이 사용할 예약된 IP 범위의 종료
+      주소를 입력한다.</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><strong>주의사항</strong></p>
+      <ul>
+      <li><p>예약된 IP 주소는 클라우드 전체에서 고유해야 한다. 서로 다른
+      Zone의 호스트가 동일한 프라이빗 IP를 가질 수 없다.</p></li>
+      <li><p>컴퓨팅 서버와 관리 서버에는 시스템 예약 IP 범위 외부의 IP를
+      사용해야 한다. 예를 들어 시스템 예약 IP 범위가 192.168.154.2 ~
+      192.168.154.7이라면, namuVirt는 .2 ~ .7을 시스템 VM에 사용하고, .8 ~
+      .254는 관리 서버와 하이퍼바이저 호스트에 사용된다.</p></li>
+      <li><p>Pod 내의 호스트에는 프라이빗 IP 주소가 할당된다. 이 주소는
+      일반적으로 RFC1918 주소이다. Console Proxy VM과 Secondary Storage VM
+      역시 해당 Pod CIDR 내의 프라이빗 IP를 할당받는다.</p></li>
+      </ul>
+      <p><strong>권장사항 (KVM / XenServer)</strong></p>
+      <p>KVM 및 XenServer에서 권장하는 Pod당 프라이빗 IP 수는 호스트당
+      하나이다. Pod의 향후 확장이 예상된다면 지금 충분한 수의 프라이빗 IP를
+      추가해 두어야 한다.</p>
+      <p><strong>권장사항 (고급 Zone + VMware ESXi)</strong></p>
+      <p>VMware ESXi는 관리자가 지정한 서브넷 방식을 사용하며, 일반적으로
+      Pod당 255개의 IP만 제공한다. 이 IP는 물리 머신, 게스트 Virtual Router,
+      기타 엔티티가 공유하므로 ESXi Pod를 확장할 때 프라이빗 IP가 부족해질 수
+      있다. 이를 방지하기 위해 다음 방법 중 하나 또는 둘 다를 사용하는
+      것이 좋다.</p>
+      <ul>
+      <li><p>더 큰 CIDR 블록을 지정한다. /20 서브넷 마스크를 사용하면
+      4,000개 이상의 IP 주소를 확보할 수 있다.</p></li>
+      <li><p>각자 고유한 서브넷을 가진 여러 Pod를 생성한다. 예를 들어 Pod를
+      10개 생성하고 각 Pod에 255개의 IP가 있다면 총 2,550개의 IP를 확보할 수
+      있다.</p></li>
+      </ul>
+      <p><strong>확인</strong> 버튼을 클릭하여 Pod를 추가한다.</p>
+      <h2 id="편집">편집</h2>
+      <p>해당 Pod의 정보를 편집한다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image33.webp" style="width:0.2in" /><strong>Pod
+      편집</strong> 버튼을 클릭하여 Pod 편집 화면을 호출한다. 수정할 항목을
+      입력한 후 <strong>확인</strong> 버튼을 클릭하여 Pod를
+      업데이트한다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image64.webp" style="width:5in" /></p>
+      <h2 id="pod-비활성화활성화">Pod 비활성화/활성화</h2>
+      <p>해당 Pod를 비활성화/활성화한다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image65.webp" style="width:0.2in" /><strong>Pod
+      비활성화/활성화</strong> 버튼을 클릭하여 Pod 비활성화/활성화 화면을
+      호출한 뒤 <strong>확인</strong> 버튼을 클릭한다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image66.webp" style="width:5in" /></p>
+      <h2 id="롤링-유지-관리-시작">롤링 유지 관리 시작</h2>
+      <p>해당 Pod의 롤링 유지 관리를 시작한다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image41.webp" style="width:0.2in" /><strong>롤링
+      유지 관리 시작</strong> 버튼을 클릭하여 롤링 유지 관리 시작 화면을
+      호출한 뒤 <strong>확인</strong> 버튼을 클릭한다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image67.webp" style="width:5in" /></p>
+      <h2 id="pod-삭제">Pod 삭제</h2>
+      <p>해당 Pod를 삭제한다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image43.webp" style="width:0.2in" /><strong>Pod
+      삭제</strong> 버튼을 클릭하여 Pod 삭제 화면을 호출한
+      뒤 <strong>확인</strong> 버튼을 클릭한다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image68.webp" style="width:5in" /></p>
+      <h2 id="상세-탭">상세 탭</h2>
+      <p>Pod에 대한 상세 정보를 조회하는 화면이다. 해당 Pod의 이름, 아이디,
+      할당 상태, 넷마스크, 게이트웨이, Zone, 전용 여부 등의 정보를 확인할 수
+      있다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image69.webp" style="width:10in" /></p>
+      <p><strong>전용 Pod</strong></p>
+      <p>특정 도메인 또는 계정의 전용 Pod로 지정할 수 있다. <img src="/guide/html/images/manual/10_infrastructure/03_pods/image70.webp" style="width:0.5290354330708661in" /><strong>전용
+      Pod</strong> 버튼을 클릭하여 전용 Pod 화면을 호출한 뒤 항목을 입력하고
+      <strong>확인</strong> 버튼을 클릭한다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image69.webp" style="width:10in" /></p>
+      <h2 id="리소스-탭">리소스 탭</h2>
+      <p>Pod에 할당된 자원의 상태를 조회하는 화면이다. 해당 Pod에서 현재
+      할당량과 할당 가능량을 확인할 수 있으며, 메모리, CPU, 기본 스토리지
+      사용량, 할당된 기본 스토리지, 관리 IP 주소, GPU, CPU 코어 수 등의 정보를
+      확인할 수 있다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image71.webp" style="width:10in" /></p>
+      <h2 id="이벤트-탭">이벤트 탭</h2>
+      <p>Pod에 관련된 이벤트 정보를 확인할 수 있는 화면이다. Pod에서 발생한
+      다양한 액션과 변경 사항을 파악할 수 있다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image72.webp" style="width:10in" /></p>
+      <h2 id="코멘트-탭">코멘트 탭</h2>
+      <p>Pod에 관련된 코멘트를 확인할 수 있는 화면이다.</p>
+      <p><img src="/guide/html/images/manual/10_infrastructure/03_pods/image72.webp" style="width:10in" /></p>

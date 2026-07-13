@@ -66,7 +66,7 @@
           </a-timeline>
         </a-card>
         <a-card :title="$t('label.kubernetes.dashboard')">
-          <p><strong>Note:</strong> CloudStack Kubernetes clusters use <strong>Headlamp</strong> dashboard (deployed in <code>kube-system</code> namespace). For backward compatibility with older clusters using Kubernetes Dashboard, please check your cluster configuration.</p>
+          <p><strong>Note:</strong> Kubernetes clusters use <strong>Headlamp</strong> dashboard (deployed in <code>kube-system</code> namespace). For backward compatibility with older clusters using Kubernetes Dashboard, please check your cluster configuration.</p>
           <a-timeline>
             <a-timeline-item>
               <p>

@@ -22,7 +22,7 @@ export default {
   name: 'domain',
   title: 'label.domains',
   icon: 'BlockOutlined',
-  docHelp: '#/09_domains/01_domains/domains.html',
+  docHelp: '#/manual/09_domains/01_domains/domains.html',
   permission: ['listDomains', 'listDomainChildren'],
   resourceType: 'Domain',
   columns: ['name', 'state', 'path', 'parentdomainname', 'level'],

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Title</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
+  <!-- 상대경로 수정 필요: 파일 뎁스에 따라 조정 -->
+  <!-- 뎁스 2 (01_compute/01_instances/instances.html): ../../style.css -->
+  <!-- 뎁스 1 (docs/page.html): ../style.css -->
+  <!-- 뎁스 0 (index.html): ./style.css -->
+  <link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 메뉴는 menu-renderer.js에서 자동 생성 -->
+    <aside id="menu-sidebar" class="menu-sidebar"></aside>
+
+    <main class="content">
+      <h1>Page Title</h1>
+
+      <p>
+        페이지의 메인 콘텐츠를 여기에 작성한다.
+      </p>
+
+      <h2>섹션 1</h2>
+      <p>
+        상세 설명...
+      </p>
+
+      <h2>섹션 2</h2>
+      <p>
+        추가 정보...
+      </p>
+    </main>
+  </div>
+
+  <!-- 메뉴 렌더링 스크립트 -->
+  <!-- 상대경로 수정 필요 (위의 style.css와 동일) -->
+  <script src="../../menu-renderer.js"></script>
+</body>
+</html>

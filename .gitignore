@@ -24,6 +24,7 @@
 *.iml
 *.iso
 *.jar
+!vendor/cloudstack-nonoss/*.jar
 *.log
 *.log.*
 *.mar
@@ -68,6 +69,8 @@ debian/files
 debian/tmp
 deps/cloud.userlibraries
 dist/
+build/packages/
+build/logs/
 docs/publish
 docs/runbook/publish
 docs/runbook/tmp

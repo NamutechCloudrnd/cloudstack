@@ -22,7 +22,7 @@ export default {
   name: 'extension',
   title: 'label.extensions',
   icon: 'appstore-add-outlined',
-  docHelp: '#/13_extensions/01_extensions/extensions.html',
+  docHelp: '#/manual/13_extensions/01_extensions/extensions.html',
   permission: ['listExtensions'],
   params: (dataView) => {
     const params = {}

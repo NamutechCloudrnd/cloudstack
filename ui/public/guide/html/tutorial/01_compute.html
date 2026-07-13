@@ -1,0 +1,329 @@
+<h1>Template 기반 VM 생성</h1>
+<p>준비 중입니다.</p>
+<h1 id="autoscaling-groups">AutoScaling Groups</h1>
+<p>namuVIRT에서 AutoScaling Group은 로드밸런서와 연결된 VM 그룹의
+인스턴스 수를 모니터링 지표와 정책에 따라 자동으로 Scale-in/Scale-out
+하기위한 기능이다.</p>
+<h2 id="autoscaling-groups-생성-전-사전-작업.">AutoScaling Groups 생성
+전 사전 작업.</h2>
+<h3 id="compute-offering-생성">Compute Offering 생성</h3>
+<p>AutoScaling Group에서 사용할 Compute Offering 규격을 정의한다.
+AutoScaling Group의 최대 VM 수 만큼 자원이 증가할 수 있으므로 Cluster와
+Host에 충분한 Capacity가 있어야 하고 이를 고려하여 Compute Offering을
+정의해야 한다.</p>
+<ul>
+<li>추가방법 : 사용자 메뉴얼 &gt; Service Offering &gt; Compute Offering
+생성 방법 참고</li>
+</ul>
+<p>Compute Offering을 추가할 때 필수로 Dynamic Scaling Enabled 옵션을
+활성화해야 한다.</p>
+<h3 id="public-ip-생성-및-load-balancer-생성">Public IP 생성 및 Load
+Balancer 생성</h3>
+<p>AutoScaling Group을 활용하기 위해서는 Load Balancer가 필요하다. 이때
+사용할 Public IP를 생성하고 Load Balancer Rule을 생성해야 한다. Public
+IP 는 Guest Network 또는 VPC 의 상세 페이지에서 생성 가능하다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/02_autoscaling_groups_image1.png" style="width:10in" /></p>
+<p>[그림 1] Public IP 생성</p>
+<p>생성된 Public IP의 상세 페이지로 이동하여 Load Balancing 탭에서
+정책을 추가할 수 있다. 이때 AutoScale 옵션을 “Yes”로 지정하고 Add버튼을
+클릭하여 Public IP가 위치한 네트워크를 선택한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/02_autoscaling_groups_image2.png" style="width:10in" /></p>
+<p>[그림 2] Public IP 할당된 네트워크 추가</p>
+<p><img src="/guide/html/images/tutorial/01_compute/02_autoscaling_groups_image3.png" style="width:10in" /></p>
+<p>[그림 3] Load Balancing 추가 완료</p>
+<h2 id="autoscaling-groups-생성">AutoScaling Groups 생성</h2>
+<p>사전 작업이 완료되면 AutoScaling Group을 추가할 수 있다</p>
+<ul>
+<li>추가방법 : 사용자 메뉴얼 &gt; Compute &gt; AutoScaling Group 추가
+확인</li>
+</ul>
+<h2 id="autoscaling-groups-테스트">AutoScaling Groups 테스트</h2>
+<p>Apache Bench를 통해 Load Balancer에 부하를 주고 AutoScaling이
+동작하는 것을 확인할 수 있다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/02_autoscaling_groups_image4.png" style="width:10in" /></p>
+<p>[그림 4] Apache Bench를 이용한 Load Balancer 부하</p>
+<p>AutoScaling Groups 에서 Group의 상태가 “ENABLED”에서 “SCALING”으로
+변경된 것을 확인할 수 있다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/02_autoscaling_groups_image5.png" style="width:10in" /></p>
+<p>[그림 5] Auto Scaling Group 의 상태 “SCALING” 변경</p>
+<p>Instances 메뉴에서 기본으로 생성된 VM 이외에 추가 VM이 생성된 것을
+확인할 수 있다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/02_autoscaling_groups_image6.png" style="width:10in" /></p>
+<p>[그림 6] Auto Scaling Group에 의한 Instance 추가</p>
+<h1 id="kubernetes-cluster-환경-구성-및-운영-시나리오">Kubernetes
+Cluster 환경 구성 및 운영 시나리오</h1>
+<p>namuVIRT는 Kubernetes 클러스터 환경을 구성하기위한 기능을 제공한다.
+클러스터를 구성하고 운영하기 위한 절차는 다음과 같다.</p>
+<ol type="1">
+<li><p>Kubernetes 사용 설정</p></li>
+<li><p>Kubernetes ISO 템플릿 등록</p></li>
+<li><p>Guest Network 생성(선택)</p></li>
+<li><p>Compute Offering 생성</p></li>
+<li><p>Kubernetes Cluster 생성</p></li>
+<li><p>Kubernetes 운영</p></li>
+</ol>
+<h2 id="kubernetes-사용-설정">Kubernetes 사용 설정</h2>
+<ul>
+<li><strong>글로벌 설정 &gt; Compute &gt; Kubernetes</strong>에서
+Kubernetes 기능 활성화</li>
+</ul>
+<p><img src="/guide/html/images/tutorial/01_compute/03_kubernetes_cluster_image1.png" style="width:10in" /></p>
+<p>[그림 1] Kubernetes 기능 활성화</p>
+<ul>
+<li><strong>글로벌 설정 &gt; Miscellaneous &gt; Other</strong>에서
+<strong>endpoint.url</strong> 설정 : 관리서버 주소 (예:
+http://&lt;management server ip:port or fqdn&gt;/client/api)</li>
+</ul>
+<p><img src="/guide/html/images/tutorial/01_compute/03_kubernetes_cluster_image2.png" style="width:10in" /></p>
+<p>[그림 2] endpoint.url 설정</p>
+<h2 id="kubernetes-iso-등록">Kubernetes ISO 등록</h2>
+<p>Kubernetes를 배포하고 관리할 수 있도록 제공하는 부팅 가능한 이미지를
+등록할 수 있다. 부팅 가능한 이미지는 아래 링크에서 제공중이다.</p>
+<h3 class="j-제목-3" id="cks-iso-다운로드-링크">CKS ISO 다운로드
+링크</h3>
+<p><a href="https://download.cloudstack.org/cks/">클라우드스택 CKS ISO
+이미지 다운로드 링크</a></p>
+<h3 class="j-제목-3" id="kubernetes-iso-등록-1">Kubernetes ISO 등록</h3>
+<p>Kubernetes <span class="smallcaps">ISO 이미지를 등록하여 사용하면
+된다. 이때 시맨틱 버전과 다운로드 링크에서 제공하는 버전이 일치해야
+한다.</span></p>
+<p><span class="smallcaps">또한, 최소 CPU 코어와 최소 메모리 사이즈를
+지정 가능하며 이는</span> Kubernetes 운영을 고려하여 지정해야 한다. 이
+때 지정된 사이즈는 Kubernetes Cluster 생성 시 Compute Offering 을
+선택하는 기준이 된다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/03_kubernetes_cluster_image3.png" style="width:10in" /></p>
+<p>[그림 3] Kubernetes ISO 등록</p>
+<h2 id="guest-network-등록-선택">Guest Network 등록 (선택)</h2>
+<p>Kubernetes Cluster를 제공하기 위해서는 격리된 네트워크(isolated
+network)가 필요로 하다. 이는 Advanced network를 사용하는 Zone에서 사용
+가능하다.</p>
+<p>이때 생성된 isolated network는 Network Offering에서 Source NAT, DHCP,
+DNS, Load Balancer가 포함된 Offering을 이용해서 Network를 생성해야
+한다.</p>
+<p>Kubernetes Cluster를 생성할 때 네트워크를 지정하지 않으면 Kubernetes
+Cluster 전용 Network Offering을 namuVIRT에서 생성한다.</p>
+<ul>
+<li><strong>글로벌 설정 &gt;
+cloud.kubernetes.cluster.network.offering</strong> 에
+<strong>DefaultNetworkOfferingforKubernetesService</strong> 가 등록되어
+있는 경우 CKS에 대한 네트워크를 자동으로 생성해 준다.</li>
+</ul>
+<h2 id="compute-offering-등록">Compute Offering 등록</h2>
+<p>Kubernetes Cluster를 구성하기 위한 Compute Offering을 구성한다. 이때
+Compute Offering의 CPU와 Memory의 사이즈는 Kubernetes ISO 템플릿에서
+지정한 CPU와 Memory 사이즈보다 커야 한다.</p>
+<h2 id="kubernetes-cluster-생성">Kubernetes Cluster 생성</h2>
+<p><img src="/guide/html/images/tutorial/01_compute/03_kubernetes_cluster_image4.png" style="width:10in" /></p>
+<p>[그림 4] Kubernetes Cluster 생성 설정</p>
+<p>Kubernetes Cluster 구성 시 HA 활성화를 하게 되면 마스터 노드 수와
+외부 로드 밸런서 IP 주소를 설정할 수 있다. 외부 로드 밸런서는
+공유네트워크에서 Kubernetes HA 를 사용할 때 사용하는 외부 로드 밸런서 IP
+주소 이다. 고급 설정을 이용하여 제어 노드와 워커노드의 Compute
+Offering을 다르게 지정할 수 있다.</p>
+<p>여기서 주의할 점은 노드 루트 디스크 크기이다. 목적에 맞춰 설정해
+주어야 한다.</p>
+<table style="width:97%;">
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 32%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;"><strong>용도</strong></th>
+<th style="text-align: left;"><strong>최소 권장</strong></th>
+<th style="text-align: left;"><strong>안정적인 권장</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">단순 PoC Control Plane</td>
+<td style="text-align: left;">30GB</td>
+<td style="text-align: left;">50GB</td>
+</tr>
+<tr>
+<td style="text-align: left;">단순 PoC Worker</td>
+<td style="text-align: left;">40GB</td>
+<td style="text-align: left;">50~80GB</td>
+</tr>
+<tr>
+<td style="text-align: left;">운영 Control Plane</td>
+<td style="text-align: left;">80GB</td>
+<td style="text-align: left;">100GB</td>
+</tr>
+<tr>
+<td style="text-align: left;">운영 Worker</td>
+<td style="text-align: left;">100GB</td>
+<td style="text-align: left;">150~200GB</td>
+</tr>
+<tr>
+<td style="text-align: left;">모니터링/로그 Worker</td>
+<td style="text-align: left;">200GB</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>생성을 위한 팝업에서 최초 입력 값 8GB를 사용하면</p>
+<h2 id="kubernetes-운영">Kubernetes 운영</h2>
+<p>Kubernetes Cluster를 생성하면 상세 페이지에서 액세스
+방법/가상머신/방화벽 설정/포트 포워딩 설정/로드밸런서 설정 등을 확인할
+수 있다.</p>
+<h3 class="j-제목-3" id="kubernetes-access">Kubernetes Access</h3>
+<p>Kubernetes Cluster를 생성완료 하면 Kubernetes API 를 사용할 수
+있다</p>
+<ol type="1">
+<li>클러스터용 kubeconfig 파일을 다운로드 한다.</li>
+</ol>
+<p><img src="/guide/html/images/tutorial/01_compute/03_kubernetes_cluster_image5.png" style="width:6in" /></p>
+<p>[그림 5] kubeconfig 파일 다운로드</p>
+<h1 id="ha-환경-구성">HA 환경 구성</h1>
+<p>namuVIRT는 인스턴스를 고가용성으로 활성화하여 지정할 수 있도록
+지원한다. 기본적으로 모든 VR(Virtual Router)와 Elastic LB Instance(Load
+Balancing Instance)는 자동으로 HA를 활성화하여 구성된다.</p>
+<p>HA 활성화가 된 인스턴스는 관리대상 호스트의 장애를 감지하고 동일한
+가용영역 내 인스턴스를 자동으로 재시작 한다. 이때 동일한 인스턴스가
+동시에 실행되는 일이 없도록 보수적인 정책을 유지한다.</p>
+<p>HA 기능은 iSCSI 또는 NFS 스토리지(Shared Storage)와 함께 작동하며
+Local Storage는 지원하지 않는다.</p>
+<p><strong><span class="smallcaps">HA 기능을 검증하기 위해서는 동일한
+클러스터 내에 두 개 이상의 호스트가 존재해야 한다.</span></strong></p>
+<h2 id="ha-환경-구성-1">HA 환경 구성</h2>
+<h3 id="ha-기능-활성화">HA 기능 활성화</h3>
+<p>HA 기능을 활성화 하기 위해서는 글로벌 설정 또는 Zone 설정에서
+활성화가 가능하다.</p>
+<ul>
+<li><strong>Configuration &gt; Global Setting &gt; Compute &gt; Virtual
+Machine</strong>에서 <strong>HA(vm.ha.enable)</strong> 기능 활성화</li>
+</ul>
+<p><img src="/guide/html/images/tutorial/01_compute/04_vm_ha_image1.png" style="width:10in" /></p>
+<p>[그림 1] Global Configuration HA 기능 활성화</p>
+<ul>
+<li><strong>Infrastructure &gt; Zones &gt; Zone Dtails &gt; Settings
+Tab</strong> 에서 <strong>HA(vm.ha.enable)</strong> 기능 활성화</li>
+</ul>
+<p><img src="/guide/html/images/tutorial/01_compute/04_vm_ha_image2.png" style="width:10in" /></p>
+<p>[그림 2] Zone Setting HA 기능 활성화</p>
+<h3 id="ha-compute-offering-생성">HA Compute Offering 생성</h3>
+<p>HA 기능을 사용하기 위해서는 Compute Offering을 생성할 때 HA 기능을
+활성화해주어야 한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/04_vm_ha_image3.png" style="width:7in" /></p>
+<p>[그림 3] Compute Offering HA 기능 활성화</p>
+<h3 id="ha-vm-생성">HA VM 생성</h3>
+<p>HA Compute Offering을 기반으로 가상머신을 생성한다.</p>
+<p>이렇게 생성된 가상머신은 호스트가 장애 발생시 동일한 클러스터의 다른
+호스트에서 재시작 된다.</p>
+<h2 id="dedicated-ha">Dedicated HA</h2>
+<p>Dedicated HA는 HA 전용 호스트를 지정하기 위해 사용된다.</p>
+<p>예를 들어 KVM A, B, C가 있다고 가정하였을 때 KVM C 가 Dedicated HA
+호스트 라고 지정되어 있으면 KVM A 또는 B에서 장애가 발생되었다고
+판단되면 namuVIRT는 KVM C에 재생성 요청을 하게 된다.</p>
+<p>Dedicated HA Host를 구성하기 위해서는 tag 기반으로 동작하며,
+<strong>글로벌 설정에 Tag 지정</strong>과 <strong>Host에 Tag
+지정</strong>을 해야 한다.</p>
+<ul>
+<li><strong>Configuration &gt; Global Setting &gt; Compute &gt; High
+Availability</strong>에서 <strong>HA Tag(ha.tag)</strong> 지정</li>
+</ul>
+<p><img src="/guide/html/images/tutorial/01_compute/04_vm_ha_image4.png" style="width:10in" /></p>
+<p>[그림 4] Dedicated HA Host 구성을 위한 HA Tag 설정</p>
+<p><strong><span class="smallcaps">참고:HA Tag를 지정하면
+Management서버를 재시작 해야 한다.</span></strong></p>
+<p>HA Tag를 지정한 다음 호스트에 Tag를 추가하면 Dedicated HA Host 구성이
+완료된다.</p>
+<h1>VMware to KVM 마이그레이션</h1>
+<p>준비 중입니다.</p>
+<h1 id="gpu-passthrough">GPU Passthrough</h1>
+<h2 id="kvm-호스트-사전-작업">KVM 호스트 사전 작업</h2>
+<p>호스트에 관리자 권한으로 접속하여 GPU Passthrough를 위한 사전 작업을
+진행한다.</p>
+<h3 id="immou-활성화">IMMOU 활성화</h3>
+<p>IOMMU가 활성화되어있는지 확인힌다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image1.png"
+style="width:6.57813in;height:0.47222in" /></p>
+<p>비활성화 상태라면 grub 파일의 “GRUB_CMDLINE_LINUX_DEFAULT”에 값을
+추가한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image2.png"
+style="width:6.57813in;height:0.34722in" /></p>
+<p>설정 값은 Intel의 경우 "intel_iommu=on", AMD의 경우 "amd_iommu=on"로
+작성한다. grub 파일 수정 후 “update-grub” 명령어로 변경 사항을
+적용한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image3.png"
+style="width:6.57813in;height:1.34722in" /></p>
+<h3 id="gpu-확인">GPU 확인</h3>
+<p>Passthrough로 사용할 GPU의 ID와 PCI 주소를 확인한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image4.png"
+style="width:6.57813in;height:0.79167in" /></p>
+<h3 id="vfio-드라이버-설정">VFIO 드라이버 설정</h3>
+<p>vfio 모듈이 로드되었는지 확인한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image5.png"
+style="width:6.57813in;height:0.95833in" /></p>
+<p>모듈이 없는 경우 “modprobe” 명령어로 모듈을 추가한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image6.png"
+style="width:6.57813in;height:0.5in" /></p>
+<p>RHEL 계열의 OS인 경우 재부팅 시 vfio 모듈이 자동으로 로드 될 수
+있도록 설정을 추가한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image7.png"
+style="width:6.57813in;height:1.38889in" /></p>
+<p>GPU ID를 vfio-pci에 바인딩한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image8.png"
+style="width:6.57813in;height:0.29167in" /></p>
+<p>(선택) vifo-pci가 드라이버를 점유할 수 있도록 다른 선택지들을
+블랙리스트 처리한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image9.png"
+style="width:6.57813in;height:0.26389in" /></p>
+<p>initramfs를 업데이트한다. Ubuntu의 경우 “update-initramfs -u”
+명령어를 사용하고, RHEL 계열의 경우 “dracut -f” 명령어를 사용한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image10.png"
+style="width:6.57813in;height:0.23611in" /></p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image11.png"
+style="width:6.57813in;height:0.23611in" /></p>
+<p>호스트를 재부팅한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image12.png"
+style="width:6.57813in;height:0.23611in" /></p>
+<h3 id="설정-확인">설정 확인</h3>
+<p>pci 주소를 통해 vifo 모듈이 드라이버를 점유한 내용을 확인한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image13.png"
+style="width:6.57813in;height:0.91667in" /></p>
+<h2 id="vm-생성-전-사전-작업">VM 생성 전 사전 작업</h2>
+<h3 id="host-확인">Host 확인</h3>
+<p>사전에 설정한 호스트에 GPU가 인식되는지 확인한다.</p>
+<p><strong>Infrastructure &gt; Hosts</strong> 메뉴에서 호스트 상세
+페이지의GPU 탭에서 자동으로 등록된 디바이스를 확인할 수
+있다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image14.png"
+style="width:6.57813in;height:3.18056in" /></p>
+<h3 id="gpu-card-등록-확인">GPU Card 등록 확인</h3>
+<p>Configuration &gt; GPU Card Types 메뉴에서 자동으로 등록된 디바이스를
+확인할 수 있다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image15.png"
+style="width:6.57813in;height:3.20833in" /></p>
+<h3 id="gpu-compute-offering-생성">GPU Compute Offering 생성</h3>
+<p>GPU를 지원하는 VM을 생성하기 위해서는 GPU 지원 가능한 Compute
+Offering을 생성해야 한다. Compute Offering을 추가할 때 GPU Card에서
+등록된 디바이스를 선택하여 생성한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image16.png"
+style="width:6.57813in;height:3.20833in" /></p>
+<p>여기서 주의할 점은 GPU Driver 를 설치하기 위한 절절한 크기의 Root
+Disk Offering 을 선택해야 한다.</p>
+<ul>
+<li>최소 20GB 이상 권장 100GB</li>
+</ul>
+<h2 id="vm-생성">VM 생성</h2>
+<p>GPU를 지원하는 가상머신을 생성하기 위해서는 앞에서 생성한 GPU Compute
+Offering 을 기반으로 인스턴스를 생성요청 하면 된다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image17.png"
+style="width:6.57813in;height:3.20833in" /></p>
+<h2 id="gpu-pci-passthrough-인식-확인">GPU PCI Passthrough 인식
+확인</h2>
+<p>GPU Compute Offering으로 생성한 VM에 접속한 후 <strong>lspci</strong>
+명령을 실행하여, 물리 GPU 장치가 게스트 운영체제의 PCI 장치로 정상
+전달되었는지 확인한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image18.png"
+style="width:6.57847in;"/></p>
+<p>위 결과는 KVM 호스트의 NVIDIA A100 GPU가 해당 VM PCI Passthrough
+방식으로 정상 연결되었음을 의미한다.</p>
+<p><img src="/guide/html/images/tutorial/01_compute/05_gpu_passthrough_image19.png"
+style="width:6.46875in;height:3.30208in" /></p>
+<p>위 사진은 nvidia driver 및 nvidia utils 를 설치한 후 nvidia-smi 를
+이용해서 GPU 정보를 조회한 결과이다.</p>
+<p>정상적으로 GPU 장치를 가져오는 것을 확인할 수 있다.</p>

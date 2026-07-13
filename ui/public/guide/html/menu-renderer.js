@@ -20,22 +20,92 @@ function renderMenu() {
   sidebar.innerHTML = ''
   sidebar.classList.add('menu-sidebar')
 
-  const installLink = document.createElement('a')
-  installLink.className = 'sidebar-top-link'
-  installLink.href = '#/install'
-  installLink.dataset.path = 'install'
-  installLink.innerHTML = '<i class="fa fa-download"></i><span>설치 가이드</span>'
-  sidebar.appendChild(installLink)
+  const manualSection = createSection('manual', '<i class="fa fa-book"></i>', '사용자 설명서', menuData.manual || [])
+  sidebar.appendChild(manualSection)
 
-  const sidebarTitle = document.createElement('div')
-  sidebarTitle.className = 'sidebar-top-link sidebar-top-link--static'
-  sidebarTitle.innerHTML = '<i class="fa fa-book"></i><span>사용자 설명서</span>'
-  sidebar.appendChild(sidebarTitle)
+  const tutorialSection = createSection(
+    'tutorial',
+    '<i class="fa fa-graduation-cap"></i>',
+    '튜토리얼',
+    menuData.tutorial || []
+  )
+  sidebar.appendChild(tutorialSection)
+}
 
-  menuData.menu.forEach((category) => {
-    const accordion = createAccordionItem(category)
-    sidebar.appendChild(accordion)
+function createSection(key, iconHTML, label, categories) {
+  const section = document.createElement('div')
+  section.className = 'sidebar-section'
+  section.id = `section-${key}`
+
+  const header = document.createElement('div')
+  header.className = 'sidebar-top-link sidebar-section-header'
+  header.innerHTML = `
+    ${iconHTML}
+    <span class="section-label">${label}</span>
+    <span class="section-toggle-icon">▶</span>
+  `
+
+  const content = document.createElement('div')
+  content.className = 'sidebar-section-content'
+
+  categories.forEach((category) => {
+    if (category.path && !category.items) {
+      content.appendChild(createCategoryLink(category))
+    } else {
+      content.appendChild(createAccordionItem(category))
+    }
   })
+
+  header.addEventListener('click', () => toggleSection(key))
+
+  section.appendChild(header)
+  section.appendChild(content)
+
+  return section
+}
+
+function setSectionCollapsed(key, collapsed) {
+  const section = document.getElementById(`section-${key}`)
+  if (!section) return
+  section.classList.toggle('collapsed', collapsed)
+}
+
+function openSectionExclusive(key) {
+  const otherKey = key === 'manual' ? 'tutorial' : 'manual'
+  setSectionCollapsed(otherKey, true)
+  setSectionCollapsed(key, false)
+}
+
+function toggleSection(key) {
+  const section = document.getElementById(`section-${key}`)
+  if (!section) return
+
+  if (section.classList.contains('collapsed')) {
+    openSectionExclusive(key)
+  } else {
+    setSectionCollapsed(key, true)
+  }
+}
+
+function createCategoryLink(category) {
+  const accordionDiv = document.createElement('div')
+  accordionDiv.className = 'accordion-item category-link'
+  accordionDiv.id = `accordion-${category.id}`
+
+  const link = document.createElement('a')
+  link.className = 'accordion-header category-link-header'
+  link.href = `#/${category.path}`
+  link.dataset.path = category.path
+  link.id = `menu-item-${category.id}`
+  const iconHTML = category.icon ? `<i class="fa ${category.icon}"></i>` : ''
+  link.innerHTML = `
+    ${iconHTML}
+    <span class="accordion-label">${category.label}</span>
+  `
+
+  accordionDiv.appendChild(link)
+
+  return accordionDiv
 }
 
 function createAccordionItem(category) {
@@ -153,6 +223,9 @@ function highlightCurrentPage(currentHash) {
   const menuItems = document.querySelectorAll('.menu-item')
   menuItems.forEach((item) => item.classList.remove('active'))
 
+  const categoryLinks = document.querySelectorAll('.category-link-header')
+  categoryLinks.forEach((link) => link.classList.remove('active'))
+
   const accordions = document.querySelectorAll('.accordion-item')
   accordions.forEach((item) => item.classList.remove('open'))
 
@@ -167,21 +240,42 @@ function highlightCurrentPage(currentHash) {
     return
   }
 
-  for (const category of menuData.menu) {
-    for (const item of category.items) {
-      if (item.path === currentHash) {
-        const menuItem = document.getElementById(`menu-item-${item.id}`)
-        const accordionItem = document.getElementById(`accordion-${category.id}`)
+  const sections = [
+    { key: 'manual', categories: menuData.manual || [] },
+    { key: 'tutorial', categories: menuData.tutorial || [] },
+  ]
 
-        if (menuItem) {
-          menuItem.classList.add('active')
+  for (const section of sections) {
+    for (const category of section.categories) {
+      if (category.path && !category.items) {
+        if (category.path === currentHash) {
+          const menuItem = document.getElementById(`menu-item-${category.id}`)
+          if (menuItem) {
+            menuItem.classList.add('active')
+          }
+          openSectionExclusive(section.key)
+          return
         }
+        continue
+      }
 
-        if (accordionItem) {
-          accordionItem.classList.add('open')
+      for (const item of category.items) {
+        if (item.path === currentHash) {
+          const menuItem = document.getElementById(`menu-item-${item.id}`)
+          const accordionItem = document.getElementById(`accordion-${category.id}`)
+
+          if (menuItem) {
+            menuItem.classList.add('active')
+          }
+
+          if (accordionItem) {
+            accordionItem.classList.add('open')
+          }
+
+          openSectionExclusive(section.key)
+
+          return
         }
-
-        return
       }
     }
   }

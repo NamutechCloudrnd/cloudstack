@@ -22,7 +22,7 @@ export default {
   name: 'storagepool',
   title: 'label.primary.storage',
   icon: 'hdd-outlined',
-  docHelp: '#/10_infrastructure/06_primary_storage/primary_storage.html',
+  docHelp: '#/manual/10_infrastructure/06_primary_storage/primary_storage.html',
   permission: ['listStoragePoolsMetrics'],
   searchFilters: ['name', 'zoneid', 'podid', 'clusterid', 'ipaddress', 'path', 'scope'],
   columns: () => {

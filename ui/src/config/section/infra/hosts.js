@@ -22,7 +22,7 @@ export default {
   name: 'host',
   title: 'label.hosts',
   icon: 'database-outlined',
-  docHelp: '#/10_infrastructure/05_hosts/hosts.html',
+  docHelp: '#/manual/10_infrastructure/05_hosts/hosts.html',
   permission: ['listHostsMetrics'],
   searchFilters: ['name', 'zoneid', 'podid', 'clusterid', 'arch', 'hypervisor'],
   resourceType: 'Host',

@@ -101,9 +101,9 @@
                 <a href="https://docs.cloudstack.apache.org/en/latest/developersguide/dev.html" target="_blank">{{ $t('label.api.docs.description') }}</a>
               </template>
             </a-alert>
-            <a-result
+            <!-- <a-result
               status="success"
-              :title="$t('label.download') + ' CloudStack CloudMonkey CLI'"
+              :title="$t('label.download') + ' CloudMonkey CLI'"
               sub-title="For API automation and orchestration"
             >
               <template #extra>
@@ -145,7 +145,7 @@
                   </div>
                 </div>
               </template>
-            </a-result>
+            </a-result> -->
           </span>
         </a-card>
       </template>
@@ -198,6 +198,7 @@ export default {
     }
   },
   created () {
+    this.selectFirstApi()
     if (!('getUserKeys' in this.$store.getters.apis)) {
       return
     }
@@ -209,6 +210,12 @@ export default {
     })
   },
   methods: {
+    selectFirstApi () {
+      const firstApi = Object.keys(this.$store.getters.apis).sort()[0]
+      if (firstApi) {
+        this.showApi(firstApi)
+      }
+    },
     showApi (api) {
       this.selectedApi = api
       this.selectedParams = this.$store.getters.apis[api].params

@@ -22,7 +22,7 @@ export default {
   name: 'account',
   title: 'label.accounts',
   icon: 'team-outlined',
-  docHelp: '#/08_accounts/01_accounts/accounts.html',
+  docHelp: '#/manual/08_accounts/01_accounts/accounts.html',
   permission: ['listAccounts'],
   searchFilters: () => {
     var filters = ['name', 'accounttype', 'domainid']
