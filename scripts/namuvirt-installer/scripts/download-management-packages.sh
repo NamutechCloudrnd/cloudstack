@@ -55,12 +55,17 @@ docker run --rm --platform linux/amd64 \
     # 위 도구 설치로 캐시에 남은 rpm 을 비운다(closure /out 에 섞이지 않도록).
     dnf clean packages >/dev/null 2>&1 || true
     echo "== 의존성 closure 다운로드 (설치는 안 함) =="
+    # grafana 는 버전이 여러 개 남아 있으면 glob 이 전부 넘어가 "cannot install both" 로
+    # 실패한다. ansible(monitoring.yml)과 동일하게 최신 버전 하나만 고른다(sort -V | tail -1).
+    GRPM_NEWEST="$(ls /grpm/grafana-*.rpm 2>/dev/null | sort -V | tail -1)"
+    [ -n "$GRPM_NEWEST" ] || { echo "ERROR: /grpm 에 grafana rpm 이 없다"; exit 1; }
+    echo "== grafana rpm 선택: $(basename "$GRPM_NEWEST") =="
     # 로컬 cloudstack/grafana rpm + top-level 패키지의 전체 트랜잭션을 받는다.
     # (로컬 rpm 자체는 안 받고 그 의존성만 받음 → 로컬 rpm 은 packages/ 에 이미 있음)
     dnf install -y --downloadonly --downloaddir=/out --setopt=install_weak_deps=False \
       /csrpm/cloudstack-common-*.rpm /csrpm/cloudstack-management-*.rpm \
       /csrpm/cloudstack-usage-*.rpm /csrpm/cloudstack-ui-*.rpm \
-      /grpm/grafana-*.rpm \
+      "$GRPM_NEWEST" \
       '"${TOP_PKGS[*]}"'
     # rocky:8.10 dnf 는 --downloaddir 을 무시하고 rpm 을 /var/cache/dnf 에 두는 경우가 있다.
     # /out 이 비어 있으면 캐시에서 직접 수확한다(closure 유실 방지).

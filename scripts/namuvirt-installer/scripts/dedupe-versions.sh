@@ -43,9 +43,14 @@ dedupe_rocky() {
   docker run --rm --platform linux/amd64 -v "$HARNESS_ROOT/$dir:/pkgs" "$ROCKY_IMAGE" bash -c '
     set -e
     dnf install -y --quiet dnf-utils >/dev/null 2>&1 || true
-    # repomanage --old: 패키지별 최신(--keep 1)을 제외한 구버전 경로를 출력한다.
-    # mgmt/(관리 VM repo)는 제외하고 삭제한다.
-    repomanage --old --keep 1 /pkgs 2>/dev/null | grep -v "/mgmt/" | while read -r f; do
+    # mgmt/(관리 VM 전용 offline repo)는 자기 closure/repodata 를 온전히 보유해야 하므로
+    # dedupe 대상에서 "완전히" 제외한다 — 키퍼 판정 입력에서도 빼야 한다.
+    #   (과거엔 repomanage /pkgs 전체를 넣고 출력만 grep -v /mgmt/ 로 걸렀는데, 그러면
+    #    mgmt 사본이 최신 키퍼로 뽑힐 때 group 쪽 사본이 "old" 로 찍혀 삭제되는 버그가 있었다.)
+    # group 디렉터리들만 repomanage 에 넘긴다(그룹 간 버전 중복만 정리).
+    dirs=(); for d in /pkgs/*/; do [ "$(basename "$d")" = mgmt ] && continue; dirs+=("$d"); done
+    [ ${#dirs[@]} -eq 0 ] && exit 0
+    repomanage --old --keep 1 "${dirs[@]}" 2>/dev/null | while read -r f; do
       [ -n "$f" ] && rm -f "$f" && echo "  removed $(basename "$f")"
     done
   '

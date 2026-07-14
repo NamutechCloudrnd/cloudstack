@@ -136,6 +136,9 @@ fi
 detect_version_dupes() {
   local osdir="$1" ext="$2" dupes
   [[ -d "$osdir" ]] || return 0
+  # 빈 디렉터리면 grep -v '^$' 가 exit 1 을 내는데, pipefail+set -e 조합에서 이게 빌드를
+  # (메시지 없이) 중단시킨다. os-packages 미준비 상태에서도 뒤의 명확한 안내(mgmt closure
+  # 검증 등)까지 흐름이 도달하도록, 여기서는 '|| true' 로 pipefail 중단을 흡수한다.
   dupes="$(find "$osdir" -path '*/mgmt/*' -prune -o -name "*.$ext" -print 2>/dev/null \
     | sed 's#.*/##' | grep -v '^$' | sort -u \
     | awk -v ext="$ext" '{
@@ -144,7 +147,7 @@ detect_version_dupes() {
         if (ext=="rpm") { sub(/.*\./,"",arch); sub(/-[0-9].*/,"",name) }  # rpm: name-ver-rel.ARCH
         else            { sub(/.*_/,"",arch); sub(/_.*/,"",name) }        # deb: name_ver_ARCH
         print name"."arch
-      }' | sort | uniq -d)"
+      }' | sort | uniq -d)" || true
   if [[ -n "$dupes" ]]; then
     warn "os-packages($osdir)에 같은 패키지의 여러 버전이 있다 (NAME.ARCH):"
     echo "$dupes" | sed 's/^/      /' >&2
@@ -187,7 +190,9 @@ build_one() {
 # 과거 bind-mount 등으로 비워진 채 빌드되어 빈 이미지가 출하된 사례가 있어 여기서 강제 검증한다.
 # 비어 있으면(=repodata 없거나 rpm 부족) 빌드를 막아, 설치 단계의 조기-실패로 넘어가지 않게 한다.
 _mgmt_dir="packages/os-packages/rocky/mgmt"
-_mgmt_rpms="$(find "$_mgmt_dir" -name '*.rpm' 2>/dev/null | wc -l | tr -d ' ')"
+# mgmt 디렉터리 자체가 없으면 find 가 exit 1 → pipefail+set -e 로 아래 안내에 도달 전에 죽는다.
+# '|| true' 로 흡수하되 stdout(개수 "0")은 그대로 잡혀 아래 명확한 die 메시지가 뜨게 한다.
+_mgmt_rpms="$(find "$_mgmt_dir" -name '*.rpm' 2>/dev/null | wc -l | tr -d ' ')" || true
 if [[ ! -f "$_mgmt_dir/repodata/repomd.xml" || "$_mgmt_rpms" -lt 50 ]]; then
   die "관리 이미지 mgmt closure 가 비어있음/부족 ($_mgmt_dir: rpm=${_mgmt_rpms}, repodata=$([[ -f "$_mgmt_dir/repodata/repomd.xml" ]] && echo 있음 || echo 없음)).
   → './scripts/download-management-packages.sh' 로 mgmt closure(+repodata)를 먼저 생성한 뒤 다시 빌드하라.
