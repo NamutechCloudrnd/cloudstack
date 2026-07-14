@@ -1,0 +1,187 @@
+---
+# 설치 하네스 기준 config.yaml 로더.
+#
+# 원본(sample) 대비 변경점:
+#   1) config.yaml 경로는 컨테이너 내부 mount 지점(/mnt/namuvirt/config.yaml)을 기본값으로 한다.
+#      run-ansible.sh 가 `-e namuvirt_config_file=...` 로 넘긴다.
+#   2) OS는 host 별이 아니라 kvm.os 로 Cluster 전체가 동일하다 (rocky 또는 ubuntu).
+#   3) kvm.master 는 {ip,nic,gateway} 객체이며 kvm_hosts 그룹에도 포함되는 관리 대상이다.
+#   4) 패키지는 이미지에 내장되므로 packages_root 는 컨테이너 고정 경로를 사용한다
+#      (config.yaml 의 packages_dir 는 사용하지 않는다).
+#   5) 모든 대상(master 포함)은 SSH로 접속한다 — 컨테이너는 throwaway 이므로 local 접속을 쓰지 않는다.
+#
+# 실패 조기 종료(체크리스트): kvm.os 값 오류 / master 가 hosts 에 중복 / 혼합 OS 표기.
+
+- name: config.yaml 경로 확정
+  ansible.builtin.set_fact:
+    _config_file: "{{ namuvirt_config_file | default('/mnt/namuvirt/config.yaml') }}"
+
+- name: config.yaml 존재 확인
+  ansible.builtin.stat:
+    path: "{{ _config_file }}"
+  register: _config_stat
+
+- name: config.yaml 누락 시 즉시 실패
+  ansible.builtin.assert:
+    that: [_config_stat.stat.exists]
+    fail_msg: "config.yaml 을 찾을 수 없다: {{ _config_file }}"
+
+- name: config.yaml 로드
+  ansible.builtin.include_vars:
+    file: "{{ _config_file }}"
+    name: cfg
+
+# ── Cluster OS (전체 KVM Host 동일) ──────────────────────────────────────────
+- name: kvm.os 확정
+  ansible.builtin.set_fact:
+    cluster_os: "{{ (cfg.kvm.os | default('rocky')) | lower }}"
+
+- name: kvm.os 값 검증 (rocky 또는 ubuntu)
+  ansible.builtin.assert:
+    that: ["cluster_os in ['rocky', 'ubuntu']"]
+    fail_msg: >-
+      kvm.os 값이 잘못되었다: '{{ cluster_os }}'. rocky 또는 ubuntu 만 허용한다.
+
+# ── master / hosts 정규화 ────────────────────────────────────────────────────
+- name: kvm.master 항목 정규화 (문자열 IP 또는 {ip,nic,gateway} 객체 허용)
+  ansible.builtin.set_fact:
+    master_entry: "{{ cfg.kvm.master if cfg.kvm.master is mapping else {'ip': cfg.kvm.master} }}"
+
+- name: 추가 KVM Host 목록 초기화
+  ansible.builtin.set_fact:
+    extra_kvm_hosts: []
+
+# master 만 있는 구성(추가 관리 대상 Host 없음)도 지원한다.
+# `hosts:` 키를 생략하거나 비워(null) 두면 extra_kvm_hosts 는 빈 리스트가 되고,
+# kvm_hosts 그룹은 master 1대만 포함한다. default([], true) 로 null 도 빈 리스트로 처리.
+- name: 추가 KVM Host 항목 정규화
+  ansible.builtin.set_fact:
+    extra_kvm_hosts: "{{ extra_kvm_hosts + [(item if item is mapping else {'ip': item})] }}"
+  loop: "{{ cfg.kvm.hosts | default([], true) }}"
+  loop_control:
+    label: "{{ item }}"
+
+- name: master 가 kvm.hosts 에 중복 기재되지 않았는지 검증
+  ansible.builtin.assert:
+    that:
+      - "master_entry.ip not in (extra_kvm_hosts | map(attribute='ip') | list)"
+    fail_msg: >-
+      kvm.master({{ master_entry.ip }}) 가 kvm.hosts 에 중복 기재되었다.
+      master 는 자동으로 관리 대상에 포함되므로 kvm.hosts 에는 추가 Host 만 적는다.
+
+- name: kvm.hosts 항목에 다른 OS 표기가 섞이지 않았는지 검증 (혼합 Cluster 거부)
+  ansible.builtin.assert:
+    that:
+      - "extra_kvm_hosts | selectattr('os', 'defined') | rejectattr('os', 'equalto', cluster_os) | list | length == 0"
+    fail_msg: >-
+      Cluster 는 단일 OS 여야 한다. kvm.os={{ cluster_os }} 인데 kvm.hosts 에 다른 os 표기가 섞여 있다.
+      Rocky/Ubuntu 혼합 구성은 지원하지 않는다.
+
+# ── 공통 변수 ────────────────────────────────────────────────────────────────
+- name: 공통 변수 계산
+  ansible.builtin.set_fact:
+    common_ssh_user: "{{ cfg.ssh_user | default('namuvirt') }}"
+    common_ssh_key: "{{ cfg.ssh_private_key_path | default('/mnt/namuvirt/ssh/id_ed25519') }}"
+    common_bridge: "{{ (cfg.network | default({})).bridge | default('cloudbr0') }}"
+    common_prefix: "{{ (cfg.network | default({})).prefix | default(24) }}"
+    common_dns: "{{ (cfg.network | default({})).dns | default(['8.8.8.8', '1.1.1.1']) }}"
+    common_primary_storage: "{{ (cfg.storage | default({})).primary | default('/export/primary') }}"
+    common_secondary_storage: "{{ (cfg.storage | default({})).secondary | default('/export/secondary') }}"
+    common_nfs_domain: "{{ cfg.nfs_domain | default('local') }}"
+    # 패키지는 이미지 내장 — config.yaml 의 packages_dir 는 무시한다.
+    common_packages_root: "/opt/namuvirt-installer/packages"
+    common_management_ip: "{{ cfg.management.vm_ip }}"
+
+# ── 동적 인벤토리 등록 ───────────────────────────────────────────────────────
+# master 도 SSH로 접속한다 (컨테이너는 kvm.master 물리 호스트에서 실행되지만,
+# 컨테이너 자신이 아니라 물리 호스트를 구성해야 하므로 master.ip 로 SSH 한다).
+- name: kvm_master 인벤토리 등록 (kvm_hosts 그룹에도 포함)
+  ansible.builtin.add_host:
+    name: kvm-master
+    groups:
+      - kvm_master
+      - kvm_hosts
+    ansible_host: "{{ master_entry.ip }}"
+    ansible_user: "{{ common_ssh_user }}"
+    ansible_ssh_private_key_file: "{{ common_ssh_key }}"
+    namuvirt_ssh_private_key_path: "{{ common_ssh_key }}"
+    host_ip: "{{ master_entry.ip }}"
+    host_os: "{{ cluster_os }}"
+    is_master: true
+    nic: "{{ master_entry.nic | default('') }}"
+    gateway: "{{ master_entry.gateway | default('') }}"
+    management_ip: "{{ common_management_ip }}"
+    bridge_name: "{{ common_bridge }}"
+    network_prefix: "{{ common_prefix }}"
+    dns_servers: "{{ common_dns }}"
+    primary_storage: "{{ common_primary_storage }}"
+    secondary_storage: "{{ common_secondary_storage }}"
+    nfs_domain: "{{ common_nfs_domain }}"
+    packages_root: "{{ common_packages_root }}"
+
+- name: 추가 KVM Host 인벤토리 등록
+  ansible.builtin.add_host:
+    name: "kvm-host-{{ idx + 1 }}"
+    groups:
+      - kvm_hosts
+    ansible_host: "{{ item.ip }}"
+    ansible_user: "{{ common_ssh_user }}"
+    ansible_ssh_private_key_file: "{{ common_ssh_key }}"
+    namuvirt_ssh_private_key_path: "{{ common_ssh_key }}"
+    host_ip: "{{ item.ip }}"
+    host_os: "{{ cluster_os }}"
+    is_master: false
+    nic: "{{ item.nic | default('') }}"
+    gateway: "{{ item.gateway | default('') }}"
+    management_ip: "{{ common_management_ip }}"
+    bridge_name: "{{ common_bridge }}"
+    network_prefix: "{{ common_prefix }}"
+    dns_servers: "{{ common_dns }}"
+    primary_storage: "{{ common_primary_storage }}"
+    secondary_storage: "{{ common_secondary_storage }}"
+    nfs_domain: "{{ common_nfs_domain }}"
+    packages_root: "{{ common_packages_root }}"
+  loop: "{{ extra_kvm_hosts }}"
+  loop_control:
+    index_var: idx
+    label: "{{ item.ip }}"
+
+- name: 관리 VM 인벤토리 등록
+  ansible.builtin.add_host:
+    name: mgmt-vm
+    groups:
+      - management_vm
+    ansible_host: "{{ cfg.management.vm_ip }}"
+    ansible_user: "{{ common_ssh_user }}"
+    ansible_ssh_private_key_file: "{{ common_ssh_key }}"
+    namuvirt_ssh_private_key_path: "{{ common_ssh_key }}"
+    vm_name: "{{ cfg.management.vm_name | default('namuVIRT-management') }}"
+    vm_vcpus: "{{ cfg.management.vm_vcpus | default(8) }}"
+    vm_ram_mb: "{{ cfg.management.vm_ram_mb | default(16384) }}"
+    vm_disk_gb: "{{ cfg.management.vm_disk_gb | default(200) }}"
+    os_variant: "{{ cfg.management.os_variant | default('rocky8.6') }}"
+    vm_gateway: >-
+      {{ cfg.management.vm_gateway | default((cfg.management.vm_ip.split('.')[0:3] | join('.')) ~ '.1') }}
+    # 관리 VM 고정 MAC (라이센스 바인딩 등). 비우면 libvirt 자동 MAC.
+    vm_mac: "{{ cfg.management.vm_mac | default('') }}"
+    rocky_cloudimg: "{{ cfg.management.rocky_cloudimg | default('/mnt/namuvirt/images/NAMU-Rocky-8-10.qcow2') }}"
+    systemvm_template: "{{ cfg.management.systemvm_template | default('/mnt/namuvirt/images/SystemVM-Template-KVM.qcow2') }}"
+    # 비우면(기본) 관리 VM 은 secondary 를 NFS 로 마운트하지 않고 로컬 디렉터리로 쓴다.
+    # 값을 명시하면 그 호스트의 NFS export 를 secondary 로 마운트한다.
+    nfs_export_host_ip: "{{ cfg.management.nfs_export_host_ip | default('') }}"
+    golden_image_path: "{{ cfg.management.golden_image_path | default('') }}"
+    bridge_name: "{{ common_bridge }}"
+    network_prefix: "{{ common_prefix }}"
+    dns_servers: "{{ common_dns }}"
+    primary_storage: "{{ common_primary_storage }}"
+    secondary_storage: "{{ common_secondary_storage }}"
+    nfs_domain: "{{ common_nfs_domain }}"
+    packages_root: "{{ common_packages_root }}"
+
+- name: 동적 인벤토리 구성 결과 출력
+  ansible.builtin.debug:
+    msg:
+      - "cluster_os: {{ cluster_os }}"
+      - "kvm_master (관리 대상 포함): kvm-master ({{ master_entry.ip }})"
+      - "kvm_hosts 추가: {{ extra_kvm_hosts | map(attribute='ip') | list }}"
+      - "management_vm: mgmt-vm ({{ cfg.management.vm_ip }})"

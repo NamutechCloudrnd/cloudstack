@@ -1,0 +1,30 @@
+---
+# 체크리스트 3-3) config.json.j2 → /etc/cloudstack/management/config.json (grafanaBase 설정).
+# 기존 monitoring.sh의 python inline 패치 방식 대신 Jinja2 템플릿을 그대로 배포한다.
+
+- name: grafanaBase 계산
+  ansible.builtin.set_fact:
+    grafanaBase: >-
+      http://{{ ansible_host }}:{{ grafana_http_port }}{{ ('/' ~ grafana_monitoring_path) if grafana_monitoring_path | default('') else '' }}
+  tags: [management, config_json]
+
+- name: config.json 대상 디렉터리 존재 확인
+  ansible.builtin.stat:
+    path: "{{ item | dirname }}"
+  loop:
+    - /etc/cloudstack/management/config.json
+    - /etc/cloudstack/ui/config.json
+  register: _config_json_dirs
+  tags: [management, config_json]
+
+- name: config.json 배포 (management / ui — 디렉터리가 있는 경우만)
+  ansible.builtin.template:
+    src: configure/config.json.j2
+    dest: "{{ item.item }}"
+    mode: "0644"
+  loop: "{{ _config_json_dirs.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.stat.exists
+  notify: restart cloudstack-management
+  tags: [management, config_json]

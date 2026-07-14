@@ -1,0 +1,89 @@
+---
+# 체크리스트 1) 사전 검증 — SSH 접속, sudo, OS 체크, KVM 확인.
+# 지원 OS: Rocky Linux 8.x / Ubuntu 24.04 (Noble)
+# 하네스 규칙:
+#   - 모든 KVM Host 는 kvm.os(cluster_os) 와 동일한 OS 여야 한다 (혼합 Cluster 거부).
+#   - 기존 KVM 이 이미 설치되어 있으면 KVM 설치는 skip 하고 관리 바이너리만 설치한다(협의).
+
+- name: SSH 접속 확인
+  ansible.builtin.wait_for_connection:
+    timeout: 30
+
+- name: sudo(become) 동작 확인
+  ansible.builtin.command: whoami
+  become: true
+  register: _whoami
+  changed_when: false
+
+- name: sudo 결과 확인
+  ansible.builtin.assert:
+    that:
+      - _whoami.stdout | trim == 'root'
+    fail_msg: >-
+      sudo로 root 권한을 얻지 못했다 ({{ ansible_user }}@{{ inventory_hostname }}).
+      {{ ansible_user }} 계정에 비밀번호 없는 sudo가 설정되어 있는지 확인할 것.
+
+- name: OS 체크 (Rocky 8 또는 Ubuntu 24.04)
+  ansible.builtin.assert:
+    that:
+      - >-
+        (ansible_distribution == 'Rocky' and ansible_distribution_major_version == '8')
+        or
+        (ansible_distribution == 'Ubuntu' and ansible_distribution_version == '24.04')
+    fail_msg: >-
+      지원하지 않는 OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+      ({{ inventory_hostname }}). Rocky Linux 8.x 또는 Ubuntu 24.04 만 지원한다.
+
+- name: 실제 OS 가 kvm.os(cluster_os) 와 일치하는지 검증 (혼합 Cluster 거부)
+  ansible.builtin.assert:
+    that:
+      - "(ansible_distribution | lower) == hostvars['kvm-master'].host_os | default(ansible_distribution | lower)"
+    fail_msg: >-
+      Host OS({{ ansible_distribution | lower }}) 가 Cluster OS(kvm.os) 와 다르다
+      ({{ inventory_hostname }}). 하나의 namuVIRT Cluster 는 모든 KVM Host 가 동일 OS 여야 한다.
+
+- name: KVM 디바이스(/dev/kvm) 존재 여부 확인
+  ansible.builtin.stat:
+    path: /dev/kvm
+  register: _kvm_device
+
+- name: /dev/kvm 누락 시 실패 (가상화 미지원/BIOS VT 비활성)
+  ansible.builtin.assert:
+    that:
+      - _kvm_device.stat.exists
+    fail_msg: >-
+      /dev/kvm 이 없다 ({{ inventory_hostname }}). BIOS 의 VT-x/AMD-V 활성화 여부와
+      중첩 가상화 설정을 확인할 것.
+
+- name: qemu-kvm 설치 여부 확인 (Rocky)
+  ansible.builtin.command: rpm -q qemu-kvm
+  become: true
+  register: _qemu_kvm_rpm
+  changed_when: false
+  failed_when: false
+  when: ansible_distribution != 'Ubuntu'
+
+- name: qemu-kvm 설치 여부 확인 (Ubuntu)
+  ansible.builtin.command: dpkg -l qemu-kvm qemu-system-x86
+  become: true
+  register: _qemu_kvm_deb
+  changed_when: false
+  failed_when: false
+  when: ansible_distribution == 'Ubuntu'
+
+- name: "KVM 설치 상태 기록 (협의 - 기존 KVM 이 있으면 KVM 설치 skip)"
+  ansible.builtin.set_fact:
+    kvm_already_installed: >-
+      {{
+        (_qemu_kvm_rpm.rc | default(1)) == 0
+        if ansible_distribution != 'Ubuntu'
+        else (_qemu_kvm_deb.rc | default(1)) == 0
+      }}
+
+- name: KVM 상태 출력
+  ansible.builtin.debug:
+    msg: >-
+      {{ inventory_hostname }} ({{ ansible_distribution }} {{ ansible_distribution_major_version }}):
+      KVM {{ 'already installed — KVM 패키지 설치는 skip, 관리 바이너리만 설치'
+             if kvm_already_installed
+             else 'not installed — kvm_hosts role 이 설치' }}

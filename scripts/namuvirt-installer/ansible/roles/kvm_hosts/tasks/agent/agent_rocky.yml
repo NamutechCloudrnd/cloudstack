@@ -1,0 +1,165 @@
+---
+# cloudstack-agent 설치 (Rocky) — install_agent() + configure_java17() 포팅.
+# packages_root/namuvirt/rocky/ 에 패키지가 없으면 skip(WARN).
+
+- name: namuvirt 패키지 경로 확정 (Rocky)
+  ansible.builtin.set_fact:
+    _namuvirt_pkg_dir: "{{ packages_root }}/namuvirt/rocky"
+  tags: [kvm_hosts, agent]
+
+- name: cloudstack-common RPM 탐색
+  ansible.builtin.find:
+    paths: "{{ _namuvirt_pkg_dir }}"
+    patterns: "cloudstack-common-*.rpm"
+  delegate_to: localhost
+  become: false
+  register: _common_pkg
+  tags: [kvm_hosts, agent]
+
+- name: cloudstack-agent RPM 탐색
+  ansible.builtin.find:
+    paths: "{{ _namuvirt_pkg_dir }}"
+    patterns: "cloudstack-agent-*.rpm"
+  delegate_to: localhost
+  become: false
+  register: _agent_pkg
+  tags: [kvm_hosts, agent]
+
+- name: agent 설치 가능 여부 결정
+  ansible.builtin.set_fact:
+    skip_agent: "{{ (_common_pkg.files | length == 0) or (_agent_pkg.files | length == 0) }}"
+  tags: [kvm_hosts, agent]
+
+- name: 패키지 없음 — agent 설치 skip 경고
+  ansible.builtin.debug:
+    msg: >-
+      WARN: cloudstack-common/agent RPM이 {{ _namuvirt_pkg_dir }} 에 없다 — agent 설치를 건너뜀.
+      packages/namuvirt/rocky/ 에 배포 패키지를 배치할 것.
+  when: skip_agent
+  tags: [kvm_hosts, agent]
+
+- name: cloudstack-agent 설치 및 설정 (Rocky)
+  when: not skip_agent
+  tags: [kvm_hosts, agent]
+  block:
+    - name: Java 17 JDK 디렉터리 탐색
+      ansible.builtin.find:
+        paths: /usr/lib/jvm
+        file_type: directory
+        patterns: "java-17-openjdk*"
+      register: _java17_dirs
+
+    - name: Java 17 미발견 경고
+      ansible.builtin.debug:
+        msg: "WARN: java-17-openjdk not found in /usr/lib/jvm"
+      when: _java17_dirs.files | length == 0
+
+    - name: 시스템 기본 java를 17로 설정
+      ansible.builtin.command: >
+        alternatives --set java {{ (_java17_dirs.files | sort(attribute='path') | first).path }}/bin/java
+      when: _java17_dirs.files | length > 0
+      changed_when: true
+
+    - name: 패키지 전송 디렉터리 생성
+      ansible.builtin.file:
+        path: /opt/namuvirt/packages
+        state: directory
+        mode: "0755"
+
+    - name: cloudstack-common/agent RPM 전송
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: "/opt/namuvirt/packages/{{ item.path | basename }}"
+        mode: "0644"
+      loop:
+        - "{{ _common_pkg.files[0] }}"
+        - "{{ _agent_pkg.files[0] }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    - name: cloudstack-common/agent RPM 설치
+      ansible.builtin.dnf:
+        name:
+          - "/opt/namuvirt/packages/{{ _common_pkg.files[0].path | basename }}"
+          - "/opt/namuvirt/packages/{{ _agent_pkg.files[0].path | basename }}"
+        state: present
+        disable_gpg_check: true
+
+    - name: agent.properties 기본 키 설정
+      ansible.builtin.lineinfile:
+        path: /etc/cloudstack/agent/agent.properties
+        regexp: "^#?{{ item.key | regex_escape }}="
+        line: "{{ item.key }}={{ item.value }}"
+        create: true
+        mode: "0644"
+      loop:
+        - { key: host, value: "{{ management_ip }}" }
+        - { key: port, value: "{{ agent_port }}" }
+        - { key: public.network.device, value: "{{ bridge_name }}" }
+        - { key: private.network.device, value: "{{ bridge_name }}" }
+        - { key: guest.network.device, value: "{{ bridge_name }}" }
+
+    - name: agent.properties guid/local.storage.uuid 현재 값 확인
+      ansible.builtin.shell: >
+        set -o pipefail;
+        grep -E '^#?{{ item }}=' /etc/cloudstack/agent/agent.properties
+        | tail -1 | cut -d= -f2- | tr -d '[:space:]'
+      args:
+        executable: /bin/bash
+      loop:
+        - guid
+        - local.storage.uuid
+      register: _agent_uuid_current
+      changed_when: false
+      failed_when: false
+
+    - name: 비어있는 guid/local.storage.uuid 용 uuid 생성
+      ansible.builtin.command: uuidgen
+      loop: "{{ _agent_uuid_current.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      register: _agent_uuid_generated
+      changed_when: true
+      when: item.stdout | default('') | trim == ''
+
+    - name: agent.properties guid/local.storage.uuid 기록 (비어있던 항목만)
+      ansible.builtin.lineinfile:
+        path: /etc/cloudstack/agent/agent.properties
+        regexp: "^#?{{ item.item.item }}="
+        line: "{{ item.item.item }}={{ item.stdout }}"
+      loop: "{{ _agent_uuid_generated.results }}"
+      loop_control:
+        label: "{{ item.item.item | default('skipped') }}"
+      when: item.skipped is not defined
+
+    - name: Java 17 JDK home 경로 확인
+      ansible.builtin.find:
+        paths: /usr/lib/jvm
+        file_type: directory
+        patterns: "java-17-openjdk*"
+      register: _java17_jdk_dirs
+
+    - name: cloudstack-agent systemd override 디렉터리 생성
+      ansible.builtin.file:
+        path: /etc/systemd/system/cloudstack-agent.service.d
+        state: directory
+        mode: "0755"
+
+    - name: cloudstack-agent Java 17 systemd override 배포
+      ansible.builtin.template:
+        src: java17.conf.j2
+        dest: /etc/systemd/system/cloudstack-agent.service.d/java17.conf
+        mode: "0644"
+      vars:
+        java17_bin: "{{ (_java17_jdk_dirs.files | sort(attribute='path') | first).path }}/bin/java"
+      notify: reload systemd
+
+    - name: libvirtd / cloudstack-agent 활성화
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+      loop:
+        - libvirtd
+        - cloudstack-agent

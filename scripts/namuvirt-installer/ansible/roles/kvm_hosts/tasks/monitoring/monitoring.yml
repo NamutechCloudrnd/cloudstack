@@ -1,0 +1,102 @@
+---
+# 체크리스트 4-2) install_exporters() 포팅 — node/process/libvirt exporter.
+# 폐쇄망: 레포 없이 packages_root/exporters에 사전 적재된 tar.gz를 직접 설치한다.
+
+- name: 빌드용 임시 디렉터리 생성
+  ansible.builtin.file:
+    path: "/opt/namuvirt/build/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - node_exporter
+    - process-exporter
+    - prometheus-libvirt-exporter
+  tags: [kvm_hosts, monitoring]
+
+- name: 이미 설치된 exporter 바이너리 확인
+  ansible.builtin.stat:
+    path: "/usr/local/bin/{{ item }}"
+  loop:
+    - node_exporter
+    - process-exporter
+    - prometheus-libvirt-exporter
+  register: _exporter_installed
+  tags: [kvm_hosts, monitoring]
+
+- name: exporter 설치 (없는 것만)
+  vars:
+    exporters:
+      - bin: node_exporter
+        pattern: "node_exporter-*linux-amd64.tar.gz"
+      - bin: process-exporter
+        pattern: "process-exporter-*linux-amd64.tar.gz"
+      - bin: prometheus-libvirt-exporter
+        pattern: "prometheus-libvirt-exporter-*linux-amd64.tar.gz"
+  # apply 필수: install 은 `--tags kvm_hosts` 로 도는데, apply 없이 include_tasks 하면
+  # 포함된 _install_one_exporter.yml 의 자식 태스크가 태그를 상속받지 못해 --tags 필터에
+  # 걸려 통째로 스킵된다(유닛만 배포되고 바이너리 미설치 → 203/EXEC). apply 로 태그 전파.
+  ansible.builtin.include_tasks:
+    file: _install_one_exporter.yml
+    apply:
+      tags: [kvm_hosts, monitoring]
+  when: not (_exporter_installed.results | selectattr('item', 'equalto', exp.bin) | map(attribute='stat.exists') | first)
+  loop: "{{ exporters }}"
+  loop_control:
+    loop_var: exp
+    label: "{{ exp.bin }}"
+  tags: [kvm_hosts, monitoring]
+
+- name: node-exporter systemd unit 배포
+  ansible.builtin.template:
+    src: node-exporter.service.j2
+    dest: /etc/systemd/system/node-exporter.service
+    mode: "0644"
+  notify: reload systemd
+  tags: [kvm_hosts, monitoring]
+
+- name: process-exporter 설정 파일 (없을 때만)
+  ansible.builtin.copy:
+    dest: /etc/process-exporter.yml
+    content: |
+      process_names:
+        - name: "{{ '{{.Comm}}' }}"
+          cmdline:
+            - '.+'
+    mode: "0644"
+    force: false
+  tags: [kvm_hosts, monitoring]
+
+- name: process-exporter systemd unit 배포
+  ansible.builtin.template:
+    src: process-exporter.service.j2
+    dest: /etc/systemd/system/process-exporter.service
+    mode: "0644"
+  notify: reload systemd
+  tags: [kvm_hosts, monitoring]
+
+- name: libvirt-exporter systemd unit 배포
+  ansible.builtin.template:
+    src: libvirt-exporter.service.j2
+    dest: /etc/systemd/system/libvirt-exporter.service
+    mode: "0644"
+  notify: reload systemd
+  tags: [kvm_hosts, monitoring]
+
+- name: libvirt-exporter 바이너리 누락 경고
+  ansible.builtin.debug:
+    msg: "WARNING: /usr/local/bin/prometheus-libvirt-exporter missing; install binary before service start"
+  when: not (_exporter_installed.results | selectattr('item', 'equalto', 'prometheus-libvirt-exporter') | map(attribute='stat.exists') | first)
+  tags: [kvm_hosts, monitoring]
+
+- name: exporter 서비스 활성화
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+    daemon_reload: true
+  loop:
+    - node-exporter
+    - process-exporter
+    - libvirt-exporter
+  failed_when: false
+  tags: [kvm_hosts, monitoring]

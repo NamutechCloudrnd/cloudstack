@@ -1,0 +1,4 @@
+---
+# OS에 따라 Rocky(rpm/dnf) 또는 Ubuntu(deb/dpkg) 패키지 설치 파일을 선택한다.
+- ansible.builtin.include_tasks: "packages_{{ ansible_distribution | lower }}.yml"
+  tags: [kvm_hosts, packages]

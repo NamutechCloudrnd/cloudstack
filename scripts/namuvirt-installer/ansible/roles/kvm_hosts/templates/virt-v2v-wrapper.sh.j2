@@ -1,0 +1,24 @@
+#!/bin/bash
+# Rocky 9 virt-v2v wrapper — Ubuntu 24.04+ guest conversion on Rocky 8 KVM hosts.
+set -euo pipefail
+ROOT=/opt/virt-v2v-r9
+REAL=/usr/bin/virt-v2v.real
+
+if [ ! -x "${ROOT}/usr/bin/virt-v2v" ]; then
+  exec "${REAL}" "$@"
+fi
+
+mount_chroot() {
+  local d
+  for d in /dev /proc /sys /run /mnt /var/tmp /tmp; do
+    mkdir -p "${ROOT}${d}"
+    if ! mountpoint -q "${ROOT}${d}"; then
+      mount --rbind "${d}" "${ROOT}${d}"
+    fi
+  done
+  mkdir -p "${ROOT}/run/user/0"
+  chmod 700 "${ROOT}/run/user/0"
+}
+
+mount_chroot
+exec chroot "${ROOT}" env XDG_RUNTIME_DIR=/run/user/0 HOME=/root /usr/bin/virt-v2v "$@"

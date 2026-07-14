@@ -1,0 +1,44 @@
+---
+# cloud-init이 관리 VM에 주입할 SSH 공개키를 확인한다.
+# 키는 고객이 ssh/id_ed25519 로 제공(prepare-install.sh 가 생성)하며 컨테이너의
+# /mnt/namuvirt/ssh 로 읽기전용 mount 된다. 따라서:
+#   - 확인은 반드시 controller(컨테이너=localhost)에서 한다. 이 play 는 kvm_master 를
+#     대상으로 하므로 delegate_to 를 빼면 원격 kvm-master 에서 실행되어 mount 경로가 없다.
+#   - RO mount 이므로 여기서 키를 생성하지 않는다(없으면 preflight/prepare-install 로 준비).
+# 공개키 내용은 user-data.j2 의 lookup('file', ...pub) 이 controller 에서 읽어 주입한다.
+
+- name: SSH ed25519 개인키 존재 확인 (controller mount)
+  ansible.builtin.stat:
+    path: "{{ namuvirt_ssh_private_key_path }}"
+  delegate_to: localhost
+  run_once: true
+  become: false
+  register: _ssh_key
+  tags: [management, provision]
+
+- name: SSH 개인키 누락 시 중단
+  ansible.builtin.assert:
+    that: _ssh_key.stat.exists
+    fail_msg: >-
+      {{ namuvirt_ssh_private_key_path }} 가 없다 —
+      ssh/id_ed25519 를 배치하거나 prepare-install.sh 로 생성할 것.
+  delegate_to: localhost
+  run_once: true
+  tags: [management, provision]
+
+- name: SSH 공개키 존재 확인 (controller mount)
+  ansible.builtin.stat:
+    path: "{{ namuvirt_ssh_private_key_path }}.pub"
+  delegate_to: localhost
+  run_once: true
+  become: false
+  register: _ssh_pubkey
+  tags: [management, provision]
+
+- name: SSH 공개키 누락 시 중단
+  ansible.builtin.assert:
+    that: _ssh_pubkey.stat.exists
+    fail_msg: "{{ namuvirt_ssh_private_key_path }}.pub 가 없다 — ssh/id_ed25519.pub 배치 확인."
+  delegate_to: localhost
+  run_once: true
+  tags: [management, provision]

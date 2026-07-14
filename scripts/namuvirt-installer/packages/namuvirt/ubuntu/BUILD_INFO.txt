@@ -1,0 +1,9 @@
+build_id=20260714_041046
+branch=develop
+commit=a9009881b22f5fea130b0f71911b9a9cfc7137c5
+describe=a9009881b2-dirty
+mode=normal
+with_vmware=1
+package_format=deb
+repo_dir=/workspace/namuVIRT
+built_at=2026-07-14T04:25:39+00:00

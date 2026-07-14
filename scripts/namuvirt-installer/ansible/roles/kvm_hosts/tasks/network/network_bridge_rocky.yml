@@ -1,0 +1,92 @@
+---
+# Rocky: nmcli로 cloudbr0 브리지 설정.
+# SSH가 NIC를 타고 있으면 브리지 전환 중 잠깐 끊길 수 있음 — 로컬 콘솔 사용 권장.
+
+- name: nmcli 브리지 설정 시작 경고
+  ansible.builtin.debug:
+    msg: "WARN: nmcli bridge setup may briefly interrupt SSH on {{ nic }}; use local console if disconnected"
+  tags: [kvm_hosts, network]
+
+- name: 브리지 connection 존재 확인
+  ansible.builtin.command: nmcli -t -f NAME connection show
+  register: _nmcli_connections
+  changed_when: false
+  tags: [kvm_hosts, network]
+
+- name: 브리지 connection 생성 (없을 때만)
+  ansible.builtin.command: >
+    nmcli connection add type bridge con-name {{ bridge_name }} ifname {{ bridge_name }}
+  when: bridge_name not in _nmcli_connections.stdout_lines
+  tags: [kvm_hosts, network]
+
+- name: 활성 connection 목록에서 NIC의 connection 이름 조회
+  ansible.builtin.shell: >
+    set -o pipefail;
+    nmcli -t -f NAME,DEVICE connection show --active | awk -F: -v dev="{{ nic }}" '$2==dev{print $1; exit}'
+  args:
+    executable: /bin/bash
+  register: _nic_con_active
+  changed_when: false
+  tags: [kvm_hosts, network]
+
+- name: 전체 connection 목록에서 NIC의 connection 이름 조회 (active에 없을 때)
+  ansible.builtin.shell: >
+    set -o pipefail;
+    nmcli -t -f NAME,DEVICE connection show | awk -F: -v dev="{{ nic }}" '$2==dev{print $1; exit}'
+  args:
+    executable: /bin/bash
+  register: _nic_con_all
+  changed_when: false
+  when: _nic_con_active.stdout | trim == ''
+  tags: [kvm_hosts, network]
+
+- name: NIC connection 이름 확정
+  ansible.builtin.set_fact:
+    nic_connection_name: >-
+      {{ (_nic_con_active.stdout | trim) or (_nic_con_all.stdout | default('') | trim) or nic }}
+  tags: [kvm_hosts, network]
+
+# nic 이 브리지 자신으로 잡히면(예: config 의 nic 가 cloudbr0) 브리지를 자기 자신의
+# slave 로 만들어 이후 ipv4 설정이 깨진다. nic == bridge 인 경우 enslave 를 건너뛴다.
+- name: NIC를 브리지에 master로 연결 (nic 이 브리지 자신이 아닐 때만)
+  ansible.builtin.command: nmcli connection modify {{ nic_connection_name }} master {{ bridge_name }}
+  when: nic_connection_name != bridge_name
+  tags: [kvm_hosts, network]
+
+# 이전 실패 런 등으로 브리지 connection 에 master/slave-type 이 잘못 박혀 있으면 해제한다.
+# (bridge master 는 master/slave-type 이 비어 있어야 ipv4 설정이 가능하다.)
+- name: 브리지 connection 자기참조/슬레이브 오설정 해제
+  ansible.builtin.command: >
+    nmcli connection modify {{ bridge_name }} connection.master "" connection.slave-type ""
+  changed_when: false
+  failed_when: false
+  tags: [kvm_hosts, network]
+
+- name: 브리지 IPv4/DNS 설정
+  ansible.builtin.command: >
+    nmcli connection modify {{ bridge_name }}
+    ipv4.addresses {{ host_ip }}/{{ network_prefix }}
+    ipv4.gateway {{ gateway }}
+    ipv4.dns "{{ dns_servers | join(' ') }}"
+    ipv4.method manual
+    ipv6.method ignore
+  tags: [kvm_hosts, network]
+
+- name: NIC connection up (nic 이 브리지 자신이 아닐 때만)
+  ansible.builtin.command: nmcli connection up {{ nic_connection_name }}
+  register: _nic_up
+  changed_when: _nic_up.rc == 0
+  failed_when: false
+  when: nic_connection_name != bridge_name
+  tags: [kvm_hosts, network]
+
+- name: NIC connection up 실패 시 원래 NIC 이름으로 재시도
+  ansible.builtin.command: nmcli connection up {{ nic }}
+  when:
+    - nic_connection_name != bridge_name
+    - _nic_up.rc | default(0) != 0
+  tags: [kvm_hosts, network]
+
+- name: 브리지 connection up
+  ansible.builtin.command: nmcli connection up {{ bridge_name }}
+  tags: [kvm_hosts, network]

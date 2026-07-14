@@ -1,0 +1,8 @@
+---
+# configure_time_sync() — Rocky: chronyd / Ubuntu: chrony (서비스 이름 상이)
+- name: chrony 서비스 활성화
+  ansible.builtin.systemd:
+    name: "{{ 'chrony' if ansible_distribution == 'Ubuntu' else 'chronyd' }}"
+    state: started
+    enabled: true
+  tags: [kvm_hosts]

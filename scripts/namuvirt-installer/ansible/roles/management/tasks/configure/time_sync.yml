@@ -1,0 +1,22 @@
+---
+# 관리 VM 시간 동기화 — KVM host와 동일한 chrony 서비스.
+# CloudStack management ↔ KVM agent 간 시간 불일치 시 VM 조작 오류·MariaDB 타임스탬프 불일치 발생.
+
+- name: chrony 서비스 활성화 (관리 VM)
+  ansible.builtin.systemd:
+    name: "{{ 'chrony' if ansible_distribution == 'Ubuntu' else 'chronyd' }}"
+    state: started
+    enabled: true
+  tags: [management, configure]
+
+- name: chrony 동기화 상태 확인 (정보성)
+  ansible.builtin.command: chronyc tracking
+  register: _chrony_tracking
+  changed_when: false
+  failed_when: false
+  tags: [management, configure]
+
+- name: chrony 동기화 상태 출력
+  ansible.builtin.debug:
+    msg: "{{ _chrony_tracking.stdout_lines | default(['chronyc tracking 실패 — chrony가 아직 동기화 중일 수 있음']) }}"
+  tags: [management, configure]

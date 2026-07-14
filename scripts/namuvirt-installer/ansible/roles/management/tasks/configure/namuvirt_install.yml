@@ -1,0 +1,73 @@
+---
+# namuVIRT(CloudStack) management 패키지 설치 — check_packages() + sync_packages() + install 포팅.
+# 패키지 위치: packages_root/namuvirt/{os}/
+
+- name: namuVIRT 패키지 경로 확정
+  ansible.builtin.set_fact:
+    _namuvirt_pkg_dir: "{{ packages_root }}/namuvirt/{{ ansible_distribution | lower }}"
+  tags: [management, configure]
+
+- name: namuVIRT management 패키지 탐색 (controller)
+  ansible.builtin.find:
+    paths: "{{ _namuvirt_pkg_dir }}"
+    patterns: "{{ item }}-*{{ '.rpm' if ansible_distribution != 'Ubuntu' else '.deb' }}"
+  loop:
+    - cloudstack-common
+    - cloudstack-management
+    - cloudstack-ui
+    - cloudstack-usage
+  delegate_to: localhost
+  become: false
+  register: _mgmt_pkg_find
+  tags: [management, configure]
+
+- name: 패키지 누락 시 중단
+  ansible.builtin.assert:
+    that: item.files | length > 0
+    fail_msg: >-
+      missing package: {{ item.item }}-* in {{ _namuvirt_pkg_dir }}
+      — packages/namuvirt/{{ ansible_distribution | lower }}/ 에 배포 패키지를 배치할 것
+  loop: "{{ _mgmt_pkg_find.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  tags: [management, configure]
+
+- name: 관리 VM 패키지 전송 디렉터리 생성
+  ansible.builtin.file:
+    path: "{{ namuvirt_pkg_remote_dir }}"
+    state: directory
+    mode: "0755"
+  tags: [management, configure]
+
+- name: namuVIRT 패키지를 관리 VM으로 전송
+  ansible.builtin.copy:
+    src: "{{ item.path }}"
+    dest: "{{ namuvirt_pkg_remote_dir }}/"
+    mode: "0644"
+  loop: "{{ _mgmt_pkg_find.results | map(attribute='files') | flatten }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
+  tags: [management, configure]
+
+- name: namuVIRT 패키지 설치 (Rocky, 오프라인)
+  ansible.builtin.dnf:
+    name: "{{ _mgmt_pkg_find.results | map(attribute='files') | flatten | map(attribute='path') | map('basename') | map('regex_replace', '^(.*)$', namuvirt_pkg_remote_dir + '/\\1') | list }}"
+    state: present
+    disable_gpg_check: true
+    disablerepo: "*"          # 폐쇄망: 온라인 미러 차단
+    enablerepo: nvoffline     # cloudstack 의존성은 base_packages 가 얹은 로컬 repo 에서 해결
+  when: ansible_distribution != 'Ubuntu'
+  tags: [management, configure]
+
+- name: namuVIRT 패키지 설치 (Ubuntu)
+  ansible.builtin.shell: >
+    dpkg -i {{ _mgmt_pkg_find.results | map(attribute='files') | flatten
+               | map(attribute='path') | map('basename')
+               | map('regex_replace', '^(.*)$', namuvirt_pkg_remote_dir + '/\\1')
+               | join(' ') }} 2>&1; dpkg --configure -a
+  args:
+    executable: /bin/bash
+  changed_when: true
+  failed_when: false
+  when: ansible_distribution == 'Ubuntu'
+  tags: [management, configure]

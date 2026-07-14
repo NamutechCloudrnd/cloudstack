@@ -1,0 +1,9 @@
+---
+# preflight_stage 변수로 두 단계를 구분한다 (site.yml의 두 개의 play에서 각각 호출):
+#   load_config     — hosts: localhost — config.yaml 파싱 + add_host로 동적 인벤토리 구성
+#   validate_hosts  — hosts: kvm_hosts — 체크리스트 1) SSH/sudo/OS/KVM 설치 여부 확인
+- ansible.builtin.import_tasks: load_config.yml
+  when: preflight_stage == 'load_config'
+
+- ansible.builtin.import_tasks: validate_hosts.yml
+  when: preflight_stage == 'validate_hosts'

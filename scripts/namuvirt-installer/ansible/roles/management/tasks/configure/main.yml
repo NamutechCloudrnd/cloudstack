@@ -1,0 +1,23 @@
+---
+# install-management-vm.sh 의 VM 내부 설치 흐름과 동일한 순서.
+# (이 파일 자체가 configure/ 안에 있으므로, 같은 디렉터리의 파일은 접두사 없이 참조한다.)
+- ansible.builtin.import_tasks: base_packages.yml
+- ansible.builtin.import_tasks: time_sync.yml
+- ansible.builtin.import_tasks: selinux_firewall.yml
+- ansible.builtin.import_tasks: nfs_mount.yml
+- ansible.builtin.import_tasks: mariadb.yml
+- ansible.builtin.import_tasks: namuvirt_install.yml
+- ansible.builtin.import_tasks: remove_kvm_traces.yml
+- ansible.builtin.import_tasks: database_init.yml
+# config.json(grafanaBase 등)은 cloudstack-management 가 기동 시 읽으므로 start_management 앞에서 배포한다.
+# (뒤에 두면 restart handler 에 의존하게 되어 첫 기동 시 UI 에 반영이 안 될 수 있다.)
+- ansible.builtin.import_tasks: config_json.yml
+- ansible.builtin.import_tasks: start_management.yml
+# SystemVM 템플릿 seed 와 골든(OS) 이미지 업로드는 설치 흐름에서 분리한다(zone/secondary storage 는
+# 설치 후 운영자가 CloudStack 에서 구성하므로 그 시점에 맞춰 별도 수행).
+#   - SystemVM 부트스트랩 시드: `./upload-os-image.sh seed-systemvm` (cloud-install-sys-tmplt 직접, SSVM 불필요).
+#     ※ 최초엔 반드시 seed-systemvm 을 써야 한다. register-systemvm(SSVM 경유)은 SSVM 이 있어야 하므로 순환이다.
+#   - 게스트 OS 이미지 등록: `./upload-os-image.sh register ...` (SSVM 경유, 로컬 http).
+# (systemvm_template.yml 은 seed-systemvm 과 동일 로직의 참고용 — install 에서 자동 호출하진 않는다.)
+- ansible.builtin.import_tasks: monitoring.yml
+- ansible.builtin.import_tasks: verify.yml

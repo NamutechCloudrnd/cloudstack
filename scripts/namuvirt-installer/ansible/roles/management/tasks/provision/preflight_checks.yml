@@ -1,0 +1,66 @@
+---
+# Rocky cloud image 존재(폐쇄망, 다운로드 없음) + 호스트 도구/libvirtd/브리지 전제 확인.
+# virt-install/qemu-img/rsync/genisoimage 등은 kvm_hosts role(packages.yml)이 이미 설치했어야
+# 한다 — kvm_master도 kvm_hosts 그룹 멤버이므로 site.yml에서 management.yml보다 먼저 끝난다.
+
+# rocky_cloudimg 는 컨테이너의 외부 mount(/mnt/namuvirt/images/...) 경로이므로
+# 존재 확인은 반드시 controller(컨테이너=localhost)에서 한다. 이 play 는 kvm_master 대상이라
+# delegate_to 를 빼면 원격 kvm-master 에서 stat 되어 항상 '없음' 으로 실패한다.
+- name: Rocky cloud image 존재 확인 (controller mount)
+  ansible.builtin.stat:
+    path: "{{ rocky_cloudimg }}"
+  delegate_to: localhost
+  run_once: true
+  become: false
+  register: _cloudimg
+  tags: [management, provision]
+
+- name: Rocky cloud image 누락 시 중단
+  ansible.builtin.assert:
+    that: _cloudimg.stat.exists
+    fail_msg: >-
+      {{ rocky_cloudimg }} 가 없다 (컨테이너 mount). images/ 에 해당 파일을 배치할 것.
+  delegate_to: localhost
+  run_once: true
+  tags: [management, provision]
+
+- name: 관리 VM 호스트 도구 확인
+  ansible.builtin.command: "command -v {{ item }}"
+  loop:
+    - virt-install
+    - qemu-img
+    - rsync
+    - ssh
+  register: _vm_host_tools
+  changed_when: false
+  failed_when: false
+  tags: [management, provision]
+
+- name: 누락된 호스트 도구 확인
+  ansible.builtin.assert:
+    that: item.rc == 0
+    fail_msg: >-
+      {{ item.item }} 가 없다 — kvm_hosts role(packages.yml)이 packages_root/os-packages 에서
+      설치했어야 한다. rpm을 추가하고 kvm_hosts role을 다시 실행할 것.
+  loop: "{{ _vm_host_tools.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  tags: [management, provision]
+
+- name: genisoimage 또는 mkisofs 확인
+  ansible.builtin.shell: "command -v genisoimage || command -v mkisofs"
+  args:
+    executable: /bin/bash
+  register: _iso_tool
+  changed_when: false
+  tags: [management, provision]
+
+- name: libvirtd 활성 확인
+  ansible.builtin.command: systemctl is-active --quiet libvirtd
+  changed_when: false
+  tags: [management, provision]
+
+- name: 브리지 존재 확인 (kvm_hosts role이 먼저 끝나 있어야 함)
+  ansible.builtin.command: ip link show {{ bridge_name }}
+  changed_when: false
+  tags: [management, provision]

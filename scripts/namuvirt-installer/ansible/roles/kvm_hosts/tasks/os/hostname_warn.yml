@@ -1,0 +1,18 @@
+---
+# warn_hostname() — FQDN이 비어 있거나 localhost면 CloudStack 등록 전 경고만 남긴다.
+- name: hostname --fqdn 확인
+  ansible.builtin.command: hostname --fqdn
+  register: _hostname_fqdn
+  changed_when: false
+  failed_when: false
+  tags: [kvm_hosts]
+
+- name: FQDN 경고
+  ansible.builtin.debug:
+    msg: >-
+      WARN: hostname --fqdn 가 비어있거나 localhost 형태({{ _hostname_fqdn.stdout | default('') }}).
+      CloudStack host 등록 시 문제될 수 있으니 실제 FQDN을 설정할 것.
+  when: >-
+    _hostname_fqdn.stdout | default('') | trim == ''
+    or _hostname_fqdn.stdout | trim in ['localhost', 'localhost.localdomain']
+  tags: [kvm_hosts]

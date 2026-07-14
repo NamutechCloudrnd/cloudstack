@@ -1,0 +1,9 @@
+[Unit]
+Description=Prometheus
+After=network-online.target
+[Service]
+User=prometheus
+ExecStart=/usr/local/bin/prometheus --config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/var/lib/prometheus --web.listen-address=0.0.0.0:{{ prometheus_http_port }}
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target

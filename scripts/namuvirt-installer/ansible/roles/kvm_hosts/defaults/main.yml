@@ -1,0 +1,5 @@
+---
+kvm_enable_vmware_conversion: false
+vddk_tarball: ""
+vddk_lib_dir: /usr/lib/vmware-vix-disklib
+agent_port: 8250

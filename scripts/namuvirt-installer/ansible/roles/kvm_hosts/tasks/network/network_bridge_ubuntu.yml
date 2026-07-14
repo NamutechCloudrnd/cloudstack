@@ -1,0 +1,38 @@
+---
+# Ubuntu: netplan으로 cloudbr0 브리지 설정.
+# networkd renderer 사용 (NetworkManager 대신).
+
+- name: netplan 디렉터리 확인
+  ansible.builtin.file:
+    path: /etc/netplan
+    state: directory
+    mode: "0755"
+  tags: [kvm_hosts, network]
+
+- name: 기존 netplan 파일 백업 (첫 실행 시만)
+  ansible.builtin.shell: >
+    set -o pipefail;
+    for f in /etc/netplan/*.yaml /etc/netplan/*.yml; do
+      [ -f "$f" ] || continue;
+      bn=$(basename "$f");
+      [ "$bn" = "01-cloudbr0.yaml" ] && continue;
+      [ -f "/etc/netplan/${bn}.bak" ] || cp "$f" "/etc/netplan/${bn}.bak";
+    done
+  args:
+    executable: /bin/bash
+  changed_when: false
+  failed_when: false
+  tags: [kvm_hosts, network]
+
+- name: cloudbr0 netplan 설정 배포
+  ansible.builtin.template:
+    src: cloudbr0-netplan.yaml.j2
+    dest: /etc/netplan/01-cloudbr0.yaml
+    mode: "0600"
+  register: _netplan_changed
+  tags: [kvm_hosts, network]
+
+- name: netplan apply (설정 변경 시)
+  ansible.builtin.command: netplan apply
+  when: _netplan_changed.changed
+  tags: [kvm_hosts, network]

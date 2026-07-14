@@ -1,0 +1,24 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    {{ nic }}:
+      dhcp4: no
+      dhcp6: no
+  bridges:
+    {{ bridge_name }}:
+      interfaces:
+        - {{ nic }}
+      addresses:
+        - {{ host_ip }}/{{ network_prefix }}
+      routes:
+        - to: default
+          via: {{ gateway }}
+      nameservers:
+        addresses:
+{% for dns in dns_servers %}
+          - {{ dns }}
+{% endfor %}
+      parameters:
+        stp: false
+        forward-delay: 0

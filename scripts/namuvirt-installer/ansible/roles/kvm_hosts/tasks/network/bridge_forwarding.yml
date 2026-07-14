@@ -1,0 +1,93 @@
+---
+# configure_bridge_forwarding() — 브리지 VM 트래픽이 밖으로 나가도록 보장한다.
+#
+# 문제 (실제 현장에서 확인):
+#   kvm.master 는 설치 컨테이너 실행을 위해 docker 를 돌린다. docker 데몬은
+#   `iptables -P FORWARD DROP` 을 걸고 `net.bridge.bridge-nf-call-iptables=1` 을 켠다.
+#   그 결과 cloudbr0 를 건너 물리 NIC 로 나가는 게스트(관리 VM 등) 트래픽이
+#   iptables FORWARD 체인을 타고 docker 의 DROP 정책에 걸려 죽는다.
+#   증상: 호스트 자신은 외부 통신 OK, ARP(L2)도 OK 인데 VM 만 gateway 로 IP 통신 불가.
+#
+# 해결:
+#   bridge-nf-call-{ip,ip6,arp}tables 를 0 으로 두어 "브리지 통과 트래픽은 iptables 를
+#   타지 않는다"로 만든다. 이것이 libvirt 브리지 VM 의 정석 설정이며, docker 의
+#   FORWARD DROP 과 무관해진다. 값을 0 으로 두면 br_netfilter 가 로드되어 있어도
+#   실질적으로 필터링이 비활성이라 docker 미설치 KVM Host 에도 무해하다.
+#
+# 영속성:
+#   1) /etc/modules-load.d + /etc/sysctl.d 로 부팅 시 적용.
+#   2) docker 데몬이 기동하며 값을 1 로 되돌리는 레이스를 막기 위해
+#      After=docker.service 로 재적용하는 systemd oneshot 을 둔다(재부팅·docker 재시작 안전).
+
+- name: br_netfilter 모듈 부팅 시 로드 등록
+  ansible.builtin.copy:
+    dest: /etc/modules-load.d/br_netfilter.conf
+    content: "br_netfilter\n"
+    owner: root
+    group: root
+    mode: "0644"
+  tags: [kvm_hosts, network]
+
+- name: br_netfilter 모듈 즉시 로드
+  ansible.builtin.command: modprobe br_netfilter
+  changed_when: false
+  failed_when: false
+  tags: [kvm_hosts, network]
+
+- name: 브리지 netfilter 우회 sysctl 영구 설정
+  ansible.builtin.copy:
+    dest: /etc/sysctl.d/99-namuvirt-bridge.conf
+    content: |
+      # namuVIRT: 브리지(cloudbr0) 통과 VM 트래픽은 iptables 를 타지 않게 한다.
+      # docker 의 FORWARD DROP 에 게스트 트래픽이 걸리는 문제를 방지.
+      net.bridge.bridge-nf-call-iptables = 0
+      net.bridge.bridge-nf-call-ip6tables = 0
+      net.bridge.bridge-nf-call-arptables = 0
+    owner: root
+    group: root
+    mode: "0644"
+  tags: [kvm_hosts, network]
+
+- name: 브리지 netfilter sysctl 즉시 적용
+  ansible.builtin.command: sysctl -p /etc/sysctl.d/99-namuvirt-bridge.conf
+  changed_when: false
+  failed_when: false
+  tags: [kvm_hosts, network]
+
+# docker 데몬은 기동할 때마다 bridge-nf-call-iptables 를 1 로 되돌릴 수 있다.
+# systemd-sysctl(부팅 초기)보다 뒤, docker.service 뒤에 다시 0 으로 박아 레이스를 이긴다.
+- name: docker 이후 재적용 systemd oneshot 유닛 생성
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/namuvirt-bridge-nf.service
+    content: |
+      [Unit]
+      Description=namuVIRT bridge netfilter bypass (keep bridged VM traffic off iptables FORWARD)
+      After=docker.service network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      ExecStart=-/sbin/modprobe br_netfilter
+      ExecStart=/sbin/sysctl -w net.bridge.bridge-nf-call-iptables=0 net.bridge.bridge-nf-call-ip6tables=0 net.bridge.bridge-nf-call-arptables=0
+
+      [Install]
+      WantedBy=multi-user.target
+    owner: root
+    group: root
+    mode: "0644"
+  register: _bridge_nf_unit
+  tags: [kvm_hosts, network]
+
+- name: systemd 데몬 리로드 (유닛 변경 시)
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: _bridge_nf_unit is changed
+  tags: [kvm_hosts, network]
+
+- name: namuvirt-bridge-nf 유닛 enable + start
+  ansible.builtin.systemd:
+    name: namuvirt-bridge-nf.service
+    enabled: true
+    state: started
+  tags: [kvm_hosts, network]

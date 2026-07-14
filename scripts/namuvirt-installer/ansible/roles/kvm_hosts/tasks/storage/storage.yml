@@ -1,0 +1,79 @@
+---
+# 체크리스트 2) Storage 구성 — configure_nfs() 포팅.
+# primary/secondary export 디렉터리 생성 + /etc/exports + nfs-server 기동.
+
+- name: primary/secondary storage 디렉터리 생성
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: nobody
+    group: nobody
+    mode: "0777"
+  loop:
+    - "{{ primary_storage }}"
+    - "{{ secondary_storage }}"
+  tags: [kvm_hosts, storage]
+
+- name: idmapd.conf Domain 설정 (ensure_nfs_idmapd_domain)
+  ansible.builtin.lineinfile:
+    path: /etc/idmapd.conf
+    regexp: '^Domain\s*='
+    line: "Domain = {{ nfs_domain }}"
+    insertafter: '^\[General\]'
+    create: true
+    mode: "0644"
+  tags: [kvm_hosts, storage]
+
+- name: "[General] 섹션 보장 (idmapd.conf에 섹션이 없을 때만 추가)"
+  ansible.builtin.lineinfile:
+    path: /etc/idmapd.conf
+    line: "[General]"
+    insertbefore: "^Domain"
+    firstmatch: true
+    create: true
+    mode: "0644"
+  tags: [kvm_hosts, storage]
+
+- name: >-
+    NFS 허용 CIDR 계산 (namuvirt_derive_nfs_allow_from_kvm_hosts 와 동일 — kvm_hosts 그룹의
+    모든 host_ip에서 고유 /{{ network_prefix }} 목록을 뽑는다)
+  ansible.builtin.set_fact:
+    nfs_allow_cidrs: >-
+      {{
+        groups['kvm_hosts']
+        | map('extract', hostvars, 'host_ip')
+        | map('regex_replace', '^(\d+\.\d+\.\d+)\.\d+$', '\1.0/' ~ network_prefix)
+        | unique
+        | list
+      }}
+  tags: [kvm_hosts, storage]
+
+- name: /etc/exports 라인 보장 (idempotent — namuvirt_ensure_exports_line)
+  ansible.builtin.lineinfile:
+    path: /etc/exports
+    regexp: "^{{ item | regex_escape }}\\s"
+    line: >-
+      {{ item }}{% for cidr in nfs_allow_cidrs %} {{ cidr }}(rw,async,no_root_squash,no_subtree_check){% endfor %}
+    create: true
+    mode: "0644"
+  loop:
+    - "{{ primary_storage }}"
+    - "{{ secondary_storage }}"
+  tags: [kvm_hosts, storage]
+
+- name: exportfs -ra 적용
+  ansible.builtin.command: exportfs -ra
+  changed_when: true
+  tags: [kvm_hosts, storage]
+
+- name: rpcbind / nfs 서비스 활성화
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop: "{{ _nfs_services }}"
+  vars:
+    _nfs_services: >-
+      {{ ['rpcbind', 'nfs-kernel-server'] if ansible_distribution == 'Ubuntu'
+         else ['rpcbind', 'nfs-server'] }}
+  tags: [kvm_hosts, storage]

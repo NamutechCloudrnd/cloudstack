@@ -1,0 +1,8 @@
+os-images/*
+!os-images/.gitkeep
+!os-images/README.md
+release/
+
+packages/**/*.rpm
+packages/**/*.deb
+packages/**/*.tar.gz

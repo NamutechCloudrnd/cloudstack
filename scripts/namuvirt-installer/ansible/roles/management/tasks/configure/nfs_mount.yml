@@ -1,0 +1,47 @@
+---
+# mount_secondary_nfs() — secondary storage 를 관리 VM 에 준비한다.
+#
+# 동작:
+#   - nfs_export_host_ip 가 비어 있으면(기본): NFS 마운트를 하지 않고
+#     로컬 디렉터리({{ secondary_storage }})를 그대로 secondary 로 사용한다.
+#   - nfs_export_host_ip 가 지정되면: 그 호스트의 NFS export 를 secondary 로 마운트한다.
+
+- name: secondary storage 디렉터리 생성 (로컬/마운트 포인트 공용)
+  ansible.builtin.file:
+    path: "{{ secondary_storage }}"
+    state: directory
+    mode: "0755"
+  tags: [management, configure]
+
+- name: secondary storage 모드 안내
+  ansible.builtin.debug:
+    msg: >-
+      secondary storage =
+      {{ 'NFS 마운트 (' ~ nfs_export_host_ip ~ ':' ~ secondary_storage ~ ')'
+         if (nfs_export_host_ip | default('')) != ''
+         else '로컬 디렉터리 (' ~ secondary_storage ~ ') — NFS 마운트 안 함' }}
+  tags: [management, configure]
+
+# ── 아래는 nfs_export_host_ip 가 지정된 경우에만 실행 ──────────────────────────
+- name: /etc/fstab 에 NFS secondary 항목 추가
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: "^{{ nfs_export_host_ip | regex_escape }}:{{ secondary_storage | regex_escape }}\\s"
+    line: "{{ nfs_export_host_ip }}:{{ secondary_storage }} {{ secondary_storage }} nfs defaults,_netdev 0 0"
+  when: (nfs_export_host_ip | default('')) != ''
+  tags: [management, configure]
+
+- name: secondary storage 마운트 여부 확인
+  ansible.builtin.command: mountpoint -q {{ secondary_storage }}
+  register: _secondary_mounted
+  changed_when: false
+  failed_when: false
+  when: (nfs_export_host_ip | default('')) != ''
+  tags: [management, configure]
+
+- name: secondary storage 마운트
+  ansible.builtin.command: mount -t nfs {{ nfs_export_host_ip }}:{{ secondary_storage }} {{ secondary_storage }}
+  when:
+    - (nfs_export_host_ip | default('')) != ''
+    - _secondary_mounted.rc != 0
+  tags: [management, configure]

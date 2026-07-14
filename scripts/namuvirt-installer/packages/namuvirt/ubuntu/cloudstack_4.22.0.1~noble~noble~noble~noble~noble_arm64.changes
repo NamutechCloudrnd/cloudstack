@@ -1,0 +1,54 @@
+Format: 1.8
+Date: Tue, 14 Jul 2026 04:10:56 +0000
+Source: cloudstack
+Binary: cloudstack-agent cloudstack-common cloudstack-docs cloudstack-integration-tests cloudstack-management cloudstack-marvin cloudstack-ui cloudstack-usage
+Built-For-Profiles: noudeb
+Architecture: all
+Version: 4.22.0.1~noble~noble~noble~noble~noble
+Distribution: unstable
+Urgency: low
+Maintainer: The Apache CloudStack Team <dev@cloudstack.apache.org>
+Changed-By: the Apache CloudStack project <dev@cloudstack.apache.org>
+Description:
+ cloudstack-agent - CloudStack agent
+ cloudstack-common - A common package which contains files which are shared by several
+ cloudstack-docs - The CloudStack documentation
+ cloudstack-integration-tests - The CloudStack Marvin integration tests
+ cloudstack-management - CloudStack server library
+ cloudstack-marvin - The CloudStack Marvin library
+ cloudstack-ui - The CloudStack UI
+ cloudstack-usage - CloudStack usage monitor
+Changes:
+ cloudstack (4.22.0.1~noble~noble~noble~noble~noble) unstable; urgency=low
+ .
+   * Apache CloudStack Release 4.22.0.1~noble~noble~noble~noble
+Checksums-Sha1:
+ 765922643c5d995fe7f664c5dbb51c1e3480f516 94432370 cloudstack-agent_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ fa326bda24b5bab915c0f81cebbb76108b33ac33 122252630 cloudstack-common_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 75c03049f901c42ea4c91d50a6da3eeb507ba85c 53262 cloudstack-docs_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ b853c9a4aa903fe605f6ea1b67513c15a172fb14 795402 cloudstack-integration-tests_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ f3fd55c399d6839c89107301574aca9e081949fc 251912890 cloudstack-management_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 96ccdf63141283080c1ac981c61b96ddb60df0a6 716892 cloudstack-marvin_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ e12bf86c9f2f0cbfaf4557a46115b7a81b0ea9a8 23241138 cloudstack-ui_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 7862f434950ecc1dd11596ea7974b57adb1a8a58 69479570 cloudstack-usage_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ ad12e7c8cb1c5345404b0ad4ca2d33adede40011 15301 cloudstack_4.22.0.1~noble~noble~noble~noble~noble_arm64.buildinfo
+Checksums-Sha256:
+ a86359811dfdfbbf00305f7b35d3f815bc24c200d2ca5aa6b26ba8ba41593377 94432370 cloudstack-agent_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ a97968f92370ef90e2fe2ba2bd4428385ad4fbe4cb303dd2242fc6a4cf6fd478 122252630 cloudstack-common_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 070da8d50e47f4f9dac3a4b97b0f7a37fe3688fdb162e8557f1127e83aa15175 53262 cloudstack-docs_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 45d2c5d1ff28bc3c617592ee184a5c7350c2400975a7b0ee7d2967922ebe41d6 795402 cloudstack-integration-tests_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 987f2c3d29eba783f3e422d7eaf3dad7430746119ee68cc6d2b41cd7781f65db 251912890 cloudstack-management_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 23594ca151b075b38584939f67b1b9e15f495849fb516554e16bd65f4094354b 716892 cloudstack-marvin_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ f8d109f70bd7d20d73b0a281d954416208f61b14ae84f3e9f1cd10cb1639131a 23241138 cloudstack-ui_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ fb6960b5e2e76b585fd0942bee03158cb0d0844af88c978c0892ca032c7ac9ff 69479570 cloudstack-usage_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 43d53b5f88318f15bddb6d106f84b61eb14beba10b8f2dcba720f58a46522758 15301 cloudstack_4.22.0.1~noble~noble~noble~noble~noble_arm64.buildinfo
+Files:
+ e889cf132b3933c85720a67a93979155 94432370 libs extra cloudstack-agent_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ f560c6298bf28fcbb47ea9029ebd1efd 122252630 libs extra cloudstack-common_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 1f7c21000dc3d0bec71b0f58963d393a 53262 libs extra cloudstack-docs_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 03b287a2e641bca4b4f7c93269b5a43b 795402 libs extra cloudstack-integration-tests_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 2205306658a5854620f4efcbc96f7c8d 251912890 libs extra cloudstack-management_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 680e987fdd7370880552173c62fd8962 716892 libs extra cloudstack-marvin_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ fd9c45109df870c6c988cbcf585a2294 23241138 libs extra cloudstack-ui_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ 3db5ef110efff5da6f419d44cf3e45de 69479570 libs extra cloudstack-usage_4.22.0.1~noble~noble~noble~noble~noble_all.deb
+ d3966b8c1030984ab765557e390b33a7 15301 libs extra cloudstack_4.22.0.1~noble~noble~noble~noble~noble_arm64.buildinfo

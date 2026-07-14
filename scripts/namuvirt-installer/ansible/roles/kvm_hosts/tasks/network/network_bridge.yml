@@ -1,0 +1,25 @@
+---
+# configure_bridge() — NIC/Gateway 자동탐지 후 OS별 파일로 분기.
+# Rocky: network_bridge_rocky.yml (nmcli)
+# Ubuntu: network_bridge_ubuntu.yml (netplan)
+
+- name: 기본 라우트 NIC/Gateway 자동탐지 (nic/gateway 미지정 시)
+  ansible.builtin.shell: >
+    set -o pipefail;
+    ip route show default | awk '/default/{print $5,$3; exit}'
+  args:
+    executable: /bin/bash
+  register: _default_route
+  changed_when: false
+  when: nic | default('') == '' or gateway | default('') == ''
+  tags: [kvm_hosts, network]
+
+- name: NIC/Gateway 확정
+  ansible.builtin.set_fact:
+    nic: "{{ nic if nic | default('') != '' else (_default_route.stdout.split()[0] | default('eno1')) }}"
+    gateway: "{{ gateway if gateway | default('') != '' else (_default_route.stdout.split()[1] | default(host_ip.split('.')[0:3] | join('.') ~ '.1')) }}"
+  tags: [kvm_hosts, network]
+
+- name: OS별 브리지 설정
+  ansible.builtin.include_tasks: "network_bridge_{{ ansible_distribution | lower }}.yml"
+  tags: [kvm_hosts, network]

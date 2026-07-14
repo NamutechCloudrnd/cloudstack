@@ -1,0 +1,92 @@
+---
+# verify_management() — management VM·모니터링 최종 점검.
+
+- name: mariadb / cloudstack-management / cloudstack-usage 활성 확인
+  ansible.builtin.service_facts:
+  tags: [management, verify]
+
+- name: 필수 서비스 active 검증
+  ansible.builtin.assert:
+    that:
+      - "ansible_facts.services['mariadb.service'].state == 'running'"
+      - "ansible_facts.services['cloudstack-management.service'].state == 'running'"
+      - "ansible_facts.services['cloudstack-usage.service'].state == 'running'"
+    fail_msg: "mariadb/cloudstack-management/cloudstack-usage 중 하나가 active 상태가 아니다."
+  tags: [management, verify]
+
+- name: cloudstack-agent가 설치되어 있지 않은지 확인
+  ansible.builtin.command: rpm -q cloudstack-agent
+  register: _agent_rpm_check
+  changed_when: false
+  failed_when: _agent_rpm_check.rc == 0
+  tags: [management, verify]
+
+- name: /dev/kvm 존재 여부 확인 (관리 VM에는 없어야 정상)
+  ansible.builtin.stat:
+    path: /dev/kvm
+  register: _mgmt_kvm_device
+  tags: [management, verify]
+
+- name: KVM 디바이스 존재 경고
+  ansible.builtin.debug:
+    msg: "WARN: KVM device present in management VM (/dev/kvm) — unexpected for management-only VM"
+  when: _mgmt_kvm_device.stat.exists
+  tags: [management, verify]
+
+- name: CloudStack UI 응답 확인 (웹 리스너 완전 기동까지 대기)
+  # cloudstack-management 는 java 프로세스가 떠도 Jetty 웹 리스너(8080) 완전 기동까지
+  # 1~3분 걸린다. 200 될 때까지 재시도한다(최대 30회 x 10초 = 5분).
+  #
+  # 주의: Jetty 가 loopback(127.0.0.1)이 아니라 관리 VM IP 에만 바인딩되는 배포가 있어,
+  # 127.0.0.1 로 확인하면 "connection reset(status -1)" 이 난다(브라우저의 VM IP:8080 은 정상).
+  # 그래서 VM 자신의 IP(ansible_host)로 /client/ 를 확인한다.
+  ansible.builtin.uri:
+    url: "http://{{ ansible_host }}:8080/client/"
+    status_code: [200, 302]
+    follow_redirects: all
+    timeout: 10
+  register: _ui_check
+  until: (_ui_check.status | default(-1)) in [200, 302]
+  retries: 30
+  delay: 10
+  tags: [management, verify]
+
+- name: Prometheus / Grafana health 확인
+  ansible.builtin.uri:
+    url: "{{ item }}"
+    status_code: 200
+    timeout: 5
+  loop:
+    - "http://127.0.0.1:{{ prometheus_http_port }}/-/healthy"
+    - "http://127.0.0.1:{{ grafana_http_port }}/api/health"
+  register: _monitoring_health
+  failed_when: false
+  tags: [management, verify]
+
+- name: monitoring health 실패 경고
+  ansible.builtin.debug:
+    msg: "WARN: {{ item.item }} not healthy"
+  loop: "{{ _monitoring_health.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.status | default(0) != 200
+  tags: [management, verify]
+
+- name: KVM Host exporter 응답 확인 (각 kvm_hosts 그룹 호스트, 이 VM에서 직접 curl)
+  ansible.builtin.uri:
+    url: "http://{{ hostvars[item].host_ip }}:9100/metrics"
+    status_code: 200
+    timeout: 5
+  loop: "{{ groups['kvm_hosts'] }}"
+  register: _kvm_exporter_check
+  failed_when: false
+  tags: [management, verify]
+
+- name: KVM Host exporter 미응답 경고
+  ansible.builtin.debug:
+    msg: "WARN: kvm host exporters not reachable on {{ hostvars[item.item].host_ip }} — kvm_hosts role의 monitoring.yml을 먼저 실행할 것"
+  loop: "{{ _kvm_exporter_check.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.status | default(0) != 200
+  tags: [management, verify]

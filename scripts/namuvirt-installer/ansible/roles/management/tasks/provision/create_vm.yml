@@ -1,0 +1,79 @@
+---
+# create_vm() — Rocky cloud image + cloud-init(고정 IP/SSH키/sudo 계정)로 virt-install 부팅.
+
+- name: 관리 VM 존재 여부 확인
+  ansible.builtin.command: virsh dominfo {{ vm_name }}
+  register: _vm_exists
+  changed_when: false
+  failed_when: false
+  tags: [management, provision]
+
+- name: 관리 VM 생성
+  when: _vm_exists.rc != 0
+  tags: [management, provision]
+  block:
+    - name: 디스크/cidata 디렉터리 생성
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "/var/lib/libvirt/images"
+        - "/tmp/{{ vm_name }}-cidata"
+
+    # rocky_cloudimg 는 컨테이너(controller) 안의 외부 mount 경로(/mnt/namuvirt/images/...)이다.
+    # create_vm 은 kvm.master 에 SSH 로 실행되므로, master 로컬로 이미지를 먼저 전송한 뒤
+    # 그 로컬 경로를 backing file 로 사용한다.
+    - name: Rocky cloud image 를 master 로 전송 (backing 원본)
+      ansible.builtin.copy:
+        src: "{{ rocky_cloudimg }}"
+        dest: "/var/lib/libvirt/images/{{ rocky_cloudimg | basename }}"
+        mode: "0644"
+        force: false
+
+    - name: VM 디스크 생성 (cloud image backing)
+      ansible.builtin.command: >
+        qemu-img create -f qcow2 -b /var/lib/libvirt/images/{{ rocky_cloudimg | basename }} -F qcow2
+        /var/lib/libvirt/images/{{ vm_name }}.qcow2 {{ vm_disk_gb }}G
+      args:
+        creates: "/var/lib/libvirt/images/{{ vm_name }}.qcow2"
+
+    - name: cloud-init meta-data 생성
+      ansible.builtin.template:
+        src: provision/meta-data.j2
+        dest: "/tmp/{{ vm_name }}-cidata/meta-data"
+        mode: "0644"
+
+    - name: cloud-init user-data 생성
+      ansible.builtin.template:
+        src: provision/user-data.j2
+        dest: "/tmp/{{ vm_name }}-cidata/user-data"
+        mode: "0644"
+
+    - name: cidata.iso 생성
+      ansible.builtin.command:
+        cmd: >
+          {{ _iso_tool.stdout | default('genisoimage') }}
+          -output /tmp/{{ vm_name }}-cidata/cidata.iso -V cidata -r -J
+          /tmp/{{ vm_name }}-cidata/meta-data /tmp/{{ vm_name }}-cidata/user-data
+
+    - name: virt-install 로 VM 부팅
+      ansible.builtin.command: >
+        virt-install --name {{ vm_name }} --vcpus {{ vm_vcpus }} --memory {{ vm_ram_mb }}
+        --cpu host-passthrough
+        --disk path=/var/lib/libvirt/images/{{ vm_name }}.qcow2,format=qcow2,bus=virtio
+        --disk path=/tmp/{{ vm_name }}-cidata/cidata.iso,device=cdrom
+        --network bridge={{ bridge_name }},model=virtio{{ (',mac=' ~ vm_mac) if (vm_mac | default('')) else '' }}
+        --os-variant {{ os_variant }} --graphics none --console pty,target_type=serial
+        --import --noautoconsole --autostart
+
+- name: VM autostart 상태 확인
+  ansible.builtin.command: virsh dominfo {{ vm_name }}
+  register: _vm_dominfo
+  changed_when: false
+  tags: [management, provision]
+
+- name: VM autostart 활성화 (아직 안 되어 있으면)
+  ansible.builtin.command: virsh autostart {{ vm_name }}
+  when: "'Autostart:     enable' not in _vm_dominfo.stdout"
+  tags: [management, provision]

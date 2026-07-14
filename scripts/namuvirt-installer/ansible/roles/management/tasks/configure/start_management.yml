@@ -1,0 +1,44 @@
+---
+# start_cloudstack_management() — cloudstack-setup-management 실행 및 서비스 기동.
+
+- name: cloudstack-management 이미 동작 중인지 확인
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:8080/client/"
+    status_code: 200
+    timeout: 5
+  register: _mgmt_already_up
+  failed_when: false
+  tags: [management, configure]
+
+- name: cloudstack-setup-management 실행 및 서비스 기동 (아직 안 떠 있을 때만)
+  when: _mgmt_already_up.status | default(0) != 200
+  tags: [management, configure]
+  block:
+    - name: cloudstack-setup-management
+      ansible.builtin.command: cloudstack-setup-management
+
+    # 순서 보장: management 를 먼저 올리고, 웹 리스너(8080)가 완전히 뜬 뒤에 usage 를 올린다.
+    # usage 는 management 가 초기화한 DB 스키마에 의존하므로 management ready 이후 기동해야 한다.
+    - name: cloudstack-management 기동 + enable (먼저)
+      ansible.builtin.systemd:
+        name: cloudstack-management
+        state: started
+        enabled: true
+
+    # systemctl start 는 java 프로세스가 뜨는 즉시 리턴하므로, Jetty 8080 이 실제로
+    # 응답할 때까지(=관리 서버가 "뜬" 시점) 여기서 명시적으로 대기한다.
+    - name: cloudstack-management 웹 리스너(8080) 완전 기동 대기
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:8080/client/"
+        status_code: [200, 301, 302]
+        timeout: 10
+      register: _mgmt_ready
+      until: (_mgmt_ready.status | default(-1)) in [200, 301, 302]
+      retries: 30
+      delay: 10
+
+    - name: cloudstack-usage 기동 + enable (management 가 뜬 다음)
+      ansible.builtin.systemd:
+        name: cloudstack-usage
+        state: started
+        enabled: true

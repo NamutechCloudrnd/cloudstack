@@ -1,0 +1,72 @@
+# ============================================================================
+# namuVIRT 설치 config — 이 파일 하나만 환경에 맞게 수정한다.
+#   cp config.sample.yaml config.yaml
+#   vi config.yaml
+#   ./install-namuvirt.sh --preflight
+#   ./install-namuvirt.sh install
+#
+# 원칙:
+#   - 설치 패키지는 컨테이너 이미지에 내장된다. packages_dir 를 적지 않는다.
+#   - 하나의 namuVIRT Cluster 의 모든 KVM Host 는 동일 OS 여야 한다 (kvm.os 로 지정).
+#   - kvm.master 는 관리 대상 KVM Host 에 자동 포함되므로 kvm.hosts 에 다시 적지 않는다.
+#   - SSH private key / cloud image / SystemVM template / logs 는 외부 mount 로 제공한다.
+# ============================================================================
+
+# 모든 KVM Host 에 존재하는 sudo NOPASSWD 계정. root 로 접속하지 않는다.
+ssh_user: namuvirt
+
+# 컨테이너 내부에서 참조하는 SSH private key 경로 (ssh/ 디렉터리 mount).
+ssh_private_key_path: /mnt/namuvirt/ssh/id_ed25519
+
+kvm:
+  # Cluster 전체 OS. rocky 또는 ubuntu 중 하나만 지정한다.
+  #   허용 : 전체 rocky  또는  전체 ubuntu
+  #   비허용: master rocky + 일부 host ubuntu (혼합 Cluster 미지원)
+  os: rocky
+
+  # 관리 VM 을 올릴 물리 KVM Host (설치 컨테이너 실행 서버). 관리 대상에도 포함된다.
+  master:
+    ip: 10.10.10.3
+    nic: eno1            # 미기재 시 대상 호스트 default route 로 자동 탐지
+    gateway: 10.10.10.1  # 미기재 시 자동 탐지
+
+  # master 를 제외한 추가 KVM Host 목록 (N개). master 는 여기 다시 적지 않는다.
+  #
+  # master 단독 구성(관리 대상 Host 가 master 1대뿐)도 지원한다.
+  # 이 경우 hosts 를 생략하거나 비워두면 된다:
+  #   hosts: []      # 또는 이 hosts 블록 전체를 삭제
+  hosts:
+    - ip: 10.10.10.4
+    - ip: 10.10.10.5
+    # nic/gateway 를 명시해야 하는 환경:
+    # - ip: 10.10.10.6
+    #   nic: eno1
+    #   gateway: 10.10.10.1
+
+management:
+  vm_ip: 10.10.10.10
+  vm_name: namuVIRT-management
+  # 관리 VM 고정 MAC (라이센스 바인딩 등에 유리). 비우면("") libvirt 자동 MAC.
+  # prepare-install.sh 는 vm_ip 마지막 3옥텟에서 52:54:00:xx:xx:xx 를 기본 제안한다.
+  vm_mac: ""
+  vm_vcpus: 8
+  vm_ram_mb: 16384
+  vm_disk_gb: 200
+  # 관리 VM 은 항상 Rocky 8 기반 cloud image 로 kvm.master 위에 생성한다.
+  rocky_cloudimg: /mnt/namuvirt/images/NAMU-Rocky-8-10.qcow2
+  systemvm_template: /mnt/namuvirt/images/SystemVM-Template-KVM.qcow2
+  # 선택:
+  # os_variant: rocky8.6
+  # vm_gateway: 10.10.10.1                 # 미기재 시 vm_ip 대역의 .1
+  # nfs_export_host_ip: 10.10.10.3         # 미기재 시 secondary 를 로컬 디렉터리로 사용(NFS 마운트 안 함).
+  #                                        # 값 지정 시에만 그 호스트의 NFS export 를 secondary 로 마운트.
+  # golden_image_path: ""                  # 골든 이미지 업로드 placeholder
+
+network:
+  bridge: cloudbr0
+  prefix: 24
+  dns: [8.8.8.8, 1.1.1.1]
+
+storage:
+  primary: /export/primary
+  secondary: /export/secondary

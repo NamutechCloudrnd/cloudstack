@@ -1,0 +1,66 @@
+---
+# 단일 playbook — config.yaml만 수정하고 이 파일을 실행하면 된다.
+#   ansible-playbook site.yml
+#
+# 흐름: config.yaml 로드(동적 인벤토리 구성) → 사전 검증 → KVM Host(N개, 병렬) → 관리 VM 생성/설치.
+# 역할(role)은 3개뿐이다: preflight, kvm_hosts, management.
+# management 역할은 두 단계로 나뉜다(management_stage 변수): provision(kvm_master에서 VM 생성) →
+# configure(VM 내부에 namuvirt-management 등 설치).
+
+- name: config.yaml 로드 및 동적 인벤토리 구성
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  vars:
+    preflight_stage: load_config
+  # 동적 인벤토리 구성은 --tags 로 어떤 단계를 실행하든 항상 먼저 돌아야 한다.
+  roles:
+    - role: preflight
+      tags: [always]
+
+- name: 사전 검증 (SSH/sudo/OS/KVM 설치 여부) — 체크리스트 1)
+  hosts: kvm_hosts
+  gather_facts: true
+  vars:
+    preflight_stage: validate_hosts
+  # kvm_hosts 설치 전에도 검증이 돌아야 kvm_already_installed(협의: 기존 KVM skip)가 설정된다.
+  roles:
+    - role: preflight
+      tags: [preflight, kvm_hosts]
+
+- name: KVM Host 설치 및 구성 (N개, 병렬) — 체크리스트 2)+4)
+  hosts: kvm_hosts
+  gather_facts: true
+  roles:
+    - kvm_hosts
+
+- name: 관리 VM 생성 (kvm_master에서 virt-install) — 체크리스트 3)
+  hosts: kvm_master
+  gather_facts: true
+  vars:
+    management_stage: provision
+    vm_ip: "{{ hostvars[groups['management_vm'][0]].ansible_host }}"
+    vm_name: "{{ hostvars[groups['management_vm'][0]].vm_name }}"
+    vm_vcpus: "{{ hostvars[groups['management_vm'][0]].vm_vcpus }}"
+    vm_ram_mb: "{{ hostvars[groups['management_vm'][0]].vm_ram_mb }}"
+    vm_disk_gb: "{{ hostvars[groups['management_vm'][0]].vm_disk_gb }}"
+    os_variant: "{{ hostvars[groups['management_vm'][0]].os_variant }}"
+    vm_gateway: "{{ hostvars[groups['management_vm'][0]].vm_gateway }}"
+    rocky_cloudimg: "{{ hostvars[groups['management_vm'][0]].rocky_cloudimg }}"
+    # 고정 MAC(라이센스 바인딩용). 빠지면 kvm_master 컨텍스트에서 vm_mac 이 미정의→랜덤 MAC 으로 생성됨.
+    vm_mac: "{{ hostvars[groups['management_vm'][0]].vm_mac | default('') }}"
+  roles:
+    - management
+
+- name: 관리 VM 내부 설치 (namuvirt-management/usage, 모니터링) — 체크리스트 3)
+  hosts: management_vm
+  gather_facts: true
+  vars:
+    management_stage: configure
+  pre_tasks:
+    - name: 관리 VM SSH 연결 대기 (이전 play의 virt-install 직후 재확인)
+      ansible.builtin.wait_for_connection:
+        timeout: 60
+  roles:
+    - management

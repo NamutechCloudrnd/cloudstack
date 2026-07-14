@@ -1,0 +1,131 @@
+---
+# Ubuntu 24.04: packages_root/os-packages/ubuntu/<그룹>/ 의 .deb 파일을 직접 설치.
+# 그룹 디렉터리는 이미지 빌드 시 채워진다.
+#
+# 협의내용1: 기존 KVM 이 이미 설치된 호스트에서는 qemu-kvm/libvirt 그룹을 제외하고 설치한다.
+#
+# 성능: deb 을 파일별로 SSH copy 하지 않는다. controller 에서 tar 로 1회 묶어(flatten) 호스트당
+# 1회만 전송하고 원격에서 푼다. 호스트별 그룹 선택 차이는 tarball "변형(variant)"으로 흡수한다:
+#   full  = 전체 그룹(신규 호스트),  nokvm = qemu-kvm/libvirt 제외(기존 KVM 호스트).
+
+# 각 그룹은 자기 closure 를 그대로 보유한다(dedupe 없음 → _base 공용 풀 미사용).
+- name: 설치할 OS 패키지 그룹/변형 결정 (기존 KVM 설치 시 qemu-kvm/libvirt 제외)
+  ansible.builtin.set_fact:
+    _os_pkg_groups: >-
+      {{
+        (['network', 'nfs', 'iscsi', 'vm-tools', 'java', 'chrony', 'utils']
+         if kvm_already_installed | default(false)
+         else ['qemu-kvm', 'libvirt', 'network', 'nfs', 'iscsi', 'vm-tools', 'java', 'chrony', 'utils'])
+      }}
+    _os_pkg_variant: "{{ 'nokvm' if (kvm_already_installed | default(false)) else 'full' }}"
+  tags: [kvm_hosts, packages]
+
+- name: 기존 KVM 감지 — qemu-kvm/libvirt 설치 skip 안내
+  ansible.builtin.debug:
+    msg: "기존 KVM 감지({{ inventory_hostname }}) — qemu-kvm/libvirt 설치를 건너뛰고 관리 바이너리만 설치한다."
+  when: kvm_already_installed | default(false)
+  tags: [kvm_hosts, packages]
+
+- name: Ubuntu KVM Host 패키지 그룹 탐색 (controller — 비어있는지 확인용)
+  ansible.builtin.find:
+    paths: "{{ _os_pkg_groups | map('regex_replace', '^(.*)$', packages_root ~ '/os-packages/ubuntu/\\1') | list }}"
+    patterns: "*.deb"
+  delegate_to: localhost
+  become: false
+  register: _os_deb_find
+  tags: [kvm_hosts, packages]
+
+- name: Ubuntu OS 패키지 deb 없음 경고
+  ansible.builtin.debug:
+    msg: >-
+      WARN: {{ packages_root }}/os-packages/ubuntu/<그룹>/ 에 deb 파일이 없다.
+      scripts/download-host-packages.sh --os ubuntu 를 실행해서 그룹별 디렉터리를 채울 것.
+  when: _os_deb_find.files | length == 0
+  tags: [kvm_hosts, packages]
+
+- name: Ubuntu OS 패키지 설치 (tar-once 전송)
+  when: _os_deb_find.files | length > 0
+  tags: [kvm_hosts, packages]
+  block:
+    # controller 에서 변형별 tarball 을 1회 생성한다(flatten). mgmt 는 제외, 존재하는 그룹만.
+    - name: ubuntu os-packages tarball(full/nokvm) 생성 (controller, 1회)
+      ansible.builtin.shell: |
+        set -euo pipefail
+        cd "{{ packages_root }}/os-packages/ubuntu"
+        mk() {  # $1=출력파일, 나머지=그룹들
+          out="$1"; shift
+          dirs=""; for g in "$@"; do [ -d "$g" ] && dirs="$dirs $g"; done
+          if [ -n "$dirs" ]; then
+            find $dirs -name '*.deb' -type f 2>/dev/null \
+              | tar czf "$out" --transform 's|.*/||' -T - 2>/dev/null || tar czf "$out" -T /dev/null
+          else
+            tar czf "$out" -T /dev/null
+          fi
+        }
+        mk /tmp/nv-oskg-ubuntu-full.tar.gz  qemu-kvm libvirt network nfs iscsi vm-tools java chrony utils
+        mk /tmp/nv-oskg-ubuntu-nokvm.tar.gz network nfs iscsi vm-tools java chrony utils
+      args:
+        executable: /bin/bash
+      delegate_to: localhost
+      become: false
+      run_once: true
+      changed_when: true
+
+    # 재실행 최적화(★내용 해시 기반): tarball sha256 과 호스트 마커 sha256 을 비교해 내용이
+    # 바뀐 경우에만 재전송/재전개한다. (단순 존재 여부면 새 빌드해도 옛 dirty 파일을 그대로 써
+    # "cannot install both" 가 재발한다.)
+    - name: 이 호스트 변형 tarball 체크섬 (controller)
+      ansible.builtin.stat:
+        path: "/tmp/nv-oskg-ubuntu-{{ _os_pkg_variant }}.tar.gz"
+        checksum_algorithm: sha256
+      delegate_to: localhost
+      become: false
+      register: _os_tar_stat
+
+    - name: 호스트의 기존 staged 체크섬 읽기
+      ansible.builtin.slurp:
+        src: "/opt/namuvirt/offline/os-packages/.staged-{{ _os_pkg_variant }}"
+      register: _os_marker
+      failed_when: false
+      changed_when: false
+
+    - name: 재전개 필요 여부 판정 (해시 불일치 시)
+      ansible.builtin.set_fact:
+        _os_need_stage: "{{ (_os_marker.content | default('') | b64decode | trim) != (_os_tar_stat.stat.checksum | default('')) }}"
+
+    - name: os-packages 디렉터리 초기화 (재전개 시 — 옛 deb 제거)
+      ansible.builtin.file:
+        path: /opt/namuvirt/offline/os-packages
+        state: "{{ item }}"
+        mode: "0755"
+      loop: [absent, directory]
+      when: _os_need_stage
+
+    - name: os-packages tarball 전송 (1회 SSH copy)
+      ansible.builtin.copy:
+        src: "/tmp/nv-oskg-ubuntu-{{ _os_pkg_variant }}.tar.gz"
+        dest: /opt/namuvirt/offline/os-packages.tar.gz
+        mode: "0644"
+      when: _os_need_stage
+
+    - name: os-packages 압축 해제 (flatten 된 deb 들)
+      ansible.builtin.unarchive:
+        src: /opt/namuvirt/offline/os-packages.tar.gz
+        dest: /opt/namuvirt/offline/os-packages/
+        remote_src: true
+      when: _os_need_stage
+
+    - name: 전개 완료 marker 기록 (tarball 체크섬 저장)
+      ansible.builtin.copy:
+        content: "{{ _os_tar_stat.stat.checksum }}"
+        dest: "/opt/namuvirt/offline/os-packages/.staged-{{ _os_pkg_variant }}"
+        mode: "0644"
+      when: _os_need_stage
+
+    - name: OS 패키지(.deb) 일괄 설치 (dpkg)
+      ansible.builtin.shell: >
+        dpkg -i /opt/namuvirt/offline/os-packages/*.deb 2>&1; dpkg --configure -a
+      args:
+        executable: /bin/bash
+      changed_when: true
+      failed_when: false

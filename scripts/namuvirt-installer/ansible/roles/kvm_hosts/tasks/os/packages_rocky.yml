@@ -1,0 +1,187 @@
+---
+# install_packages() — 레포 없이 packages_root/os-packages/<그룹>/ 에 사전 적재된 rpm을 직접 설치.
+# KVM Host에 필요한 그룹: qemu-kvm, libvirt, network, nfs, iscsi, vm-tools, java, chrony, utils
+# 각 그룹 디렉터리는 이미지 빌드 시 채워진다(packages/os-packages/rocky/<그룹>/).
+#
+# 협의내용1: 기존 KVM 이 이미 설치된 호스트(kvm_already_installed)에서는 qemu-kvm/libvirt 그룹을
+# 설치하지 않고 관리에 필요한 나머지 그룹만 설치한다.
+#
+# 성능: rpm 을 파일별로 SSH copy 하지 않는다. controller 에서 tar 로 1회 묶어(flatten) 호스트당
+# 1회만 전송하고 원격에서 푼다. 호스트별 그룹 선택 차이는 tarball "변형(variant)"으로 흡수한다:
+#   full  = 전체 그룹(신규 호스트),  nokvm = qemu-kvm/libvirt 제외(기존 KVM 호스트).
+
+# 각 그룹은 자기 closure 를 그대로 보유한다(dedupe 없음 → _base 공용 풀 미사용).
+- name: 설치할 OS 패키지 그룹/변형 결정 (기존 KVM 설치 시 qemu-kvm/libvirt 제외)
+  ansible.builtin.set_fact:
+    _os_pkg_groups: >-
+      {{
+        (['network', 'nfs', 'iscsi', 'vm-tools', 'java', 'chrony', 'utils']
+         if kvm_already_installed | default(false)
+         else ['qemu-kvm', 'libvirt', 'network', 'nfs', 'iscsi', 'vm-tools', 'java', 'chrony', 'utils'])
+      }}
+    _os_pkg_variant: "{{ 'nokvm' if (kvm_already_installed | default(false)) else 'full' }}"
+  tags: [kvm_hosts, packages]
+
+- name: 기존 KVM 감지 — qemu-kvm/libvirt 설치 skip 안내
+  ansible.builtin.debug:
+    msg: "기존 KVM 감지({{ inventory_hostname }}) — qemu-kvm/libvirt 설치를 건너뛰고 관리 바이너리만 설치한다."
+  when: kvm_already_installed | default(false)
+  tags: [kvm_hosts, packages]
+
+- name: KVM Host 패키지 그룹 탐색 (controller — 비어있는지 확인용)
+  ansible.builtin.find:
+    paths: "{{ _os_pkg_groups | map('regex_replace', '^(.*)$', packages_root ~ '/os-packages/rocky/\\1') | list }}"
+    patterns: "*.rpm"
+  delegate_to: localhost
+  become: false
+  register: _os_rpm_find
+  tags: [kvm_hosts, packages]
+
+- name: OS 패키지 rpm 없음 경고
+  ansible.builtin.debug:
+    msg: >-
+      WARN: {{ packages_root }}/os-packages/<그룹>/ 에 rpm 파일이 없다.
+      scripts/download-host-packages.sh --os rocky 를 실행해서 그룹별 디렉터리를 채울 것.
+      필요 그룹: qemu-kvm libvirt network nfs iscsi vm-tools java chrony utils
+  when: _os_rpm_find.files | length == 0
+  tags: [kvm_hosts, packages]
+
+- name: OS 패키지 설치 (tar-once 전송)
+  when: _os_rpm_find.files | length > 0
+  tags: [kvm_hosts, packages]
+  block:
+    # controller 에서 변형별 tarball 을 1회 생성한다(flatten: 그룹 하위경로 제거 → 평평한 rpm 모음).
+    # mgmt(관리 VM repo)는 제외한다. 존재하는 그룹 디렉터리만 담는다.
+    - name: rocky os-packages tarball(full/nokvm) 생성 (controller, 1회)
+      ansible.builtin.shell: |
+        set -euo pipefail
+        cd "{{ packages_root }}/os-packages/rocky"
+        mk() {  # $1=출력파일, 나머지=그룹들
+          out="$1"; shift
+          dirs=""; for g in "$@"; do [ -d "$g" ] && dirs="$dirs $g"; done
+          if [ -n "$dirs" ]; then
+            find $dirs -name '*.rpm' -type f 2>/dev/null \
+              | tar czf "$out" --transform 's|.*/||' -T - 2>/dev/null || tar czf "$out" -T /dev/null
+          else
+            tar czf "$out" -T /dev/null
+          fi
+        }
+        mk /tmp/nv-oskg-rocky-full.tar.gz  qemu-kvm libvirt network nfs iscsi vm-tools java chrony utils
+        mk /tmp/nv-oskg-rocky-nokvm.tar.gz network nfs iscsi vm-tools java chrony utils
+      args:
+        executable: /bin/bash
+      delegate_to: localhost
+      become: false
+      run_once: true
+      changed_when: true
+
+    # 재실행 최적화(★내용 해시 기반): controller tarball 의 sha256 과 호스트 마커에 저장된 sha256 을
+    # 비교해, 내용이 바뀐 경우에만 재전송/재전개한다. 단순 "존재 여부"로 하면 os-packages 를
+    # 새로 빌드해도 호스트에 남은 옛 dirty 파일을 그대로 써서 "cannot install both" 가 재발한다.
+    - name: 이 호스트 변형 tarball 체크섬 (controller)
+      ansible.builtin.stat:
+        path: "/tmp/nv-oskg-rocky-{{ _os_pkg_variant }}.tar.gz"
+        checksum_algorithm: sha256
+      delegate_to: localhost
+      become: false
+      register: _os_tar_stat
+
+    - name: 호스트의 기존 staged 체크섬 읽기
+      ansible.builtin.slurp:
+        src: "/opt/namuvirt/offline/os-packages/.staged-{{ _os_pkg_variant }}"
+      register: _os_marker
+      failed_when: false
+      changed_when: false
+
+    - name: 재전개 필요 여부 판정 (해시 불일치 시)
+      ansible.builtin.set_fact:
+        _os_need_stage: "{{ (_os_marker.content | default('') | b64decode | trim) != (_os_tar_stat.stat.checksum | default('')) }}"
+
+    # 재전개 시 옛 파일(구버전 rpm)이 남지 않도록 디렉터리를 비우고 새로 만든다.
+    - name: os-packages 디렉터리 초기화 (재전개 시)
+      ansible.builtin.file:
+        path: /opt/namuvirt/offline/os-packages
+        state: "{{ item }}"
+        mode: "0755"
+      loop: [absent, directory]
+      when: _os_need_stage
+
+    # ── tar bootstrap ────────────────────────────────────────────────────────
+    # unarchive(.tar.gz)는 원격 호스트의 tar 바이너리를 쓴다. Rocky minimal(@core)에는
+    # tar 가 없을 수 있고(예: docker 미설치인 추가 KVM Host), 그러면 아래 unarchive 가 실패한다.
+    # 그래서 tar rpm 1개만 개별 copy(=tar 불필요) 후 설치해 부트스트랩한다.
+    - name: tar bootstrap (unarchive 전 원격 tar 확보)
+      when: _os_need_stage
+      block:
+        - name: tar 설치 여부 확인
+          ansible.builtin.command: rpm -q tar
+          register: _host_tar
+          changed_when: false
+          failed_when: false
+
+        - name: tar 미설치 시 개별 설치
+          when: _host_tar.rc != 0
+          block:
+            - name: controller 에서 tar rpm 찾기
+              ansible.builtin.find:
+                paths:
+                  - "{{ packages_root }}/os-packages/rocky/utils"
+                  - "{{ packages_root }}/os-packages/rocky/vm-tools"
+                patterns: "tar-*.rpm"
+              delegate_to: localhost
+              become: false
+              register: _tar_rpm
+
+            - name: tar rpm 개별 전송 (tar 없이 copy)
+              ansible.builtin.copy:
+                src: "{{ _tar_rpm.files[0].path }}"
+                dest: /opt/namuvirt/offline/tar-bootstrap.rpm
+                mode: "0644"
+              when: _tar_rpm.files | length > 0
+
+            - name: tar 설치 (rpm)
+              ansible.builtin.command: rpm -Uvh --replacepkgs /opt/namuvirt/offline/tar-bootstrap.rpm
+              when: _tar_rpm.files | length > 0
+              changed_when: true
+
+            - name: tar rpm 이 번들에 없음 경고
+              ansible.builtin.debug:
+                msg: >-
+                  WARN: os-packages 에 tar rpm 이 없어 부트스트랩 불가. unarchive 가 실패할 수 있다 —
+                  download-host-packages.sh 로 utils 그룹을 다시 받을 것.
+              when: _tar_rpm.files | length == 0
+
+    - name: os-packages tarball 전송 (1회 SSH copy)
+      ansible.builtin.copy:
+        src: "/tmp/nv-oskg-rocky-{{ _os_pkg_variant }}.tar.gz"
+        dest: /opt/namuvirt/offline/os-packages.tar.gz
+        mode: "0644"
+      when: _os_need_stage
+
+    - name: os-packages 압축 해제 (flatten 된 rpm 들)
+      ansible.builtin.unarchive:
+        src: /opt/namuvirt/offline/os-packages.tar.gz
+        dest: /opt/namuvirt/offline/os-packages/
+        remote_src: true
+      when: _os_need_stage
+
+    - name: 전개 완료 marker 기록 (tarball 체크섬 저장)
+      ansible.builtin.copy:
+        content: "{{ _os_tar_stat.stat.checksum }}"
+        dest: "/opt/namuvirt/offline/os-packages/.staged-{{ _os_pkg_variant }}"
+        mode: "0644"
+      when: _os_need_stage
+
+    # 전개된 평평한 디렉터리의 rpm 을 원격에서 수집해 설치한다(변형이 이미 그룹 선택을 반영함).
+    - name: 전개된 rpm 목록 수집 (원격)
+      ansible.builtin.find:
+        paths: /opt/namuvirt/offline/os-packages
+        patterns: "*.rpm"
+      register: _os_rpm_remote
+
+    - name: OS 패키지(rpm) 설치
+      ansible.builtin.dnf:
+        name: "{{ _os_rpm_remote.files | map(attribute='path') | list }}"
+        state: present
+        disable_gpg_check: true
+      when: _os_rpm_remote.files | length > 0

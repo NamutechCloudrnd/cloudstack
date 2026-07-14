@@ -1,0 +1,131 @@
+---
+# verify_host() — KVM·NFS·libvirt·agent·exporter·브리지 IP 등 호스트 최종 점검.
+# die가 아니라 assert로 멈출 것 / warn으로 넘어갈 것을 원본과 동일하게 구분한다.
+
+- name: KVM 디바이스/virsh 확인
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - "test -e /dev/kvm"
+    - "virsh version"
+  changed_when: false
+  tags: [kvm_hosts, verify]
+
+- name: kvm 커널 모듈 로드 확인
+  ansible.builtin.shell: "set -o pipefail; lsmod | grep -qE '^kvm(_intel|_amd)?[[:space:]]'"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  tags: [kvm_hosts, verify]
+
+# systemctl is-active 로 검증한다. nfs-server 는 Rocky 8 에서 Type=oneshot 이라
+# 정상일 때 "active (exited)" 상태이며 is-active 는 이를 "active" 로 보고한다.
+# (service_facts 의 .state 는 exited 를 'stopped' 로 보고해 오탐이 난다.)
+- name: 필수 서비스 active 확인 (systemctl is-active)
+  ansible.builtin.command: "systemctl is-active {{ item }}"
+  changed_when: false
+  register: _svc_active
+  failed_when: _svc_active.rc != 0
+  loop: "{{ _required_services }}"
+  vars:
+    _required_services: >-
+      {{ ['chronyd', 'rpcbind', 'libvirtd', 'nfs-kernel-server']
+         if ansible_distribution == 'Ubuntu'
+         else ['chronyd', 'rpcbind', 'libvirtd', 'nfs-server'] }}
+  loop_control:
+    label: "{{ item }}"
+  tags: [kvm_hosts, verify]
+
+- name: cloudstack-agent active 확인 (skip_agent 가 아닐 때만, 실패해도 warn)
+  ansible.builtin.command: systemctl is-active --quiet cloudstack-agent
+  register: _agent_active
+  changed_when: false
+  failed_when: false
+  when: not (skip_agent | default(true))
+  tags: [kvm_hosts, verify]
+
+- name: cloudstack-agent 비활성 경고
+  ansible.builtin.debug:
+    msg: "WARN: cloudstack-agent is not active (check guid, Java 17, management VM reachability)"
+  when:
+    - not (skip_agent | default(true))
+    - _agent_active.rc | default(1) != 0
+  tags: [kvm_hosts, verify]
+
+- name: agent.properties host= 확인
+  ansible.builtin.command: grep -q '^host={{ management_ip }}$' /etc/cloudstack/agent/agent.properties
+  changed_when: false
+  when: not (skip_agent | default(true))
+  tags: [kvm_hosts, verify]
+
+- name: idmapd / exports / libvirt 설정 파일 확인
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - "grep -q '^Domain[[:space:]]*=[[:space:]]*{{ nfs_domain }}$' /etc/idmapd.conf"
+    - "grep -q '^vnc_listen[[:space:]]*=' /etc/libvirt/qemu.conf"
+    - "grep -q '^listen_tcp[[:space:]]*=' /etc/libvirt/libvirtd.conf"
+    - "grep -q 'LIBVIRTD_ARGS=\"--listen\"' /etc/sysconfig/libvirtd"
+  changed_when: false
+  tags: [kvm_hosts, verify]
+
+- name: NFS export 확인
+  ansible.builtin.shell: "set -o pipefail; exportfs -v | grep -q '{{ item }}'"
+  args:
+    executable: /bin/bash
+  loop:
+    - "{{ primary_storage }}"
+    - "{{ secondary_storage }}"
+  changed_when: false
+  tags: [kvm_hosts, verify]
+
+- name: 브리지 IP 확인
+  ansible.builtin.shell: "set -o pipefail; ip -br addr show {{ bridge_name }} | grep -q '{{ host_ip }}'"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  tags: [kvm_hosts, verify]
+
+# docker(설치 컨테이너 호스트=master)의 FORWARD DROP 에 게스트 트래픽이 걸리지 않도록
+# bridge-nf-call-iptables 가 0 인지 확인한다. 1 이면 관리 VM 이 gateway 밖으로 못 나간다.
+- name: bridge-nf-call-iptables=0 확인 (게스트 외부통신 보장)
+  ansible.builtin.command: sysctl -n net.bridge.bridge-nf-call-iptables
+  register: _bridge_nf
+  changed_when: false
+  failed_when: false
+  tags: [kvm_hosts, verify]
+
+- name: bridge-nf-call-iptables 비정상 경고
+  ansible.builtin.debug:
+    msg: >-
+      WARN: net.bridge.bridge-nf-call-iptables={{ _bridge_nf.stdout | default('?') }}
+      (0 이어야 함). docker FORWARD DROP 에 게스트 트래픽이 걸릴 수 있다 —
+      namuvirt-bridge-nf.service 상태를 확인하라.
+  when: (_bridge_nf.stdout | default('1')) != '0'
+  tags: [kvm_hosts, verify]
+
+- name: exporter 응답 확인 (실패해도 warn만)
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ item }}/metrics"
+    status_code: 200
+    timeout: 5
+  loop: [9100, 9256, 9177]
+  register: _exporter_check
+  failed_when: false
+  tags: [kvm_hosts, verify]
+
+- name: exporter 미응답 경고
+  ansible.builtin.debug:
+    msg: "WARN: exporter on port {{ item.item }} not responding"
+  loop: "{{ _exporter_check.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.status | default(0) != 200
+  tags: [kvm_hosts, verify]
+
+- name: VMware 변환 도구 확인 (활성화된 경우만)
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - "command -v virt-v2v"
+    - "command -v nbdkit"
+  changed_when: false
+  when: kvm_enable_vmware_conversion | default(false) | bool
+  tags: [kvm_hosts, verify]

@@ -1,0 +1,13 @@
+[Unit]
+Description=Prometheus libvirt exporter
+After=network-online.target libvirtd.service
+Wants=network-online.target
+Requires=libvirtd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/prometheus-libvirt-exporter --web.listen-address=0.0.0.0:9177 --libvirt.uri=/run/libvirt/libvirt-sock --libvirt.driver=qemu:///system
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
