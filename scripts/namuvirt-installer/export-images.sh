@@ -49,6 +49,7 @@ OS_IMAGES_SRC="${OS_IMAGES_SRC:-$HARNESS_ROOT/os-images}"
 OS_FILTER="${OS_FILTER:-all}"   # all | rocky | ubuntu — 번들에 포함할 host 이미지 선택
 die() { echo "ERROR: $*" >&2; exit 1; }
 log() { echo "[export] $*"; }
+warn() { echo "[export]   WARN $*" >&2; }
 
 # ── 시작/종료 시간·소요 시간 ────────────────────────────────────────────────
 _START_EPOCH="$(date +%s)"
