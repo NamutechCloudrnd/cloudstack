@@ -163,8 +163,10 @@
       failed_when: false
 
 # ── 공통 ─────────────────────────────────────────────────────────────────────
+# java -version 은 3줄을 출력하는데 grep -q 가 1줄째에서 조기종료하면 java 가 SIGPIPE(rc=141)로
+# 죽어 pipefail 오탐이 난다. 전체 입력을 읽는 형태(>/dev/null)로 바꿔 방지.
 - name: Java 17 버전 확인
-  ansible.builtin.shell: "set -o pipefail; java -version 2>&1 | grep -qE 'version \"17\\.|openjdk version \"17\\.'"
+  ansible.builtin.shell: "set -o pipefail; java -version 2>&1 | grep -E 'version \"17\\.|openjdk version \"17\\.' >/dev/null"
   args:
     executable: /bin/bash
   changed_when: false

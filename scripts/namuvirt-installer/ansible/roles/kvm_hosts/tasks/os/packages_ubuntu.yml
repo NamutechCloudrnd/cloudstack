@@ -13,9 +13,9 @@
   ansible.builtin.set_fact:
     _os_pkg_groups: >-
       {{
-        (['network', 'nfs', 'iscsi', 'vm-tools', 'java', 'chrony', 'utils']
+        (['network', 'nfs', 'iscsi', 'vm-tools', 'java', 'chrony', 'utils', 'cloudstack']
          if kvm_already_installed | default(false)
-         else ['qemu-kvm', 'libvirt', 'network', 'nfs', 'iscsi', 'vm-tools', 'java', 'chrony', 'utils'])
+         else ['qemu-kvm', 'libvirt', 'network', 'nfs', 'iscsi', 'vm-tools', 'java', 'chrony', 'utils', 'cloudstack'])
       }}
     _os_pkg_variant: "{{ 'nokvm' if (kvm_already_installed | default(false)) else 'full' }}"
   tags: [kvm_hosts, packages]
@@ -62,8 +62,8 @@
             tar czf "$out" -T /dev/null
           fi
         }
-        mk /tmp/nv-oskg-ubuntu-full.tar.gz  qemu-kvm libvirt network nfs iscsi vm-tools java chrony utils
-        mk /tmp/nv-oskg-ubuntu-nokvm.tar.gz network nfs iscsi vm-tools java chrony utils
+        mk /tmp/nv-oskg-ubuntu-full.tar.gz  qemu-kvm libvirt network nfs iscsi vm-tools java chrony utils cloudstack
+        mk /tmp/nv-oskg-ubuntu-nokvm.tar.gz network nfs iscsi vm-tools java chrony utils cloudstack
       args:
         executable: /bin/bash
       delegate_to: localhost

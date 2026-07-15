@@ -24,8 +24,12 @@
   run_once: true
   tags: [management, provision]
 
+# 'command' 는 셸 빌트인이라 command 모듈(셸 미경유)로는 실행 불가 → rc=2("No such file or
+# directory: command")로 항상 실패한다. shell 모듈(+bash)로 실행해야 한다. (아래 genisoimage 확인과 동일)
 - name: 관리 VM 호스트 도구 확인
-  ansible.builtin.command: "command -v {{ item }}"
+  ansible.builtin.shell: "command -v {{ item }}"
+  args:
+    executable: /bin/bash
   loop:
     - virt-install
     - qemu-img

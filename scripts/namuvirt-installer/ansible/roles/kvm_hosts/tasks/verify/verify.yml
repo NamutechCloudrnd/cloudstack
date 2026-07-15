@@ -10,8 +10,11 @@
   changed_when: false
   tags: [kvm_hosts, verify]
 
+# grep -q 는 매치 즉시 종료해 파이프를 닫고, 그 결과 lsmod 가 SIGPIPE(rc=141)로 죽는다.
+# pipefail 이 이를 파이프라인 실패로 보고해, 모듈이 실제로 로드됐는데도 거짓 실패했다.
+# grep -q 대신 전체 입력을 다 읽는 형태(>/dev/null)로 바꿔 SIGPIPE 를 없앤다.
 - name: kvm 커널 모듈 로드 확인
-  ansible.builtin.shell: "set -o pipefail; lsmod | grep -qE '^kvm(_intel|_amd)?[[:space:]]'"
+  ansible.builtin.shell: "set -o pipefail; lsmod | grep -E '^kvm(_intel|_amd)?[[:space:]]' >/dev/null"
   args:
     executable: /bin/bash
   changed_when: false
@@ -80,12 +83,13 @@
     - "grep -q '^Domain[[:space:]]*=[[:space:]]*{{ nfs_domain }}$' /etc/idmapd.conf"
     - "grep -q '^vnc_listen[[:space:]]*=' /etc/libvirt/qemu.conf"
     - "grep -q '^listen_tcp[[:space:]]*=' /etc/libvirt/libvirtd.conf"
-    - "grep -q 'LIBVIRTD_ARGS=\"--listen\"' /etc/sysconfig/libvirtd"
+    - "grep -q 'LIBVIRTD_ARGS=\"--listen\"' {{ '/etc/default/libvirtd' if ansible_distribution == 'Ubuntu' else '/etc/sysconfig/libvirtd' }}"
   changed_when: false
   tags: [kvm_hosts, verify]
 
+# grep -q 조기종료 → producer SIGPIPE(rc=141) 오탐 방지: 전체 입력을 읽는 형태로.
 - name: NFS export 확인
-  ansible.builtin.shell: "set -o pipefail; exportfs -v | grep -q '{{ item }}'"
+  ansible.builtin.shell: "set -o pipefail; exportfs -v | grep '{{ item }}' >/dev/null"
   args:
     executable: /bin/bash
   loop:
@@ -95,7 +99,7 @@
   tags: [kvm_hosts, verify]
 
 - name: 브리지 IP 확인
-  ansible.builtin.shell: "set -o pipefail; ip -br addr show {{ bridge_name }} | grep -q '{{ host_ip }}'"
+  ansible.builtin.shell: "set -o pipefail; ip -br addr show {{ bridge_name }} | grep '{{ host_ip }}' >/dev/null"
   args:
     executable: /bin/bash
   changed_when: false

@@ -2,12 +2,14 @@
 # 체크리스트 2) Storage 구성 — configure_nfs() 포팅.
 # primary/secondary export 디렉터리 생성 + /etc/exports + nfs-server 기동.
 
+# nobody 그룹명이 배포판마다 다르다: Rocky=nobody, Ubuntu=nogroup (gid 65534 공통).
+# 하드코딩 시 Ubuntu 에서 "failed to look up group nobody" 로 실패한다.
 - name: primary/secondary storage 디렉터리 생성
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: nobody
-    group: nobody
+    group: "{{ 'nogroup' if ansible_distribution == 'Ubuntu' else 'nobody' }}"
     mode: "0777"
   loop:
     - "{{ primary_storage }}"

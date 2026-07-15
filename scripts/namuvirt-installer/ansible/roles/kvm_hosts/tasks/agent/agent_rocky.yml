@@ -113,8 +113,9 @@
       changed_when: false
       failed_when: false
 
+    # uuidgen 대신 커널 제공 경로를 쓴다(패키지 불필요, Rocky/Ubuntu 공통).
     - name: 비어있는 guid/local.storage.uuid 용 uuid 생성
-      ansible.builtin.command: uuidgen
+      ansible.builtin.command: cat /proc/sys/kernel/random/uuid
       loop: "{{ _agent_uuid_current.results }}"
       loop_control:
         label: "{{ item.item }}"

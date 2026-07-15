@@ -7,10 +7,13 @@
     _namuvirt_pkg_dir: "{{ packages_root }}/namuvirt/ubuntu"
   tags: [kvm_hosts, agent]
 
+# deb 파일명은 Debian 규칙으로 name_version_arch.deb (name 뒤가 '_'). rpm 스타일 하이픈
+# 패턴("cloudstack-common-*.deb")은 "cloudstack-common_...deb" 를 못 잡아 agent 설치가
+# 통째로 skip 됐다. '_' 를 기본으로, 혹시 모를 하이픈 변형까지 [-_] 로 함께 매칭한다.
 - name: cloudstack-common DEB 탐색
   ansible.builtin.find:
     paths: "{{ _namuvirt_pkg_dir }}"
-    patterns: "cloudstack-common-*.deb"
+    patterns: "cloudstack-common[-_]*.deb"
   delegate_to: localhost
   become: false
   register: _common_pkg
@@ -19,7 +22,7 @@
 - name: cloudstack-agent DEB 탐색
   ansible.builtin.find:
     paths: "{{ _namuvirt_pkg_dir }}"
-    patterns: "cloudstack-agent-*.deb"
+    patterns: "cloudstack-agent[-_]*.deb"
   delegate_to: localhost
   become: false
   register: _agent_pkg
@@ -116,8 +119,10 @@
       changed_when: false
       failed_when: false
 
+    # uuidgen(util-linux/uuid-runtime)은 Ubuntu 24.04 오프라인 번들에 없을 수 있다.
+    # 커널이 제공하는 /proc 경로는 패키지 없이 어디서나 UUID 를 생성한다(Rocky/Ubuntu 공통).
     - name: 비어있는 guid/local.storage.uuid 용 uuid 생성
-      ansible.builtin.command: uuidgen
+      ansible.builtin.command: cat /proc/sys/kernel/random/uuid
       loop: "{{ _agent_uuid_current.results }}"
       loop_control:
         label: "{{ item.item }}"

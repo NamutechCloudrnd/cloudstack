@@ -117,8 +117,45 @@ download_ubuntu() {
   log "Ubuntu 완료: $(find "$out" -name '*.deb' 2>/dev/null | wc -l | tr -d ' ') 개 deb(그룹 합계)"
 }
 
+# ── Ubuntu: cloudstack-agent/common 의존성 closure ───────────────────────────
+# Ubuntu 는 agent 를 `dpkg -i` 로 설치하는데 dpkg 는 의존성을 못 끌어온다. 그래서 cloudstack-agent/
+# common 의 Depends(vlan/ipset/ethtool/rng-tools/ufw/cpu-checker/sysstat/uuid-runtime/python3-pip/
+# libvirt-daemon-driver-storage-rbd/ 버전 맞춘 libacl1 등)를 미리 번들에 넣어야 한다.
+# apt 로 "로컬 cloudstack deb" 의 의존성을 해석시키면 올바른 대체(python3-distutils-extra 등)와
+# 버전까지 정확히 받는다. cloudstack deb 자체는 packages/namuvirt 에 이미 있으므로 제외한다.
+download_ubuntu_cloudstack() {
+  local out="packages/os-packages/ubuntu/cloudstack"
+  local csdeb="packages/namuvirt/ubuntu"
+  if ! ls "$csdeb"/cloudstack-agent_*.deb "$csdeb"/cloudstack-common_*.deb >/dev/null 2>&1; then
+    log "SKIP: $csdeb 에 cloudstack-agent/common deb 없음 — cloudstack 의존성 그룹 생략(제품 deb 배치 후 재실행)"
+    return 0
+  fi
+  mkdir -p "$out"
+  log "Ubuntu cloudstack-agent/common 의존성 closure 다운로드 → $out ($UBUNTU_IMAGE)"
+  docker run --rm --platform linux/amd64 \
+    -v "$HARNESS_ROOT/$out:/out" -v "$HARNESS_ROOT/$csdeb:/csdeb:ro" "$UBUNTU_IMAGE" bash -c '
+    set -e
+    export DEBIAN_FRONTEND=noninteractive
+    apt-get update >/dev/null
+    apt-get clean
+    # 로컬 cloudstack deb 의 의존성만 받는다(설치는 안 함). apt 가 대체/버전을 해석해준다.
+    apt-get install -y --no-install-recommends --download-only \
+      /csdeb/cloudstack-common_*.deb /csdeb/cloudstack-agent_*.deb
+    # cloudstack-* 자체는 제외하고 의존성 deb 만 그룹에 담는다.
+    for f in /var/cache/apt/archives/*.deb; do
+      [ -e "$f" ] || continue
+      case "$(basename "$f")" in cloudstack-*) continue ;; esac
+      cp -n "$f" /out/
+    done
+    chmod -R a+rX /out
+    echo "== cloudstack deps: $(ls /out/*.deb 2>/dev/null | wc -l) 개 =="
+  '
+  log "Ubuntu cloudstack deps 완료: $(find "$out" -name '*.deb' 2>/dev/null | wc -l | tr -d ' ') 개"
+}
+
 [[ "$OS_SEL" == "all" || "$OS_SEL" == "rocky"  ]] && download_rocky
 [[ "$OS_SEL" == "all" || "$OS_SEL" == "ubuntu" ]] && download_ubuntu
+[[ "$OS_SEL" == "all" || "$OS_SEL" == "ubuntu" ]] && download_ubuntu_cloudstack
 
 # 다운로드 직후 정리. --no-dedupe 로 생략 가능.
 # 버전 중복 제거만 수행한다: 같은 패키지의 구버전 삭제(최신만) → 설치 시 "cannot install both" 방지.
