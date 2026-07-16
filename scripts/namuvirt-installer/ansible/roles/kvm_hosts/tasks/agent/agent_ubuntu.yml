@@ -80,12 +80,16 @@
       loop_control:
         label: "{{ item.path | basename }}"
 
+    # 무인 설치라 conffile/ debconf 프롬프트로 멈추면 안 된다. DEBIAN_FRONTEND=noninteractive +
+    # --force-confdef/confold 로 프롬프트 없이 진행한다(기존 conffile 유지 → 뒤의 lineinfile 이
+    # host/guid 등만 덮어씀). 의존성이 번들(os-packages/cloudstack)로 이미 깔려 있어야 configure 된다.
     - name: cloudstack-common/agent DEB 설치
-      ansible.builtin.shell: >
-        dpkg -i
-        /opt/namuvirt/packages/{{ _common_pkg.files[0].path | basename }}
-        /opt/namuvirt/packages/{{ _agent_pkg.files[0].path | basename }}
-        2>&1; dpkg --configure -a
+      ansible.builtin.shell: |
+        export DEBIAN_FRONTEND=noninteractive
+        dpkg -i --force-confdef --force-confold \
+          /opt/namuvirt/packages/{{ _common_pkg.files[0].path | basename }} \
+          /opt/namuvirt/packages/{{ _agent_pkg.files[0].path | basename }} 2>&1
+        dpkg --configure -a --force-confdef --force-confold
       args:
         executable: /bin/bash
       changed_when: true

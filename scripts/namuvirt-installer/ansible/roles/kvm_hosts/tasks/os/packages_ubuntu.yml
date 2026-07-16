@@ -122,9 +122,12 @@
         mode: "0644"
       when: _os_need_stage
 
+    # 무인 설치 — conffile 프롬프트로 멈추지 않도록 noninteractive + confdef/confold.
     - name: OS 패키지(.deb) 일괄 설치 (dpkg)
-      ansible.builtin.shell: >
-        dpkg -i /opt/namuvirt/offline/os-packages/*.deb 2>&1; dpkg --configure -a
+      ansible.builtin.shell: |
+        export DEBIAN_FRONTEND=noninteractive
+        dpkg -i --force-confdef --force-confold /opt/namuvirt/offline/os-packages/*.deb 2>&1
+        dpkg --configure -a --force-confdef --force-confold
       args:
         executable: /bin/bash
       changed_when: true

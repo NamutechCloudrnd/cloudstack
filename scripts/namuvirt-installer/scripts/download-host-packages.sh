@@ -117,12 +117,18 @@ download_ubuntu() {
   log "Ubuntu 완료: $(find "$out" -name '*.deb' 2>/dev/null | wc -l | tr -d ' ') 개 deb(그룹 합계)"
 }
 
-# ── Ubuntu: cloudstack-agent/common 의존성 closure ───────────────────────────
+# ── Ubuntu: cloudstack-agent/common 의존성 전체 closure ───────────────────────
 # Ubuntu 는 agent 를 `dpkg -i` 로 설치하는데 dpkg 는 의존성을 못 끌어온다. 그래서 cloudstack-agent/
-# common 의 Depends(vlan/ipset/ethtool/rng-tools/ufw/cpu-checker/sysstat/uuid-runtime/python3-pip/
-# libvirt-daemon-driver-storage-rbd/ 버전 맞춘 libacl1 등)를 미리 번들에 넣어야 한다.
-# apt 로 "로컬 cloudstack deb" 의 의존성을 해석시키면 올바른 대체(python3-distutils-extra 등)와
-# 버전까지 정확히 받는다. cloudstack deb 자체는 packages/namuvirt 에 이미 있으므로 제외한다.
+# common 의 Depends 전부(vlan/ipset/ethtool/rng-tools/ufw/cpu-checker/sysstat/uuid-runtime/python3-pip/
+# libvirt-daemon-driver-storage-rbd + qemu/libvirt/openjdk 트리 + 버전 고정 lib libacl1 등)를
+# 미리 번들에 넣어야 한다.
+#
+# ★ 왜 `apt-get install --download-only` 로는 부족한가:
+#   그 방식은 "빌드 컨테이너에 이미 (최신으로) 깔린" 패키지는 안 받는다. 그런데 실제 폐쇄망 타깃은
+#   그 lib 이 구버전이거나 없을 수 있다(예: libacl1 2.3.2-1build1 → acl 이 요구하는 1.1 이 번들에 없어
+#   configure 가 통째로 막힘). 그래서 "설치 상태와 무관하게 무조건 받는" `apt-get download` 로,
+#   Depends 의 재귀 closure 전체를 candidate 버전으로 받아 버전 고정 lib 까지 확보한다.
+#   (qemu/libvirt/openjdk 등 다른 그룹과 겹치는 건 마지막 dedupe-versions 가 정리한다.)
 download_ubuntu_cloudstack() {
   local out="packages/os-packages/ubuntu/cloudstack"
   local csdeb="packages/namuvirt/ubuntu"
@@ -131,26 +137,53 @@ download_ubuntu_cloudstack() {
     return 0
   fi
   mkdir -p "$out"
-  log "Ubuntu cloudstack-agent/common 의존성 closure 다운로드 → $out ($UBUNTU_IMAGE)"
+  log "Ubuntu cloudstack-agent/common 의존성 전체 closure 다운로드 → $out ($UBUNTU_IMAGE)"
   docker run --rm --platform linux/amd64 \
     -v "$HARNESS_ROOT/$out:/out" -v "$HARNESS_ROOT/$csdeb:/csdeb:ro" "$UBUNTU_IMAGE" bash -c '
     set -e
     export DEBIAN_FRONTEND=noninteractive
     apt-get update >/dev/null
     apt-get clean
-    # 로컬 cloudstack deb 의 의존성만 받는다(설치는 안 함). apt 가 대체/버전을 해석해준다.
+
+    # (A) apt 로 로컬 cloudstack deb 의 의존성을 "해석"시켜 받는다.
+    #     → 가상패키지(rng-tools→rng-tools5)·대체(python3-distutils-extra)를 apt 가 올바른 실제
+    #       패키지로 골라준다. 단, 컨테이너에 이미 최신인 버전 고정 lib 은 안 받는다(그건 (B)가 보완).
+    echo "== (A) apt 의존성 해석 다운로드(가상/대체 포함) =="
     apt-get install -y --no-install-recommends --download-only \
-      /csdeb/cloudstack-common_*.deb /csdeb/cloudstack-agent_*.deb
-    # cloudstack-* 자체는 제외하고 의존성 deb 만 그룹에 담는다.
+      /csdeb/cloudstack-common_*.deb /csdeb/cloudstack-agent_*.deb || true
     for f in /var/cache/apt/archives/*.deb; do
       [ -e "$f" ] || continue
       case "$(basename "$f")" in cloudstack-*) continue ;; esac
       cp -n "$f" /out/
     done
+
+    # (B) 재귀 closure 를 candidate 버전으로 무조건 받는다(설치상태 무관 → libacl1 등 버전 고정 lib 확보).
+    # 1) 로컬 cloudstack deb 의 Depends 에서 패키지명 seed 추출.
+    #    쉼표/대체(|)로 분리(대체는 양쪽 다 후보로), 버전제약(...)·arch(:any)·공백 제거.
+    raw="$(for d in /csdeb/cloudstack-common_*.deb /csdeb/cloudstack-agent_*.deb; do
+             dpkg-deb -f "$d" Depends 2>/dev/null
+           done | tr ",|" "\n\n" | sed -E "s/\(.*\)//; s/:[a-z0-9]+//g; s/[[:space:]]//g" | grep -v "^$" | sort -u)"
+    # 2) repo 에 실제 존재하는 seed 만(없는 대체 python3-distutils 등 제외).
+    seeds=""; for p in $raw; do apt-cache show "$p" >/dev/null 2>&1 && seeds="$seeds $p"; done
+    [ -n "$seeds" ] || { echo "ERROR: cloudstack Depends seed 를 하나도 못 구함"; exit 1; }
+    # 3) seed 들의 재귀 의존 closure 전체 패키지명(가상패키지<...>·들여쓰기 라인 제외).
+    echo "== seed $(echo $seeds | wc -w)개 → 재귀 의존 closure 계산 중... =="
+    all="$(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts \
+             --no-breaks --no-replaces --no-enhances $seeds 2>/dev/null \
+           | grep "^[a-zA-Z0-9]" | sort -u)"
+    # 실제 다운로드 가능한 것만(가상/Provides-only 제외) — apt-cache show 는 로컬이라 빠르다.
+    valid=""; for p in $all; do apt-cache show "$p" >/dev/null 2>&1 && valid="$valid $p"; done
+    echo "== closure $(echo $valid | wc -w)개 패키지 배치 다운로드 시작 =="
+    # 4) candidate 버전으로 배치 다운로드(설치상태 무관 → 버전 고정 lib 확보). 한 번에 받아 빠르다.
+    cd /out
+    if ! apt-get download $valid; then
+      echo "== 배치 실패 — 개별 재시도(느림) =="
+      for p in $valid; do apt-get download "$p" 2>/dev/null || echo "  skip $p"; done
+    fi
     chmod -R a+rX /out
-    echo "== cloudstack deps: $(ls /out/*.deb 2>/dev/null | wc -l) 개 =="
+    echo "== cloudstack closure 완료: $(ls /out/*.deb 2>/dev/null | wc -l) 개 deb =="
   '
-  log "Ubuntu cloudstack deps 완료: $(find "$out" -name '*.deb' 2>/dev/null | wc -l | tr -d ' ') 개"
+  log "Ubuntu cloudstack closure 완료: $(find "$out" -name '*.deb' 2>/dev/null | wc -l | tr -d ' ') 개 deb"
 }
 
 [[ "$OS_SEL" == "all" || "$OS_SEL" == "rocky"  ]] && download_rocky

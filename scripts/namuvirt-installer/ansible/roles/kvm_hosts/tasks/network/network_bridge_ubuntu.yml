@@ -1,6 +1,12 @@
 ---
-# Ubuntu: netplan으로 cloudbr0 브리지 설정.
-# networkd renderer 사용 (NetworkManager 대신).
+# Ubuntu: netplan으로 cloudbr0 브리지 설정. networkd renderer.
+#
+# ★ 물리 NIC({{ nic }})은 cloudbr0 의 멤버로만 넣고 IP 는 cloudbr0 에만 둔다.
+#   기존 netplan(cloud-init/installer 기본)이 그 NIC 에 IP 를 얹은 채 남아 있으면, netplan 은
+#   /etc/netplan/*.yaml 을 전부 병합하므로 NIC 와 cloudbr0 에 같은 IP 가 "중복"되어 호스트↔VM
+#   통신이 깨진다(설치가 관리 VM SSH 대기에서 hang). 예전엔 원본을 .bak 로 "복사만" 하고 원본을
+#   그대로 둬서 이 버그가 있었다 → 아래처럼 (1) cloud-init netplan 재생성을 끄고 (2) 그 NIC 을
+#   참조하는 기존 netplan 을 .bak 로 "비활성화(제거)"한다.
 
 - name: netplan 디렉터리 확인
   ansible.builtin.file:
@@ -9,19 +15,12 @@
     mode: "0755"
   tags: [kvm_hosts, network]
 
-- name: 기존 netplan 파일 백업 (첫 실행 시만)
-  ansible.builtin.shell: >
-    set -o pipefail;
-    for f in /etc/netplan/*.yaml /etc/netplan/*.yml; do
-      [ -f "$f" ] || continue;
-      bn=$(basename "$f");
-      [ "$bn" = "01-cloudbr0.yaml" ] && continue;
-      [ -f "/etc/netplan/${bn}.bak" ] || cp "$f" "/etc/netplan/${bn}.bak";
-    done
-  args:
-    executable: /bin/bash
-  changed_when: false
-  failed_when: false
+- name: cloud-init 네트워크(netplan) 재생성 비활성화 (재부팅 후 중복 IP 재발 방지)
+  ansible.builtin.copy:
+    dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+    content: "network: {config: disabled}\n"
+    mode: "0644"
+  failed_when: false          # cloud-init 미설치(디렉터리 없음)면 무시
   tags: [kvm_hosts, network]
 
 - name: cloudbr0 netplan 설정 배포
@@ -32,7 +31,28 @@
   register: _netplan_changed
   tags: [kvm_hosts, network]
 
+# 물리 NIC 을 참조하는 기존 netplan 만 비활성화한다(다른 NIC 용 파일은 건드리지 않음).
+# .bak 은 처음 한 번만 백업(이후 재실행 시 원본은 이미 없으므로 idempotent).
+- name: 기존 netplan(물리 NIC 참조) 백업 후 비활성화
+  ansible.builtin.shell: |
+    set -o pipefail
+    changed=0
+    for f in /etc/netplan/*.yaml /etc/netplan/*.yml; do
+      [ -f "$f" ] || continue
+      bn=$(basename "$f")
+      [ "$bn" = "01-cloudbr0.yaml" ] && continue
+      grep -qw "{{ nic }}" "$f" || continue
+      [ -f "/etc/netplan/${bn}.bak" ] || cp "$f" "/etc/netplan/${bn}.bak"
+      rm -f "$f"; changed=1
+    done
+    [ "$changed" = 1 ] && echo CHANGED || true
+  args:
+    executable: /bin/bash
+  register: _netplan_disable
+  changed_when: "'CHANGED' in _netplan_disable.stdout"
+  tags: [kvm_hosts, network]
+
 - name: netplan apply (설정 변경 시)
   ansible.builtin.command: netplan apply
-  when: _netplan_changed.changed
+  when: _netplan_changed.changed or _netplan_disable.changed
   tags: [kvm_hosts, network]
