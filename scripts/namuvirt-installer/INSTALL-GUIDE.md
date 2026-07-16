@@ -18,7 +18,12 @@
   ⑤ ./install-namuvirt.sh --preflight          # 설치 전 검증(변경 없음)
   ⑥ ./install-namuvirt.sh install              # KVM Hosts → 관리 VM 설치
   ⑦ ./verify-install.sh                         # 설치 후 검증
+  ⑧ (설치 후) 템플릿 등록 콘솔  ./upload-os-image.sh   # §12 — infra/seed-systemvm/register
 ```
+
+> ⑧ 템플릿 등록은 설치와 분리된 운영 작업이다. 번들의 대화형 콘솔 **`./upload-os-image.sh`** 로
+> **SystemVM(`6) seed-systemvm`)** 과 **게스트(`4) register`)** 를 등록한다 — 상세는 **§12** 및
+> **[UPLOAD-OS-IMAGE.md](UPLOAD-OS-IMAGE.md)**.
 
 ---
 
@@ -352,21 +357,29 @@ logs/summary-YYYYMMDD-HHMMSS.txt
 
 ---
 
-## 12. (선택) OS/SystemVM 이미지 업로드 (`upload-os-image.sh`)
+## 12. 설치 후 — SystemVM / Guest OS 템플릿 등록
 
-설치와 **분리된 운영 도구**. 관리 VM(`management.vm_ip`)에 SSH → `cmk`(CloudMonkey)로 템플릿을 등록한다.
+설치(`install-namuvirt.sh`)는 KVM Host + 관리 VM 까지만 구성한다. **템플릿 등록은 설치와 분리된 운영 작업**으로,
+번들의 **대화형 콘솔 `./upload-os-image.sh`** 로 처리한다(관리 VM 의 `cmk` 사용). 인자 없이 실행하면 메뉴가 뜬다.
 
 ```bash
-./upload-os-image.sh check                       # cmk 연결 확인
-./upload-os-image.sh register --name "Rocky8-golden" \
-    --url "http://10.10.14.193/images/rocky8.qcow2" --ostype 245 --zone 1
-./upload-os-image.sh register --file images/NAMU-Rocky-8-10.qcow2 \
-    --name "Rocky8-golden" --ostype 245 --zone 1   # 로컬 파일(임시 HTTP 서버 자동)
-./upload-os-image.sh register-systemvm --name "systemvm-4.22" \
-    --url "http://10.10.14.193/images/systemvm.qcow2.bz2" --zone 1
-./upload-os-image.sh list                        # 등록/isready 확인
+cd release/namuvirt-installer-<version>
+./upload-os-image.sh
+#   1) check   2) list   3) infra   4) register
+#   5) register-systemvm   6) seed-systemvm   0) 종료
 ```
-환경별 추가 파라미터는 `--` 뒤에 `key=value` 로 전달한다(예: `-- account=admin projectid=...`).
+
+| 대상 | 메뉴 | 요약 |
+|------|------|------|
+| **SystemVM 템플릿** (최초 부트스트랩) | **`6) seed-systemvm`** | 폐쇄망 최초엔 SSVM 이 없어 secondary storage 에 **직접 시드**해야 SSVM 이 뜬다(순환). |
+| **게스트 OS 템플릿** | **`4) register`** | SSVM 이 뜬 뒤 등록. (원하면 CloudStack admin 웹콘솔의 *Register Template* URL 로도 가능) |
+
+**순서**: ① admin *Add Zone*(존·스토리지·호스트) → **`3) infra`** 로 확인 → **`6) seed-systemvm`**
+→ SSVM `Running`(`3) infra`) → **`4) register`**. SSVM 이 없으면 게스트 이미지를 받아올 주체가 없다.
+
+> **자세한 화면·단계·트러블슈팅은 [UPLOAD-OS-IMAGE.md](UPLOAD-OS-IMAGE.md) 를 참고한다.**
+> - §2 메뉴별 안내(check/list/infra/register/seed-systemvm) · §3 추천 순서 · §4 비대화형(자동화) · §5 트러블슈팅
+> - `seed-systemvm` 은 **secondary 경로가 등록된 secondary storage 와 같은 위치**여야 한다(`3) infra` 로 대조).
 
 ---
 

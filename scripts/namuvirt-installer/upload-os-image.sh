@@ -51,12 +51,45 @@ CONFIG_FILE="${NAMUVIRT_CONFIG:-$SCRIPT_DIR/config.yaml}"
 SSH_DIR="$SCRIPT_DIR/ssh"
 
 c_red=$'\033[31m'; c_grn=$'\033[32m'; c_yel=$'\033[33m'; c_rst=$'\033[0m'
-die()  { echo "${c_red}ERROR${c_rst} $*" >&2; exit 1; }
-ok()   { echo "  ${c_grn}OK${c_rst}   $*"; }
-warn() { echo "  ${c_yel}WARN${c_rst} $*"; }
-log()  { echo "[$(date +%H:%M:%S)] $*"; }
+c_bold=$'\033[1m'; c_cyan=$'\033[36m'; c_dim=$'\033[2m'
+die()  { echo "${c_red}✘ ERROR${c_rst} $*" >&2; exit 1; }
+ok()   { echo "  ${c_grn}✔${c_rst} $*"; }
+warn() { echo "  ${c_yel}▲ WARN${c_rst} $*"; }
+log()  { echo "  ${c_dim}[$(date +%H:%M:%S)]${c_rst} $*"; }
 
 usage() { grep '^#' "$0" | sed 's/^# \{0,1\}//'; }
+
+# ── 디자인/출력 헬퍼 ─────────────────────────────────────────────────────────
+_HR="────────────────────────────────────────────────────────"
+
+# 로그인 배너풍 헤더 (관리 VM IP 표시)
+banner() {
+  local ip="${VM_IP:-$(config_get management.vm_ip 2>/dev/null || true)}"; ip="${ip:-(미확인)}"
+  printf '\n%s' "$c_cyan"
+  cat <<'ART'
+                               _    __________  ______
+   ____  ____ _____ ___  __  _| |  / /  _/ __ \/_  __/
+  / __ \/ __ `/ __ `__ \/ / / / | / // // /_/ / / /
+ / / / / /_/ / / / / / / /_/ /| |/ // // _, _/ / /
+/_/ /_/\__,_/_/ /_/ /_/\__,_/ |___/___/_/ |_| /_/
+ART
+  printf '%s' "$c_rst"
+  printf '  %sOS 이미지 / SystemVM 템플릿 등록 콘솔%s   %s관리 VM: %s%s\n' "$c_dim" "$c_rst" "$c_dim" "$ip" "$c_rst"
+  printf '  %s%s%s\n' "$c_cyan" "$_HR" "$c_rst"
+}
+
+# 섹션 헤더 (통일된 형식)
+section() { printf '\n  %s%s▸ %s%s\n' "$c_bold" "$c_cyan" "$1" "$c_rst"; }
+
+# cmk 조회 결과 출력: 결과가 비면 "(조회된 결과가 없습니다)" 로 통일 표시
+show_result() {   # $1 = vm_exec 로 실행할 cmk 명령
+  local out; out="$(vm_exec "$1" 2>/dev/null || true)"
+  if [[ -z "${out//[[:space:]]/}" ]]; then
+    printf '    %s(조회된 결과가 없습니다)%s\n' "$c_dim" "$c_rst"
+  else
+    printf '%s\n' "$out" | sed 's/^/    /'
+  fi
+}
 
 # ── 로컬 파일 임시 HTTP 노출 (--file 용) ─────────────────────────────────────
 # master 에 python3 가 없을 수 있으므로, 이미 로드된 설치 이미지의 python 으로 서버를 띄운다.
@@ -145,7 +178,8 @@ wait_template_ready() {
 # ── 커맨드 ───────────────────────────────────────────────────────────────────
 cmd_check() {
   load_target; ensure_cmk
-  log "관리 VM($VM_IP) cmk 연결 확인 (cmk sync)"
+  section "cmk 연결 확인"
+  log "관리 VM($VM_IP) 에서 cmk sync ..."
   vm_exec "cmk sync >/dev/null 2>&1 && cmk list zones filter=id,name" \
     || die "cmk sync/list 실패 — cmk url/자격증명 설정을 확인할 것."
   ok "cmk 연결 정상"
@@ -153,7 +187,21 @@ cmd_check() {
 
 cmd_list() {
   load_target; ensure_cmk
-  vm_exec "cmk list templates templatefilter=all filter=id,name,ostypename,ispublic,isready"
+  section "등록된 템플릿 (templates)"
+  show_result "cmk list templates templatefilter=all filter=id,name,ostypename,ispublic,isready"
+}
+
+# 인프라 확인 — zone / secondary storage / host / systemvm 현황을 한 화면에, 통일된 형식으로.
+cmd_infra() {
+  load_target; ensure_cmk
+  section "Zones"
+  show_result "cmk list zones filter=id,name,allocationstate,networktype"
+  section "Secondary storage (imagestores)"
+  show_result "cmk list imagestores filter=id,name,url"
+  section "Hosts (KVM / Routing)"
+  show_result "cmk list hosts type=Routing filter=name,state,resourcestate"
+  section "SystemVMs"
+  show_result "cmk list systemvms filter=name,state"
 }
 
 # 로컬 파일을 임시 HTTP 서버(설치 이미지 python)로 노출. 성공 시 전역 SERVE_CONTAINER + SERVE_URL 세팅.
@@ -308,11 +356,12 @@ prompt_tty() {
 menu_pick() {
   local title="$1"; shift
   local -a L=("$@"); local i sel
-  { echo "  $title"; for i in "${!L[@]}"; do printf "    %2d) %s\n" $((i+1)) "${L[$i]}"; done; } >&2
+  { printf '\n  %s%s%s\n' "$c_bold" "$title" "$c_rst"
+    for i in "${!L[@]}"; do printf "    %s%2d)%s %s\n" "$c_cyan" $((i+1)) "$c_rst" "${L[$i]}"; done; } >&2
   while :; do
-    read -r -p "  번호: " sel </dev/tty || true
+    read -r -p "  ${c_cyan}번호>${c_rst} " sel </dev/tty || true
     [[ "$sel" =~ ^[0-9]+$ ]] && (( sel>=1 && sel<=${#L[@]} )) && { PICK=$((sel-1)); return 0; }
-    echo "  1~${#L[@]} 중에서 고르세요." >&2
+    printf '  %s1~%s 중에서 고르세요.%s\n' "$c_yel" "${#L[@]}" "$c_rst" >&2
   done
 }
 
@@ -347,7 +396,7 @@ pick_zone() {  # cmk zone 목록 → ZONE_ID
     id="${id//\"/}"; name="${name//\"/}"
     ids+=("$id"); labels+=("$name  [$id]")
   done < <(vm_exec "cmk -o csv list zones filter=id,name" 2>/dev/null)
-  [[ ${#ids[@]} -gt 0 ]] || die "zone 조회 실패 (cmk 설정/zone 생성 확인)."
+  [[ ${#ids[@]} -gt 0 ]] || die "등록된 zone 이 없습니다. admin 콘솔의 'Add Zone' 으로 존을 먼저 구성하세요."
   menu_pick "Zone 선택:" "${labels[@]}"
   ZONE_ID="${ids[$PICK]}"
 }
@@ -367,6 +416,7 @@ pick_format() {  # $1=파일명 → FMT (확장자 기준 기본 안내)
 interactive_register() {  # $1 = no(게스트) | yes(SystemVM)
   local systemvm="$1"; OSTYPE_ID=""
   load_target; ensure_cmk
+  require_zone
   pick_image
   local name; name="$(prompt_tty '템플릿 이름' "$(basename "$IMG_SEL" | sed 's/\.[^.]*$//')")"
   pick_zone
@@ -407,25 +457,56 @@ interactive_seed() {  # SystemVM 부트스트랩 시드 (SSVM 불필요)
   cmd_seed_systemvm --file "$IMG_SEL" --secondary "$secondary" --hypervisor "$hyp"
 }
 
+# ── 대화형 UX 헬퍼 ───────────────────────────────────────────────────────────
+cls() { clear 2>/dev/null || printf '\033[2J\033[3J\033[H'; }
+
+# 결과/에러를 보여준 뒤 Enter 로 메뉴 복귀
+pause_return() { echo >&2; read -r -p "  ${c_grn}[Enter]${c_rst} 를 눌러 메뉴로 돌아갑니다... " _ </dev/tty || true; }
+
+# 메뉴 액션 실행: subshell 로 격리해 die/오류가 나도 스크립트가 종료되지 않고 메뉴로 복귀한다.
+# subshell 은 EXIT trap 을 리셋하므로 임시 HTTP 서버 정리 trap 을 재설정해 컨테이너 누수를 막는다.
+run_action() {
+  cls; banner
+  local rc=0
+  ( trap cleanup_serve EXIT; "$@" ) || rc=$?
+  (( rc != 0 )) && { echo >&2; warn "작업이 오류로 종료되었습니다 (위 메시지 확인)."; }
+  pause_return
+}
+
+# 등록된 zone 이 없으면 die (run_action 이 잡아 메뉴로 복귀). register 계열 진입 시 사용.
+require_zone() {
+  local zcnt
+  zcnt="$(vm_exec "cmk -o csv list zones filter=id" 2>/dev/null | grep -vcE '^(id)?$')" || zcnt=0
+  [[ "${zcnt:-0}" -gt 0 ]] || die "등록된 zone 이 없습니다. admin 콘솔의 'Add Zone' 으로 존/스토리지/호스트를 먼저 구성한 뒤 다시 시도하세요."
+}
+
 cmd_menu() {
   [[ -t 0 ]] || die "대화형 모드는 터미널이 필요하다 (인자를 주고 실행하거나 --help 참고)."
+  local -a items=(
+    "check   (cmk 연결 확인)"
+    "list    (등록 템플릿 목록)"
+    "infra   (zone/secondary/host/systemvm 확인)"
+    "register (게스트 OS 템플릿 등록)"
+    "register-systemvm (SystemVM 등록 — SSVM 경유, 업데이트용)"
+    "seed-systemvm (SystemVM 부트스트랩 — SSVM 없이 직접 시드)"
+  )
+  local sel i
   while :; do
-    menu_pick "작업 선택:" \
-      "check (cmk 연결 확인)" \
-      "list (등록 템플릿 목록)" \
-      "register (게스트 OS 템플릿 등록)" \
-      "register-systemvm (SystemVM 등록 — SSVM 경유, 업데이트용)" \
-      "seed-systemvm (SystemVM 부트스트랩 — SSVM 없이 직접 시드)" \
-      "종료"
-    case "$PICK" in
-      0) cmd_check || true ;;
-      1) cmd_list  || true ;;
-      2) interactive_register no  || true ;;
-      3) interactive_register yes || true ;;
-      4) interactive_seed         || true ;;
-      5) break ;;
+    cls; banner
+    { printf '\n  %s작업을 선택하세요:%s\n' "$c_bold" "$c_rst"
+      for i in "${!items[@]}"; do printf "    %s%2d)%s %s\n" "$c_cyan" $((i+1)) "$c_rst" "${items[$i]}"; done
+      printf "    %s%2d)%s %s종료%s\n" "$c_cyan" 0 "$c_rst" "$c_dim" "$c_rst"; } >&2
+    read -r -p "  ${c_cyan}번호>${c_rst} " sel </dev/tty || true
+    case "$sel" in
+      0) break ;;
+      1) run_action cmd_check ;;
+      2) run_action cmd_list ;;
+      3) run_action cmd_infra ;;
+      4) run_action interactive_register no ;;
+      5) run_action interactive_register yes ;;
+      6) run_action interactive_seed ;;
+      *) printf '  %s0~%s 중에서 고르세요.%s\n' "$c_yel" "${#items[@]}" "$c_rst" >&2; sleep 1 ;;
     esac
-    echo >&2
   done
 }
 
@@ -436,6 +517,7 @@ main() {
     ""|menu|-i|--interactive) cmd_menu ;;
     check)              cmd_check ;;
     list)               cmd_list ;;
+    infra)              cmd_infra ;;
     register)           do_register no  "$@" ;;
     register-systemvm)  do_register yes "$@" ;;
     seed-systemvm)      cmd_seed_systemvm "$@" ;;
