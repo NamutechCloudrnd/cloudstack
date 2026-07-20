@@ -1907,6 +1907,8 @@ public class UnmanagedVMsManagerImpl implements UnmanagedVMsManager {
         convertedInstance.setCpuSpeed(sourceVMwareInstance.getCpuSpeed());
         convertedInstance.setCpuCoresPerSocket(sourceVMwareInstance.getCpuCoresPerSocket());
         convertedInstance.setMemory(sourceVMwareInstance.getMemory());
+        convertedInstance.setBootType(sourceVMwareInstance.getBootType());
+        convertedInstance.setBootMode(sourceVMwareInstance.getBootMode());
         convertedInstance.setPowerState(UnmanagedInstanceTO.PowerState.PowerOff);
         List<UnmanagedInstanceTO.Disk> convertedInstanceDisks = convertedInstance.getDisks();
         List<UnmanagedInstanceTO.Disk> sourceVMwareInstanceDisks = sourceVMwareInstance.getDisks();
