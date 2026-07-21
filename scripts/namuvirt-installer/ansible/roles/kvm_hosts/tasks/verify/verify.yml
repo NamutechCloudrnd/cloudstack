@@ -20,9 +20,18 @@
   changed_when: false
   tags: [kvm_hosts, verify]
 
+# NFS 사용 여부(storage.yml 의 _any_nfs 와 동일 판정) — 아래 서비스/idmapd 검증에서
+# 재사용한다. primary/secondary 둘 다 local/ceph 이면 nfs 관련 검증을 건너뛴다.
+- name: NFS 사용 여부 판정
+  ansible.builtin.set_fact:
+    _any_nfs: "{{ (primary_storage.protocol == 'nfs') or (secondary_storage.protocol == 'nfs') }}"
+  tags: [kvm_hosts, verify]
+
 # systemctl is-active 로 검증한다. nfs-server 는 Rocky 8 에서 Type=oneshot 이라
 # 정상일 때 "active (exited)" 상태이며 is-active 는 이를 "active" 로 보고한다.
 # (service_facts 의 .state 는 exited 를 'stopped' 로 보고해 오탐이 난다.)
+# rpcbind/nfs 서비스는 storage.yml 에서 nfs 사용 시(_any_nfs)에만 기동하므로,
+# 둘 다 local/ceph 이면 검증 대상에서 제외한다(libvirtd 는 항상 필수).
 - name: 필수 서비스 active 확인 (systemctl is-active)
   ansible.builtin.command: "systemctl is-active {{ item }}"
   changed_when: false
@@ -30,10 +39,11 @@
   failed_when: _svc_active.rc != 0
   loop: "{{ _required_services }}"
   vars:
-    _required_services: >-
-      {{ ['rpcbind', 'libvirtd', 'nfs-kernel-server']
+    _nfs_services: >-
+      {{ ['rpcbind', 'nfs-kernel-server']
          if ansible_distribution == 'Ubuntu'
-         else ['rpcbind', 'libvirtd', 'nfs-server'] }}
+         else ['rpcbind', 'nfs-server'] }}
+    _required_services: "{{ ['libvirtd'] + (_nfs_services if _any_nfs | bool else []) }}"
   loop_control:
     label: "{{ item }}"
   tags: [kvm_hosts, verify]
@@ -77,10 +87,16 @@
   when: not (skip_agent | default(true))
   tags: [kvm_hosts, verify]
 
-- name: idmapd / exports / libvirt 설정 파일 확인
+# idmapd Domain 은 storage_nfs.yml 에서만 설정하므로 nfs 사용 시에만 검사한다.
+- name: idmapd.conf Domain 확인 (nfs 사용 시)
+  ansible.builtin.command: "grep -q '^Domain[[:space:]]*=[[:space:]]*{{ nfs_domain }}$' /etc/idmapd.conf"
+  changed_when: false
+  when: _any_nfs | bool
+  tags: [kvm_hosts, verify]
+
+- name: libvirt 설정 파일 확인
   ansible.builtin.command: "{{ item }}"
   loop:
-    - "grep -q '^Domain[[:space:]]*=[[:space:]]*{{ nfs_domain }}$' /etc/idmapd.conf"
     - "grep -q '^vnc_listen[[:space:]]*=' /etc/libvirt/qemu.conf"
     - "grep -q '^listen_tcp[[:space:]]*=' /etc/libvirt/libvirtd.conf"
     - "grep -q 'LIBVIRTD_ARGS=\"--listen\"' {{ '/etc/default/libvirtd' if ansible_distribution == 'Ubuntu' else '/etc/sysconfig/libvirtd' }}"
