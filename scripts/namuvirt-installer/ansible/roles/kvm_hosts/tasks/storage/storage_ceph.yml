@@ -1,0 +1,15 @@
+---
+# Ceph 스토리지: 스텁(미구현). 스키마/디스패처 확장 지점만 잡아둔 상태다.
+# 실제 구현 시 여기에 추가할 것(참고):
+#   - ceph-common 설치, /etc/ceph/ceph.conf, client keyring 배치
+#   - libvirt secret 정의: virsh secret-define + secret-set-value (_stor_cfg.secret_uuid)
+#   - CloudStack RBD Primary 등록: rbd://{{ _stor_cfg.ceph_user }}:<secret>@<mon>/{{ _stor_cfg.pool }}
+#     (_stor_cfg.monitors 로 Monitor 주소 구성)
+# 넘겨받는 vars: _stor_role, _stor_cfg.
+
+- name: Ceph 스토리지는 아직 스텁(미구현) — 설치 중단
+  ansible.builtin.fail:
+    msg: >-
+      storage {{ _stor_role }} protocol=ceph 는 아직 구현되지 않았다(스텁).
+      현재 지원 프로토콜은 nfs 또는 local 뿐이다. (Ceph 연동은 후속 과제)
+  tags: [kvm_hosts, storage]

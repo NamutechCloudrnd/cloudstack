@@ -58,15 +58,31 @@ management:
   # 선택:
   # os_variant: rocky8.6
   # vm_gateway: 10.10.10.1                 # 미기재 시 vm_ip 대역의 .1
-  # nfs_export_host_ip: 10.10.10.3         # 미기재 시 secondary 를 로컬 디렉터리로 사용(NFS 마운트 안 함).
-  #                                        # 값 지정 시에만 그 호스트의 NFS export 를 secondary 로 마운트.
   # golden_image_path: ""                  # 골든 이미지 업로드 placeholder
+  # (secondary NFS 마운트 여부는 storage.secondary.export_host_ip 로 지정한다 —
+  #  구 management.nfs_export_host_ip 는 폐지되었다.)
 
 network:
   bridge: cloudbr0
   prefix: 24
   dns: [8.8.8.8, 1.1.1.1]
 
+# storage: primary/secondary 를 protocol 까지 각각 독립 구성한다 (v2 스키마).
+#   protocol: nfs(공유) | local(호스트 로컬, migration 불가) | ceph(스텁, 미구현)
+#   path:            nfs/local 의 디렉터리 경로
+#   export_host_ip:  nfs 공유 시 마운트 주체 서버 IP.
+#                    - primary  : 비우면 각 호스트가 자기 로컬을 export(비공유), 지정 시 단일 공유
+#                    - secondary: 관리 VM/SSVM 이 마운트할 export 서버. 비우면 로컬 디렉터리 사용
+#   hosts:           호스트별 path override(선택). 생략 시 공통 path 를 전체 호스트에 적용
 storage:
-  primary: /export/primary
-  secondary: /export/secondary
+  primary:
+    protocol: nfs
+    path: /export/primary
+    export_host_ip: ""          # 예: 10.10.10.3 (단일 공유 NFS Primary)
+    # 호스트별로 다른 경로가 필요할 때만:
+    # hosts:
+    #   10.10.10.4: { path: /data/primary }
+  secondary:
+    protocol: nfs
+    path: /export/secondary
+    export_host_ip: 10.10.10.3  # 비우면 관리 VM 로컬 디렉터리 사용(SSVM 접근 불가 주의)

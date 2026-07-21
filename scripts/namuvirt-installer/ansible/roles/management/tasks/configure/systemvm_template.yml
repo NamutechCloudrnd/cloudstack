@@ -12,16 +12,50 @@
   register: _sys_tmplt_script
   tags: [management, configure]
 
-- name: cloud-install-sys-tmplt 누락 경고
-  ansible.builtin.debug:
-    msg: "WARN: cloud-install-sys-tmplt missing — cloudstack-common 설치를 확인할 것"
+- name: cloud-install-sys-tmplt 누락 시 중단 (SSVM/CPVM 부팅 불가 — 반드시 필요)
+  ansible.builtin.fail:
+    msg: >-
+      cloud-install-sys-tmplt 가 없다 (/usr/share/cloudstack-common/...). cloudstack-common 설치를 확인할 것.
+      이 스크립트 없이는 SystemVM 템플릿을 시드할 수 없어 Zone 등록 후 SSVM/CPVM 이 뜨지 않는다.
   when: not _sys_tmplt_script.stat.exists
   tags: [management, configure]
 
+- name: SystemVM 템플릿 원본(컨트롤러 mount) 존재 확인
+  ansible.builtin.stat:
+    path: "{{ systemvm_template }}"
+  delegate_to: localhost
+  become: false
+  register: _sys_tmplt_src
+  tags: [management, configure]
+
+- name: SystemVM 템플릿 원본 누락 시 중단
+  ansible.builtin.fail:
+    msg: >-
+      SystemVM 템플릿 파일이 컨트롤러에 없다: {{ systemvm_template }}.
+      config.yaml management.systemvm_template 경로와 외부 mount(/mnt/namuvirt/images/...)를 확인할 것.
+  when: not _sys_tmplt_src.stat.exists
+  tags: [management, configure]
+
+# 이미 시드됐으면 멀티 GB qcow2 재전송/재시드를 통째로 건너뛴다(재실행 비용 절감).
+- name: SystemVM 시드 마커 확인
+  ansible.builtin.stat:
+    path: "{{ secondary_storage.path }}/.namuvirt-systemvm-seeded"
+  register: _sys_tmplt_marker
+  tags: [management, configure]
+
 - name: SystemVM 템플릿 시드
-  when: _sys_tmplt_script.stat.exists
+  when:
+    - _sys_tmplt_script.stat.exists
+    - _sys_tmplt_src.stat.exists
+    - not _sys_tmplt_marker.stat.exists
   tags: [management, configure]
   block:
+    - name: SystemVM 전송 디렉터리 생성 (copy 는 상위 디렉터리를 자동 생성하지 않음)
+      ansible.builtin.file:
+        path: "{{ management_server_work_dir }}/systemvm"
+        state: directory
+        mode: "0755"
+
     - name: SystemVM 템플릿 파일을 관리 VM으로 전송 (외부 mount → VM)
       ansible.builtin.copy:
         src: "{{ systemvm_template }}"
@@ -31,14 +65,14 @@
     - name: cloud-install-sys-tmplt 실행 (이미 시드되어 있으면 skip)
       ansible.builtin.command: >
         /usr/share/cloudstack-common/scripts/storage/secondary/cloud-install-sys-tmplt
-        -m {{ secondary_storage }}
+        -m {{ secondary_storage.path }}
         -u file://{{ management_server_work_dir }}/systemvm/{{ systemvm_template | basename }}
         -h kvm -F
       args:
-        creates: "{{ secondary_storage }}/.namuvirt-systemvm-seeded"
+        creates: "{{ secondary_storage.path }}/.namuvirt-systemvm-seeded"
 
     - name: SystemVM 시드 완료 마커 생성
       ansible.builtin.file:
-        path: "{{ secondary_storage }}/.namuvirt-systemvm-seeded"
+        path: "{{ secondary_storage.path }}/.namuvirt-systemvm-seeded"
         state: touch
         mode: "0644"

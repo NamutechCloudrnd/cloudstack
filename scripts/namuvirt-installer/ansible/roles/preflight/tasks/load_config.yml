@@ -85,12 +85,54 @@
     common_bridge: "{{ (cfg.network | default({})).bridge | default('cloudbr0') }}"
     common_prefix: "{{ (cfg.network | default({})).prefix | default(24) }}"
     common_dns: "{{ (cfg.network | default({})).dns | default(['8.8.8.8', '1.1.1.1']) }}"
-    common_primary_storage: "{{ (cfg.storage | default({})).primary | default('/export/primary') }}"
-    common_secondary_storage: "{{ (cfg.storage | default({})).secondary | default('/export/secondary') }}"
     common_nfs_domain: "{{ cfg.nfs_domain | default('local') }}"
     # 패키지는 이미지 내장 — config.yaml 의 packages_dir 는 무시한다.
     common_packages_root: "/opt/namuvirt-installer/packages"
     common_management_ip: "{{ cfg.management.vm_ip }}"
+
+# ── Storage 정규화 (v2 스키마: protocol 별 독립 구성) ─────────────────────────
+# storage.primary / storage.secondary 는 {protocol, path, export_host_ip, hosts, ...ceph} dict.
+# 문자열 경로만 온 경우도 {path: <문자열>} 로 감싸 방어적으로 정규화한다.
+# common_*_storage 는 이제 스칼라 경로가 아니라 dict 이며, 각 태스크가 .path/.protocol 로 접근한다.
+- name: storage 원본 추출
+  ansible.builtin.set_fact:
+    _primary_raw: "{{ (cfg.storage | default({})).primary | default({}) }}"
+    _secondary_raw: "{{ (cfg.storage | default({})).secondary | default({}) }}"
+
+- name: storage dict 정규화 (기본값 병합)
+  ansible.builtin.set_fact:
+    common_primary_storage: "{{ _defaults_primary | combine(_pm) }}"
+    common_secondary_storage: "{{ _defaults_secondary | combine(_sm) }}"
+  vars:
+    _pm: "{{ _primary_raw if _primary_raw is mapping else {'path': _primary_raw} }}"
+    _sm: "{{ _secondary_raw if _secondary_raw is mapping else {'path': _secondary_raw} }}"
+    _defaults_primary:
+      protocol: nfs
+      path: /export/primary
+      export_host_ip: ""
+      hosts: {}
+      monitors: []
+      pool: ""
+      ceph_user: ""
+      secret_uuid: ""
+    _defaults_secondary:
+      protocol: nfs
+      path: /export/secondary
+      export_host_ip: ""
+      hosts: {}
+      monitors: []
+      pool: ""
+      ceph_user: ""
+      secret_uuid: ""
+
+- name: storage protocol 값 검증 (nfs | local | ceph)
+  ansible.builtin.assert:
+    that:
+      - "common_primary_storage.protocol in ['nfs', 'local', 'ceph']"
+      - "common_secondary_storage.protocol in ['nfs', 'local', 'ceph']"
+    fail_msg: >-
+      storage.*.protocol 은 nfs | local | ceph 만 허용한다.
+      primary={{ common_primary_storage.protocol }}, secondary={{ common_secondary_storage.protocol }}
 
 # ── 동적 인벤토리 등록 ───────────────────────────────────────────────────────
 # master 도 SSH로 접속한다 (컨테이너는 kvm.master 물리 호스트에서 실행되지만,
@@ -166,9 +208,9 @@
     vm_mac: "{{ cfg.management.vm_mac | default('') }}"
     rocky_cloudimg: "{{ cfg.management.rocky_cloudimg | default('/mnt/namuvirt/images/NAMU-Rocky-8-10.qcow2') }}"
     systemvm_template: "{{ cfg.management.systemvm_template | default('/mnt/namuvirt/images/SystemVM-Template-KVM.qcow2') }}"
-    # 비우면(기본) 관리 VM 은 secondary 를 NFS 로 마운트하지 않고 로컬 디렉터리로 쓴다.
-    # 값을 명시하면 그 호스트의 NFS export 를 secondary 로 마운트한다.
-    nfs_export_host_ip: "{{ cfg.management.nfs_export_host_ip | default('') }}"
+    # secondary 마운트 모드는 storage.secondary(dict)로 결정한다.
+    #   protocol=nfs + export_host_ip 지정 → 그 호스트의 export 를 관리 VM 이 마운트.
+    #   protocol=local(또는 export_host_ip 미지정) → 로컬 디렉터리 사용(마운트 안 함).
     golden_image_path: "{{ cfg.management.golden_image_path | default('') }}"
     bridge_name: "{{ common_bridge }}"
     network_prefix: "{{ common_prefix }}"

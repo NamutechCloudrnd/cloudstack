@@ -125,13 +125,33 @@ for part in sys.argv[2].split('.'):
 print(cur if cur is not None else "")
 PY
   else
-    # python3 미설치(폐쇄망 KVM 호스트) 폴백: dotted key 의 leaf 를 awk 로 추출.
-    local leaf="${key##*.}"
-    awk -v k="$leaf" '
-      $0 ~ "^[[:space:]]*"k"[[:space:]]*:" {
-        sub(/^[[:space:]]*[^:]+:[[:space:]]*/, ""); sub(/[[:space:]]*$/, "");
-        gsub(/^["'\'']|["'\'']$/, ""); print; exit
-      }' "$CONFIG_FILE" 2>/dev/null
+    # python3 미설치(폐쇄망 KVM 호스트) 폴백.
+    case "$key" in
+      storage.primary.path|storage.secondary.path)
+        # 중첩 키: leaf "path" 가 primary/secondary 양쪽에 있어 섹션을 구분해야 한다.
+        # 우리 생성 포맷(2-space step)을 전제로 storage: → <role>: → path: 를 추적한다.
+        local role="${key#storage.}"; role="${role%.path}"
+        awk -v role="$role" '
+          /^storage:[[:space:]]*$/ { in_st=1; next }
+          in_st && /^[^[:space:]]/ { in_st=0 }                 # storage 블록 종료
+          in_st && in_role && /^  [^[:space:]]/ { in_role=0 }  # 다른 role 시작 → 종료
+          in_st && $0 ~ "^  "role":[[:space:]]*$" { in_role=1; next }
+          in_st && in_role && /^    path:[[:space:]]*/ {
+            sub(/^[[:space:]]*path:[[:space:]]*/, ""); sub(/[[:space:]]*$/, "");
+            gsub(/^["'\'']|["'\'']$/, ""); print; exit
+          }
+        ' "$CONFIG_FILE" 2>/dev/null
+        ;;
+      *)
+        # dotted key 의 leaf 를 awk 로 추출(우리 포맷에서 leaf 키는 유일).
+        local leaf="${key##*.}"
+        awk -v k="$leaf" '
+          $0 ~ "^[[:space:]]*"k"[[:space:]]*:" {
+            sub(/^[[:space:]]*[^:]+:[[:space:]]*/, ""); sub(/[[:space:]]*$/, "");
+            gsub(/^["'\'']|["'\'']$/, ""); print; exit
+          }' "$CONFIG_FILE" 2>/dev/null
+        ;;
+    esac
   fi
 }
 
@@ -324,8 +344,8 @@ cmd_seed_systemvm() {
     localfile="$(ls images/SystemVM-Template-KVM.qcow2 images/SystemVM*KVM*.qcow2* 2>/dev/null | head -1)"
   fi
   [[ -n "$localfile" && -f "$localfile" ]] || die "SystemVM 템플릿 파일이 없다 — --file images/<...>.qcow2 로 지정."
-  # secondary storage 경로 (config.yaml storage.secondary → 기본 /export/secondary)
-  [[ -z "$secondary" ]] && secondary="$(config_get storage.secondary)"
+  # secondary storage 경로 (config.yaml storage.secondary.path → 기본 /export/secondary)
+  [[ -z "$secondary" ]] && secondary="$(config_get storage.secondary.path)"
   [[ -z "$secondary" ]] && secondary="/export/secondary"
 
   local SYS_TMPLT=/usr/share/cloudstack-common/scripts/storage/secondary/cloud-install-sys-tmplt
@@ -444,7 +464,7 @@ interactive_register() {  # $1 = no(게스트) | yes(SystemVM)
 interactive_seed() {  # SystemVM 부트스트랩 시드 (SSVM 불필요)
   load_target
   pick_image
-  local sec_def; sec_def="$(config_get storage.secondary 2>/dev/null)"; [[ -z "$sec_def" ]] && sec_def="/export/secondary"
+  local sec_def; sec_def="$(config_get storage.secondary.path 2>/dev/null)"; [[ -z "$sec_def" ]] && sec_def="/export/secondary"
   local secondary; secondary="$(prompt_tty 'secondary storage 경로' "$sec_def")"
   menu_pick "SystemVM Hypervisor:" "kvm" "vmware" "xenserver"
   local -a hyps=(kvm vmware xenserver); local hyp="${hyps[$PICK]}"

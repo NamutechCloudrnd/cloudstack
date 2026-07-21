@@ -1,44 +1,20 @@
 ---
-# 체크리스트 2) Storage 구성 — configure_nfs() 포팅.
-# primary/secondary export 디렉터리 생성 + /etc/exports + nfs-server 기동.
+# Storage 구성 디스패처 (v2) — primary/secondary 를 protocol 별 task 파일로 분기한다.
+#   storage_nfs.yml   : 디렉터리 + idmapd + /etc/exports (공유 NFS)
+#   storage_local.yml : 디렉터리만 (호스트 로컬, export 없음)
+#   storage_ceph.yml  : 스텁(미구현)
+# 호스트별 override(cfg.hosts[host_ip].path)가 있으면 그 경로를, 없으면 공통 path 를 쓴다.
+# 확장: 새 스토리지 종류는 storage_<protocol>.yml 파일만 추가하면 된다(이 파일 무수정).
+# protocol 값 검증은 preflight/load_config 에서 이미 수행한다(nfs|local|ceph).
 
-# nobody 그룹명이 배포판마다 다르다: Rocky=nobody, Ubuntu=nogroup (gid 65534 공통).
-# 하드코딩 시 Ubuntu 에서 "failed to look up group nobody" 로 실패한다.
-- name: primary/secondary storage 디렉터리 생성
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    owner: nobody
-    group: "{{ 'nogroup' if ansible_distribution == 'Ubuntu' else 'nobody' }}"
-    mode: "0777"
-  loop:
-    - "{{ primary_storage }}"
-    - "{{ secondary_storage }}"
-  tags: [kvm_hosts, storage]
-
-- name: idmapd.conf Domain 설정 (ensure_nfs_idmapd_domain)
-  ansible.builtin.lineinfile:
-    path: /etc/idmapd.conf
-    regexp: '^Domain\s*='
-    line: "Domain = {{ nfs_domain }}"
-    insertafter: '^\[General\]'
-    create: true
-    mode: "0644"
-  tags: [kvm_hosts, storage]
-
-- name: "[General] 섹션 보장 (idmapd.conf에 섹션이 없을 때만 추가)"
-  ansible.builtin.lineinfile:
-    path: /etc/idmapd.conf
-    line: "[General]"
-    insertbefore: "^Domain"
-    firstmatch: true
-    create: true
-    mode: "0644"
+- name: 호스트별 유효 스토리지 경로 계산
+  ansible.builtin.set_fact:
+    _primary_path: "{{ (primary_storage.hosts[host_ip].path) | default(primary_storage.path, true) }}"
+    _secondary_path: "{{ (secondary_storage.hosts[host_ip].path) | default(secondary_storage.path, true) }}"
   tags: [kvm_hosts, storage]
 
 - name: >-
-    NFS 허용 CIDR 계산 (namuvirt_derive_nfs_allow_from_kvm_hosts 와 동일 — kvm_hosts 그룹의
-    모든 host_ip에서 고유 /{{ network_prefix }} 목록을 뽑는다)
+    NFS 허용 CIDR 계산 (kvm_hosts 그룹의 모든 host_ip 에서 고유 /{{ network_prefix }} 목록)
   ansible.builtin.set_fact:
     nfs_allow_cidrs: >-
       {{
@@ -50,25 +26,35 @@
       }}
   tags: [kvm_hosts, storage]
 
-- name: /etc/exports 라인 보장 (idempotent — namuvirt_ensure_exports_line)
-  ansible.builtin.lineinfile:
-    path: /etc/exports
-    regexp: "^{{ item | regex_escape }}\\s"
-    line: >-
-      {{ item }}{% for cidr in nfs_allow_cidrs %} {{ cidr }}(rw,async,no_root_squash,no_subtree_check){% endfor %}
-    create: true
-    mode: "0644"
-  loop:
-    - "{{ primary_storage }}"
-    - "{{ secondary_storage }}"
+- name: primary storage 구성 (protocol={{ primary_storage.protocol }})
+  ansible.builtin.include_tasks: "storage_{{ primary_storage.protocol }}.yml"
+  vars:
+    _stor_role: primary
+    _stor_cfg: "{{ primary_storage }}"
+    _stor_path: "{{ _primary_path }}"
   tags: [kvm_hosts, storage]
 
-- name: exportfs -ra 적용
+- name: secondary storage 구성 (protocol={{ secondary_storage.protocol }})
+  ansible.builtin.include_tasks: "storage_{{ secondary_storage.protocol }}.yml"
+  vars:
+    _stor_role: secondary
+    _stor_cfg: "{{ secondary_storage }}"
+    _stor_path: "{{ _secondary_path }}"
+  tags: [kvm_hosts, storage]
+
+# ── NFS 마무리: primary/secondary 중 하나라도 nfs 면 export 반영 + 서비스 기동(1회) ──
+- name: NFS 사용 여부 판정
+  ansible.builtin.set_fact:
+    _any_nfs: "{{ (primary_storage.protocol == 'nfs') or (secondary_storage.protocol == 'nfs') }}"
+  tags: [kvm_hosts, storage]
+
+- name: exportfs -ra 적용 (nfs 사용 시)
   ansible.builtin.command: exportfs -ra
   changed_when: true
+  when: _any_nfs | bool
   tags: [kvm_hosts, storage]
 
-- name: rpcbind / nfs 서비스 활성화
+- name: rpcbind / nfs 서비스 활성화 (nfs 사용 시)
   ansible.builtin.systemd:
     name: "{{ item }}"
     state: started
@@ -78,4 +64,5 @@
     _nfs_services: >-
       {{ ['rpcbind', 'nfs-kernel-server'] if ansible_distribution == 'Ubuntu'
          else ['rpcbind', 'nfs-server'] }}
+  when: _any_nfs | bool
   tags: [kvm_hosts, storage]

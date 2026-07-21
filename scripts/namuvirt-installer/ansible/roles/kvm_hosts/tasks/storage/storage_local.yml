@@ -1,0 +1,14 @@
+---
+# Local 스토리지: 디렉터리만 생성한다(NFS export 없음).
+# CloudStack 에는 LocalStorage 로 등록한다(운영자 수동). 각 호스트가 자기 로컬 디스크를 쓰므로
+# VM live migration 이 불가함에 유의(공유 스토리지 필요 시 protocol: nfs 사용).
+# 넘겨받는 vars: _stor_role, _stor_path.
+
+- name: "{{ _stor_role }} storage 디렉터리 생성 (local) — {{ _stor_path }}"
+  ansible.builtin.file:
+    path: "{{ _stor_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  tags: [kvm_hosts, storage]

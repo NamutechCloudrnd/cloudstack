@@ -91,6 +91,52 @@ detect_gateway() { ip route show default 2>/dev/null | awk '/default/{print $3; 
 # src IP 는 NIC 과 무관하게 기본 라우트의 source 주소로 구한다 (브리지에 IP 가 있어도 정확).
 detect_ip()      { ip route get 1.1.1.1 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="src"){print $(i+1); exit}}'; }
 
+# 스토리지 한 종류(primary/secondary)를 대화형으로 구성한다.
+#   인자: <role> <기본 path> <전체 호스트 IP...>
+#   결과는 전역 변수로 반환: __ST_PROTOCOL __ST_PATH __ST_EXPORT __ST_HOSTS_YAML
+#   (프롬프트/안내는 stderr(/dev/tty)로, 값만 전역에 담는다.)
+prompt_storage() {
+  local role="$1" def_path="$2"; shift 2
+  local -a ips=("$@")
+  local proto path export_ip mode hosts_yaml="" ip hp
+
+  echo "  -- ${role} storage --" >&2
+  while :; do
+    proto="$(prompt "${role} protocol (nfs/local; ceph=미지원 스텁)" 'nfs')"
+    case "$proto" in
+      nfs|local) break ;;
+      ceph) echo "  ${c_yel}ceph 는 아직 스텁(미구현)입니다 — nfs 또는 local 을 선택하세요.${c_rst}" >&2 ;;
+      *)    echo "  ${c_yel}nfs 또는 local 만 입력하세요.${c_rst}" >&2 ;;
+    esac
+  done
+
+  path="$(prompt "${role} 공통 path" "$def_path")"
+
+  export_ip=""
+  if [[ "$proto" == "nfs" ]]; then
+    if [[ "$role" == "secondary" ]]; then
+      echo "  (nfs: export 서버 IP 지정 시 관리 VM 이 그 호스트의 export 를 마운트. 비우면 로컬 디렉터리 사용.)" >&2
+    else
+      echo "  (nfs: export 서버 IP 비우면 각 호스트가 자기 로컬을 export. 단일 공유 스토리지면 서버 IP 를 지정.)" >&2
+    fi
+    export_ip="$(prompt "${role} nfs export 서버 IP (없으면 Enter)" '')"
+  fi
+
+  # 호스트가 2대 이상일 때만 호스트별 지정 옵션을 제공한다.
+  if [[ "${#ips[@]}" -gt 1 ]]; then
+    mode="$(prompt "${role} 경로를 모든 호스트에 동일 적용? (y=동일 / n=호스트별)" 'y')"
+    if [[ "$mode" == "n" || "$mode" == "N" ]]; then
+      for ip in "${ips[@]}"; do
+        hp="$(prompt "  - ${ip} 의 ${role} path" "$path")"
+        [[ "$hp" == "$path" ]] && continue   # 공통과 동일하면 override 생략
+        hosts_yaml+="      ${ip}: { path: ${hp} }"$'\n'
+      done
+    fi
+  fi
+
+  __ST_PROTOCOL="$proto"; __ST_PATH="$path"; __ST_EXPORT="$export_ip"; __ST_HOSTS_YAML="$hosts_yaml"
+}
+
 # ── 1) config.yaml 대화형 생성 ───────────────────────────────────────────────
 gen_config() {
   say "1) config.yaml 대화형 생성"
@@ -105,7 +151,8 @@ gen_config() {
 
   echo "  (Enter 를 누르면 [기본값] 사용)"
   local ssh_user cluster_os m_ip m_nic m_gw vm_ip vm_name extra_raw
-  local st_primary st_secondary nfs_host bridge prefix dns cloudimg systemvm
+  local bridge prefix dns cloudimg systemvm
+  local p_proto p_path p_export p_hosts s_proto s_path s_export s_hosts
 
   ssh_user="$(prompt 'ssh_user (모든 KVM Host 공통 sudo 계정)' 'namuvirt')"
   cluster_os="$(prompt 'kvm.os (rocky 또는 ubuntu, Cluster 전체 동일)' 'rocky')"
@@ -127,12 +174,19 @@ gen_config() {
   echo "  -- 추가 KVM Host (master 제외, 쉼표로 여러 개; 없으면 Enter) --"
   extra_raw="$(prompt '추가 host IP 목록 (예: 192.168.0.11,192.168.0.12)' '')"
 
-  echo "  -- 스토리지 / 네트워크 (보통 기본값) --"
-  st_primary="$(prompt 'primary storage 경로' '/export/primary')"
-  st_secondary="$(prompt 'secondary storage 경로' '/export/secondary')"
-  echo "  (secondary NFS: IP 입력 시 관리 VM 이 그 호스트의 secondary export 를 NFS 마운트.)"
-  echo "  (               비우면 관리 VM 로컬 디렉터리 사용 — NFS 마운트 안 함.)"
-  nfs_host="$(prompt 'secondary NFS 서버 IP (없으면 Enter=로컬)' '')"
+  echo "  -- 스토리지 (primary/secondary 를 각각 protocol 까지 독립 구성) --"
+  # 전체 호스트 IP (master + 추가) — config 파일 쓰기 전이라 메모리값으로 구성한다.
+  local -a _all_ips=("$m_ip")
+  if [[ -n "$extra_raw" ]]; then
+    local -a _ex; IFS=',' read -r -a _ex <<< "$extra_raw"
+    for h in "${_ex[@]}"; do h="$(echo "$h" | tr -d '[:space:]')"; [[ -n "$h" ]] && _all_ips+=("$h"); done
+  fi
+  prompt_storage primary '/export/primary' "${_all_ips[@]}"
+  p_proto="$__ST_PROTOCOL"; p_path="$__ST_PATH"; p_export="$__ST_EXPORT"; p_hosts="$__ST_HOSTS_YAML"
+  prompt_storage secondary '/export/secondary' "${_all_ips[@]}"
+  s_proto="$__ST_PROTOCOL"; s_path="$__ST_PATH"; s_export="$__ST_EXPORT"; s_hosts="$__ST_HOSTS_YAML"
+
+  echo "  -- 네트워크 (보통 기본값) --"
   bridge="$(prompt 'bridge 이름' 'cloudbr0')"
   prefix="$(prompt '네트워크 prefix' '24')"
   dns="$(prompt 'DNS (쉼표 구분)' '8.8.8.8,1.1.1.1')"
@@ -182,19 +236,33 @@ gen_config() {
     echo "  vm_disk_gb: 200"
     echo "  rocky_cloudimg: $C_IMG_DIR/$cloudimg"
     echo "  systemvm_template: $C_IMG_DIR/$systemvm"
-    # secondary NFS 서버 IP 를 입력했을 때만 기록한다. 미기재 시 관리 VM 은 로컬 디렉터리 사용.
-    if [[ -n "$nfs_host" ]]; then
-      echo "  nfs_export_host_ip: $nfs_host"
-    fi
     echo ""
     echo "network:"
     echo "  bridge: $bridge"
     echo "  prefix: $prefix"
     echo "  dns: $dns_yaml"
     echo ""
+    # storage: primary/secondary 를 protocol 별 독립 구성한다.
+    #   protocol: nfs(공유) | local(호스트 로컬) | ceph(스텁)
+    #   export_host_ip: nfs 공유 시 마운트 주체 서버 IP (secondary 는 관리 VM/SSVM 이 마운트)
+    #   hosts: 호스트별 path override (없으면 공통 path 를 전체 적용)
     echo "storage:"
-    echo "  primary: $st_primary"
-    echo "  secondary: $st_secondary"
+    echo "  primary:"
+    echo "    protocol: $p_proto"
+    echo "    path: $p_path"
+    [[ "$p_proto" == "nfs" ]] && echo "    export_host_ip: \"$p_export\""
+    if [[ -n "$p_hosts" ]]; then
+      echo "    hosts:"
+      printf '%s' "$p_hosts"
+    fi
+    echo "  secondary:"
+    echo "    protocol: $s_proto"
+    echo "    path: $s_path"
+    [[ "$s_proto" == "nfs" ]] && echo "    export_host_ip: \"$s_export\""
+    if [[ -n "$s_hosts" ]]; then
+      echo "    hosts:"
+      printf '%s' "$s_hosts"
+    fi
   } > "$CONFIG_FILE"
 
   ok "config.yaml 생성: $CONFIG_FILE"

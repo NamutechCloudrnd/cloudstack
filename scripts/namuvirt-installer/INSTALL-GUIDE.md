@@ -233,17 +233,24 @@ management:
   vm_disk_gb: 200
   rocky_cloudimg:    /mnt/namuvirt/images/NAMU-Rocky-8-10.qcow2
   systemvm_template: /mnt/namuvirt/images/SystemVM-Template-KVM.qcow2
-  # nfs_export_host_ip: 10.10.14.193   # (선택) 지정 시 그 호스트 secondary 를 NFS 마운트.
-  #                                    #  미기재 시 관리 VM 로컬 디렉터리 사용(NFS 안 함).
 
 network:
   bridge: cloudbr0
   prefix: 24
   dns: [8.8.8.8, 1.1.1.1]
 
+# storage: primary/secondary 를 protocol 까지 각각 독립 구성 (v2)
 storage:
-  primary: /export/primary
-  secondary: /export/secondary
+  primary:
+    protocol: nfs                 # nfs(공유) | local(호스트 로컬) | ceph(스텁)
+    path: /export/primary
+    export_host_ip: ""            # nfs 공유 시 단일 export 서버. 비우면 각 호스트 로컬 export
+    # hosts:                      # (선택) 호스트별 path override
+    #   10.10.14.195: { path: /data/primary }
+  secondary:
+    protocol: nfs
+    path: /export/secondary
+    export_host_ip: 10.10.14.193  # 관리 VM/SSVM 이 마운트할 export 서버. 비우면 로컬 디렉터리
 ```
 
 | 필드 | 의미 | 비고 |
@@ -258,10 +265,12 @@ storage:
 | `management.vm_vcpus/vm_ram_mb/vm_disk_gb` | 관리 VM 사양 | §1.3 참고 |
 | `management.rocky_cloudimg` | 관리 VM 골든 이미지 | `images/` 에 실제 파일 |
 | `management.systemvm_template` | SystemVM 템플릿 | `images/` 에 실제 파일 |
-| `management.nfs_export_host_ip` | secondary NFS 서버 | 미기재 시 로컬 디렉터리(마운트 안 함) |
 | `network.bridge` | KVM bridge 이름 | 기본 `cloudbr0` |
 | `network.prefix/dns` | 서브넷 prefix, DNS | |
-| `storage.primary/secondary` | NFS export 경로 | KVM Host 에 생성/export |
+| `storage.{primary,secondary}.protocol` | 스토리지 종류 | `nfs`\|`local`\|`ceph`(스텁) |
+| `storage.{primary,secondary}.path` | 디렉터리 경로 | protocol=nfs/local 에서 사용 |
+| `storage.{primary,secondary}.export_host_ip` | nfs 공유 export 서버 | secondary: 관리 VM/SSVM 마운트 주체. 비우면 로컬 |
+| `storage.{primary,secondary}.hosts` | 호스트별 path override | 생략 시 공통 path 전체 적용 |
 
 **핵심 규칙**: ① `kvm.os` 단일 ② master 를 `hosts` 에 중복 기재 금지 ③ `packages_dir` 적지 않음(이미지 내장).
 

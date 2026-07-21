@@ -87,14 +87,23 @@
   changed_when: false
   tags: [kvm_hosts, verify]
 
+# protocol=nfs 인 스토리지만 export 를 검사한다(local/ceph 은 export 없음).
+# 호스트별 override(hosts[host_ip].path)가 있으면 그 경로를 사용한다.
+- name: NFS export 검사 대상 경로 계산 (nfs 프로토콜만)
+  ansible.builtin.set_fact:
+    _nfs_export_paths: >-
+      {{ ([ primary_storage.hosts[host_ip].path | default(primary_storage.path, true) ]
+           if primary_storage.protocol == 'nfs' else [])
+       + ([ secondary_storage.hosts[host_ip].path | default(secondary_storage.path, true) ]
+           if secondary_storage.protocol == 'nfs' else []) }}
+  tags: [kvm_hosts, verify]
+
 # grep -q 조기종료 → producer SIGPIPE(rc=141) 오탐 방지: 전체 입력을 읽는 형태로.
-- name: NFS export 확인
+- name: NFS export 확인 (nfs 프로토콜 스토리지만)
   ansible.builtin.shell: "set -o pipefail; exportfs -v | grep '{{ item }}' >/dev/null"
   args:
     executable: /bin/bash
-  loop:
-    - "{{ primary_storage }}"
-    - "{{ secondary_storage }}"
+  loop: "{{ _nfs_export_paths }}"
   changed_when: false
   tags: [kvm_hosts, verify]
 

@@ -1,0 +1,46 @@
+---
+# NFS 스토리지: 디렉터리 생성 + idmapd Domain + /etc/exports 라인.
+# exportfs -ra 와 nfs 서비스 기동은 디스패처(storage.yml)에서 마무리로 1회 수행한다.
+# 넘겨받는 vars: _stor_role, _stor_path, nfs_allow_cidrs, nfs_domain.
+#
+# nobody 그룹명이 배포판마다 다르다: Rocky=nobody, Ubuntu=nogroup (gid 65534 공통).
+# 하드코딩 시 Ubuntu 에서 "failed to look up group nobody" 로 실패한다.
+
+- name: "{{ _stor_role }} storage 디렉터리 생성 (nfs) — {{ _stor_path }}"
+  ansible.builtin.file:
+    path: "{{ _stor_path }}"
+    state: directory
+    owner: nobody
+    group: "{{ 'nogroup' if ansible_distribution == 'Ubuntu' else 'nobody' }}"
+    mode: "0777"
+  tags: [kvm_hosts, storage]
+
+- name: idmapd.conf Domain 설정 (ensure_nfs_idmapd_domain)
+  ansible.builtin.lineinfile:
+    path: /etc/idmapd.conf
+    regexp: '^Domain\s*='
+    line: "Domain = {{ nfs_domain }}"
+    insertafter: '^\[General\]'
+    create: true
+    mode: "0644"
+  tags: [kvm_hosts, storage]
+
+- name: "[General] 섹션 보장 (idmapd.conf에 섹션이 없을 때만 추가)"
+  ansible.builtin.lineinfile:
+    path: /etc/idmapd.conf
+    line: "[General]"
+    insertbefore: "^Domain"
+    firstmatch: true
+    create: true
+    mode: "0644"
+  tags: [kvm_hosts, storage]
+
+- name: "/etc/exports 라인 보장 (idempotent) — {{ _stor_path }}"
+  ansible.builtin.lineinfile:
+    path: /etc/exports
+    regexp: "^{{ _stor_path | regex_escape }}\\s"
+    line: >-
+      {{ _stor_path }}{% for cidr in nfs_allow_cidrs %} {{ cidr }}(rw,async,no_root_squash,no_subtree_check){% endfor %}
+    create: true
+    mode: "0644"
+  tags: [kvm_hosts, storage]
