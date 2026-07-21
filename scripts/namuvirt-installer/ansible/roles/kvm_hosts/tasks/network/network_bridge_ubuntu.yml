@@ -52,7 +52,39 @@
   changed_when: "'CHANGED' in _netplan_disable.stdout"
   tags: [kvm_hosts, network]
 
-- name: netplan apply (설정 변경 시)
+# netplan apply 는 관리 IP 를 물리 NIC 에서 cloudbr0 로 옮기며 SSH 를 순단시킨다. 동기 실행 시
+# 응답을 나르던 채널이 끊겨 hang/UNREACHABLE 이 될 수 있으므로 async(fire-and-forget)로 띄워
+# 백그라운드에서 완주시키고 wait_for_connection 으로 재연결한다.
+- name: netplan apply (설정 변경 시, 순단 대비 fire-and-forget)
   ansible.builtin.command: netplan apply
+  async: 60
+  poll: 0
+  register: _netplan_apply
+  changed_when: true
   when: _netplan_changed.changed or _netplan_disable.changed
+  tags: [kvm_hosts, network]
+
+- name: netplan apply 후 SSH 재연결 대기 (순단 복구)
+  ansible.builtin.wait_for_connection:
+    delay: 15
+    timeout: 180
+  when: _netplan_apply.changed
+  tags: [kvm_hosts, network]
+
+- name: netplan apply 작업 완료 확인
+  ansible.builtin.async_status:
+    jid: "{{ _netplan_apply.ansible_job_id }}"
+  register: _netplan_apply_result
+  until: _netplan_apply_result.finished
+  retries: 20
+  delay: 3
+  when: _netplan_apply.changed
+  tags: [kvm_hosts, network]
+
+- name: 브리지에 관리 IP 가 올라왔는지 확인 ({{ host_ip }})
+  ansible.builtin.command: ip -br addr show {{ bridge_name }}
+  register: _bridge_addr_ubuntu
+  changed_when: false
+  failed_when: host_ip not in _bridge_addr_ubuntu.stdout
+  when: _netplan_apply.changed
   tags: [kvm_hosts, network]

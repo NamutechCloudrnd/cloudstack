@@ -1,6 +1,7 @@
 ---
 # Rocky: nmcli로 cloudbr0 브리지 설정.
-# SSH가 NIC를 타고 있으면 브리지 전환 중 잠깐 끊길 수 있음 — 로컬 콘솔 사용 권장.
+# SSH가 NIC를 타고 있으면 브리지 전환 중 잠깐 끊긴다. 전환은 async(fire-and-forget)로
+# 백그라운드에서 완주시키고 wait_for_connection 으로 재연결하므로 원격 실행에도 hang 되지 않는다.
 
 - name: nmcli 브리지 설정 시작 경고
   ansible.builtin.debug:
@@ -72,21 +73,45 @@
     ipv6.method ignore
   tags: [kvm_hosts, network]
 
-- name: NIC connection up (nic 이 브리지 자신이 아닐 때만)
-  ansible.builtin.command: nmcli connection up {{ nic_connection_name }}
-  register: _nic_up
-  changed_when: _nic_up.rc == 0
-  failed_when: false
-  when: nic_connection_name != bridge_name
+# ── 브리지 전환 활성화 (여기서 관리 NIC 이 브리지 slave 로 바뀌며 IP 가 cloudbr0 로 옮겨감) ──
+# 이 구간에서 관리 SSH 가 순단된다. 각 nmcli up 을 개별 SSH 명령으로 돌리면 NIC 에서 IP 가
+# 빠지는 순간 명령을 나르던 채널이 끊겨 'up cloudbr0' 가 실행되지 못하고 호스트가 IP 없이
+# 남을 수 있다(원격 실행 시 hang/UNREACHABLE 의 원인). 그래서 전환 전체를 하나의
+# async(fire-and-forget) 작업으로 백그라운드(setsid 분리)에 띄워 SSH 가 끊겨도 호스트에서
+# 끝까지 완주시키고, wait_for_connection 으로 재연결한 뒤 결과를 검증한다.
+- name: 브리지 전환 활성화 (순단 대비 fire-and-forget)
+  ansible.builtin.shell: |
+    set -o pipefail
+    if [ "{{ nic_connection_name }}" != "{{ bridge_name }}" ]; then
+      nmcli connection up "{{ nic_connection_name }}" || nmcli connection up "{{ nic }}" || true
+    fi
+    nmcli connection up "{{ bridge_name }}"
+  args:
+    executable: /bin/bash
+  async: 60
+  poll: 0
+  register: _bridge_cutover
+  changed_when: true
   tags: [kvm_hosts, network]
 
-- name: NIC connection up 실패 시 원래 NIC 이름으로 재시도
-  ansible.builtin.command: nmcli connection up {{ nic }}
-  when:
-    - nic_connection_name != bridge_name
-    - _nic_up.rc | default(0) != 0
+- name: 브리지 전환 후 SSH 재연결 대기 (순단 복구)
+  ansible.builtin.wait_for_connection:
+    delay: 15
+    timeout: 180
   tags: [kvm_hosts, network]
 
-- name: 브리지 connection up
-  ansible.builtin.command: nmcli connection up {{ bridge_name }}
+- name: 브리지 전환 작업 완료/성공 확인
+  ansible.builtin.async_status:
+    jid: "{{ _bridge_cutover.ansible_job_id }}"
+  register: _bridge_cutover_result
+  until: _bridge_cutover_result.finished
+  retries: 20
+  delay: 3
+  tags: [kvm_hosts, network]
+
+- name: 브리지에 관리 IP 가 올라왔는지 확인 ({{ host_ip }})
+  ansible.builtin.command: ip -br addr show {{ bridge_name }}
+  register: _bridge_addr
+  changed_when: false
+  failed_when: host_ip not in _bridge_addr.stdout
   tags: [kvm_hosts, network]
