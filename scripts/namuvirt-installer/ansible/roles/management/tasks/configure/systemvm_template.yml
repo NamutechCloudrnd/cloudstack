@@ -1,7 +1,8 @@
 ---
 # seed_systemvm_template() — secondary 스토리지에 KVM SystemVM 템플릿을 시드한다.
 # 하네스: SystemVM 템플릿은 이미지에 넣지 않고 외부 mount(/mnt/namuvirt/images/...)로 제공한다.
-# 컨테이너(controller) 안에서 mount 된 파일을 관리 VM 으로 전송한 뒤 file:// URL 로 시드한다.
+# 컨테이너(controller) 안에서 mount 된 파일을 관리 VM 으로 전송한 뒤 로컬 파일(-f)로 시드한다.
+# (cloud-install-sys-tmplt 의 -u 는 http URL 전용이라 file:// 스킴을 거부한다 → -f 사용)
 #
 # systemvm_template 은 config.yaml management.systemvm_template (기본 /mnt/namuvirt/images/...) 의
 # 절대 경로이며, dest 파일명은 그 basename 을 사용한다.
@@ -66,7 +67,7 @@
       ansible.builtin.command: >
         /usr/share/cloudstack-common/scripts/storage/secondary/cloud-install-sys-tmplt
         -m {{ secondary_storage.path }}
-        -u file://{{ management_server_work_dir }}/systemvm/{{ systemvm_template | basename }}
+        -f {{ management_server_work_dir }}/systemvm/{{ systemvm_template | basename }}
         -h kvm -F
       args:
         creates: "{{ secondary_storage.path }}/.namuvirt-systemvm-seeded"
