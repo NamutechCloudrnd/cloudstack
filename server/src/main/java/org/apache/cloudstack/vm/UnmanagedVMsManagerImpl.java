@@ -1211,6 +1211,9 @@ public class UnmanagedVMsManagerImpl implements UnmanagedVMsManager {
     private void addImportingVMBootTypeAndModeDetails(String bootType, String bootMode, Map<String, String> allDetails) {
         if (StringUtils.isNotBlank(bootType) && bootType.equalsIgnoreCase("uefi") && StringUtils.isNotBlank(bootMode)) {
             allDetails.put("UEFI", bootMode);
+            logger.info("[UEFI-TRACE] Added UEFI detail [{}] from bootType [{}].", bootMode, bootType);
+        } else {
+            logger.info("[UEFI-TRACE] No UEFI detail added, VM will boot with BIOS. bootType [{}], bootMode [{}].", bootType, bootMode);
         }
     }
 
@@ -1909,6 +1912,8 @@ public class UnmanagedVMsManagerImpl implements UnmanagedVMsManager {
         convertedInstance.setMemory(sourceVMwareInstance.getMemory());
         convertedInstance.setBootType(sourceVMwareInstance.getBootType());
         convertedInstance.setBootMode(sourceVMwareInstance.getBootMode());
+        logger.info("[UEFI-TRACE] Copied boot info to converted instance [{}] from source VMware instance: bootType [{}], bootMode [{}].",
+                convertedInstance.getName(), sourceVMwareInstance.getBootType(), sourceVMwareInstance.getBootMode());
         convertedInstance.setPowerState(UnmanagedInstanceTO.PowerState.PowerOff);
         List<UnmanagedInstanceTO.Disk> convertedInstanceDisks = convertedInstance.getDisks();
         List<UnmanagedInstanceTO.Disk> sourceVMwareInstanceDisks = sourceVMwareInstance.getDisks();

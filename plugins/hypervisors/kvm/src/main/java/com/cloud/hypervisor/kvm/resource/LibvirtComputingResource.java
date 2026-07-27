@@ -3026,6 +3026,11 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
             }
 
             bootMode = customParams.get(GuestDef.BootType.UEFI.toString());
+            LOGGER.info(String.format("[UEFI-TRACE] Received UEFI detail for VM UUID [%s]: bootMode [%s], secureBoot [%s].", uuid, bootMode, isSecureBoot));
+        } else {
+            // Log detail keys only, values may contain the VNC password.
+            LOGGER.info(String.format("[UEFI-TRACE] No UEFI detail for VM UUID [%s], defining with BIOS. Detail keys: %s",
+                    uuid, MapUtils.isNotEmpty(customParams) ? customParams.keySet() : "[]"));
         }
 
         Map<String, String> extraConfig = vmTO.getExtraConfig();
@@ -3045,6 +3050,11 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
 
         GuestDef guest = createGuestFromSpec(vmTO, vm, uuid, customParams);
         if (isUefiEnabled) {
+            if (!isUefiPropertiesFileLoaded()) {
+                // Without uefi.properties the loader and nvram stay empty, so the guest is defined with SeaBIOS and fails to boot.
+                LOGGER.warn(String.format("[UEFI-TRACE] UEFI requested for VM UUID [%s] but uefi.properties is not loaded, "
+                        + "the guest will be defined without an OVMF loader. Check /etc/cloudstack/agent/uefi.properties.", uuid));
+            }
             configureGuestIfUefiEnabled(isSecureBoot, bootMode, guest);
         }
 
@@ -3357,6 +3367,14 @@ public class LibvirtComputingResource extends ServerResourceBase implements Serv
         } else if (isUefiPropertyNotNull(GuestDef.GUEST_NVRAM_TEMPLATE_LEGACY)) {
             guest.setNvramTemplate(uefiProperties.getProperty(GuestDef.GUEST_NVRAM_TEMPLATE_LEGACY));
         }
+
+        // Values that end up in the domain XML, a null means the matching key is missing from uefi.properties.
+        boolean secureSelected = isSecureBoot && SECURE.equalsIgnoreCase(bootMode);
+        LOGGER.info(String.format("[UEFI-TRACE] Configured UEFI guest: bootMode [%s], secureBoot [%s], loader [%s], nvram [%s], nvramTemplate [%s].",
+                bootMode, isSecureBoot,
+                uefiProperties.getProperty(SECURE.equalsIgnoreCase(bootMode) ? GuestDef.GUEST_LOADER_SECURE : GuestDef.GUEST_LOADER_LEGACY),
+                uefiProperties.getProperty(GuestDef.GUEST_NVRAM_PATH),
+                uefiProperties.getProperty(secureSelected ? GuestDef.GUEST_NVRAM_TEMPLATE_SECURE : GuestDef.GUEST_NVRAM_TEMPLATE_LEGACY)));
     }
 
     private void setGuestLoader(String bootMode, String mode, GuestDef guest, String property) {
