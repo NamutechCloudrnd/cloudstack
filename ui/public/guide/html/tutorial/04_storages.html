@@ -1,0 +1,77 @@
+<h1 id="ceph-스토리지-구성">ceph 스토리지 구성</h1>
+<h2 id="신규-ceph-풀-등록">신규 ceph 풀 등록</h2>
+<p>ceph RDB 스토리지 연동 구성 방식에 대해 설명한다.</p>
+<h3 id="ceph-운영-정보-사전-확인">ceph 운영 정보 사전 확인</h3>
+<p>ceph 대시보드 화면에서 이상 유무를 확인한다.<br />
+(*Status또는 Inventory에 빨강, 노랑이 있는 경우 ceph 담당자 점검 요청)</p>
+<p><img src="/guide/html/images/tutorial/04_storages/01_ceph_storage_image1.png" style="width:6.57847in;height:3.62847in" /></p>
+<p>namuVIRT Primary Storage 등록을 위한 값 확인</p>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 20%" />
+<col style="width: 55%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: center;">Primary Storage 항목</th>
+<th style="text-align: center;">ceph 메뉴 경로</th>
+<th style="text-align: center;">확인 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RADOS Monitor</td>
+<td>Cluster &gt; 모니터</td>
+<td>Quorum에 등록된 사용 IP Address.</td>
+</tr>
+<tr>
+<td>RADOS Pool</td>
+<td>Cluster &gt; 데이터 풀</td>
+<td>application_metadata 가 rdb로 지정된 이름.</td>
+</tr>
+<tr>
+<td>RADOS User</td>
+<td>Administration<br />
+&gt; Ceph Users</td>
+<td><p>mon: profile rbd, osd: profile rbd pool=&lt;RADOS Pool&gt; 대상자</p>
+<p>*client.cloustack 인 경우 cloustack이 이름</p></td>
+</tr>
+<tr>
+<td>RADOS Secret</td>
+<td>Administration<br />
+&gt; Ceph Users</td>
+<td><p>Create 시에만 UI에서 확인 수 있음.</p>
+<p>기록하지 않은 경우 ceph 서버 콘솔명령어로 확인</p>
+<p>&gt; sudo ceph auth get-key client.cloudstack</p></td>
+</tr>
+</tbody>
+</table>
+<h3 id="ceph-rdb-primary-storage-신규-등록">ceph RDB Primary Storage 신규 등록</h3>
+<p>Infrastructure → Primary Storage → Add Primary Storage 클릭한다.</p>
+<p><img src="/guide/html/images/tutorial/04_storages/01_ceph_storage_image2.png" style="width:3.40535in;height:6.44776in" /></p>
+<p>사전에 ceph에서 확인된 정보를 입력하여 Primary Storage를 추가한다.</p>
+<p>OK완료 State가 Up 상태인지 확인한다</p>
+<p><img src="/guide/html/images/tutorial/04_storages/01_ceph_storage_image3.png" style="width:6.57847in;height:0.58958in" /></p>
+<h3 id="ceph-primary-storage-등록-정보-수정-변경관리">ceph Primary Storage 등록 정보 수정 (변경·관리)</h3>
+<p>RBD Primary Storage 는 접속 정보(Monitor/Pool/User/Secret)와 Scope/Protocol 을 직접 수정할 수 없다.</p>
+<p>이 값을 바꾸려면 삭제 후 재등록해야 한다.</p>
+<p><img src="/guide/html/images/tutorial/04_storages/01_ceph_storage_image4.png" style="width:2.3875in;height:2.52239in" /></p>
+<p>* 주의 사항 : 접속 정보를 변경하는 경우 볼륨이 남아 있으면 삭제할 수 없다.<br />
+먼저 볼륨을 다른 Primary 로 마이그레이션하여 삭제 대상 ceph의 의존성을 제거해야 삭제가 가능하다.</p>
+<p>(Storage → Volumes 목록에서 Storage 필드에서 ceph 의존성 확인 가능)</p>
+<h2 id="ceph-rdb의-고가용성ha-설정">ceph RDB의 고가용성(HA) 설정</h2>
+<p>ceph RDB 스토리지를 이용하여 고가용성(HA)를 구성하는 경우 namuVIRT-Management 서버가 호스트를 Down 으로 확정하지 못해 자동 HA 가 동작하지 않는다.</p>
+<p>NFS를 공유 스토리지를 추가로 공유하여 HA가 동작하도록 설정이 필요하다.</p>
+<p>*참고 : <a href="https://docs.cloudstack.apache.org/en/latest/adminguide/reliability.html#ha-enabled-instances">https://docs.cloudstack.apache.org/en/latest/adminguide/reliability.html#ha-enabled-instances</a></p>
+<h3 id="하트비트-풀-공유-nfs-구성">하트비트 풀 공유 NFS 구성</h3>
+<p>VM 디스크는 모든 호스트가 함께 여는 Ceph RBD(공유 블록 스토리지)에 저장된다.</p>
+<p>KVM HA는 별도의 NFS 하트비트 풀에 각 호스트가 하트비트 파일을 기록·갱신하여 HA 기능 활성화를 지원한다</p>
+<p><img src="/guide/html/images/tutorial/04_storages/01_ceph_storage_image5.png" style="width:6.28789in;height:2.82836in" /></p>
+<h3 id="하트비트-풀-primary-storage-추가">하트비트 풀 Primary Storage 추가</h3>
+<p>Infrastructure → Primary Storage → Add Primary Storage 클릭한다.</p>
+<p><img src="/guide/html/images/tutorial/04_storages/01_ceph_storage_image6.png" style="width:3.14328in;height:4.30597in" /></p>
+<p>Path에 입력하는 Storage은 하트비트용 풀 스토리지로만 사용한다면 1GB이하의 적은 용량으로 할당 가능하다.</p>
+<p>* 단 Ceph RBD 전용 환경에서 VM마이그레이션 하려면 NFS/로컬 Primary가 필요한데(RBD는 변환 직접 대상 불가), 이 하트비트 NFS를 변환 임시 착지 Primary로 겸용할 수도 있다. 이 경우 변환 산출물 용량만큼 커야 하며, 변환 후 볼륨을 RBD로 옮기고 정리해 다시 하트비트 전용으로 사용 권장</p>
+<p>OK완료 State가 Up 상태인지 확인한다</p>
+<p><img src="/guide/html/images/tutorial/04_storages/01_ceph_storage_image7.png" style="width:6.57847in;height:1.39097in" /></p>

@@ -482,6 +482,12 @@
       "label": "Infrastructure",
       "icon": "fa-server",
       "path": "tutorial/03_infrastructure.html"
+    },
+    {
+      "id": "tutorial_storage",
+      "label": "Storage",
+      "icon": "fa-database",
+      "path": "tutorial/04_storages.html"
     }
   ]
 }
