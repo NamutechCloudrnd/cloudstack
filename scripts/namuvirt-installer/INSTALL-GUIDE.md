@@ -403,6 +403,8 @@ cd release/namuvirt-installer-<version>
 | `install-docker.sh` 오프라인이 `nothing provides tar` 로 실패 | 구버전 번들의 `docker-packages/rocky` 에 tar rpm 누락(minimal 호스트엔 tar 없음). tar 포함 최신 번들 사용, 또는 `tar-*.rpm` 을 `docker-packages/rocky/` 에 추가 후 재실행 |
 | 특정 단계만 실패 | `./install-namuvirt.sh --tags <단계>` 로 재실행(대부분 idempotent) |
 | 관리 VM 재생성 필요 | master 에서 `virsh destroy/undefine <vm_name>` 후 `--tags management` |
+| 업그레이드 후 재부팅했더니 관리서버가 안 뜸 | 패키지 `%preun` 이 업그레이드 시에도 `systemctl disable` 을 실행하는 upstream 결함. `--tags management` 로 설치하면 하네스가 enable 을 보장하지만, **rpm/dpkg 로 수동 업그레이드했다면** `systemctl is-enabled cloudstack-management` 확인 후 `sudo systemctl enable cloudstack-management` |
+| 업그레이드 후 호스트가 UI 상 Up 인데 동작이 이상함 | Ubuntu 에서 의존성 미충족으로 `dpkg` 가 `iU`(unpacked, 미설정) 상태로 남았을 수 있다. `dpkg -l cloudstack-agent` 가 `ii` 인지 확인. `iU` 면 부족한 deb 를 `packages/os-packages/ubuntu/` 에서 설치 후 `dpkg --configure -a`. 의존성이 늘어난 업그레이드는 `--tags agent` 대신 `--tags kvm_hosts` 로 실행할 것 |
 | 관리 VM 이 게이트웨이로 못 나감 | 브리지 netfilter 이슈 — 최신 번들은 자동 조치(`namuvirt-bridge-nf.service`) |
 | 로그 수집 | `./install-namuvirt.sh collect-logs` → `logs/*.tar.gz` |
 
