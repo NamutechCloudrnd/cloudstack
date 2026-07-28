@@ -94,6 +94,15 @@ done
 REPO_ROOT="$(git -C "$HARNESS_ROOT" rev-parse --show-toplevel 2>/dev/null || true)"
 [[ -n "$REPO_ROOT" ]] || REPO_ROOT="$(cd "$HARNESS_ROOT/../.." && pwd -P)"
 
+# cloudstack-*.rpm/deb 산출물에 실제로 반영되는 경로. 여기가 바뀌면 패키지를 다시 빌드해야 한다.
+# 설치 하네스(scripts/namuvirt-installer)는 패키지에 들어가지 않으므로 제외한다 —
+# 하네스만 고친 커밋 때문에 멀쩡한 패키지가 낡았다고 판정되면 안 된다.
+PRODUCT_PATHS=(
+  pom.xml api core engine framework server client agent usage utils services
+  plugins vmware-base ui packaging debian systemvm setup extensions deps vendor build
+  scripts ':(exclude)scripts/namuvirt-installer'
+)
+
 # pom.xml 의 제품 버전(4.x.y.z). 파일 첫 <version> 은 maven-parent 라 4.* 패턴으로 고른다.
 # -SNAPSHOT 은 package.sh 가 타임스탬프로 치환하므로 비교에서 뗀다.
 pom_base_version() {
@@ -137,23 +146,32 @@ check_product_packages() {
   log "  패키지 ${n}개"
 
   # 2) 빌드 커밋 == 현재 저장소 HEAD (낡은 패키지 반출 차단 — 이 검증의 핵심)
-  local bi="$dir/BUILD_INFO.txt" pkg_commit head_commit describe
+  local bi="$dir/BUILD_INFO.txt" pkg_commit describe changed
   if [[ -f "$bi" ]]; then
     pkg_commit="$(sed -n 's/^commit=//p' "$bi" | head -1)"
     describe="$(sed -n 's/^describe=//p' "$bi" | head -1)"
-    head_commit="$(git -C "$REPO_ROOT" rev-parse HEAD 2>/dev/null || true)"
-    if [[ -z "$head_commit" ]]; then
+    if ! git -C "$REPO_ROOT" rev-parse --git-dir >/dev/null 2>&1; then
       warn "  git 저장소가 아니라 빌드 커밋 대조 생략"
     elif [[ -z "$pkg_commit" ]]; then
       warn "  BUILD_INFO.txt 에 commit 항목이 없어 대조 생략"
-    elif [[ "$pkg_commit" != "$head_commit" ]]; then
-      die "$os 제품 패키지가 현재 소스와 다른 커밋에서 빌드됐다.
+    elif ! git -C "$REPO_ROOT" cat-file -e "${pkg_commit}^{commit}" 2>/dev/null; then
+      warn "  빌드 커밋 $pkg_commit 을 저장소에서 찾을 수 없어 대조 생략"
+    elif ! git -C "$REPO_ROOT" merge-base --is-ancestor "$pkg_commit" HEAD 2>/dev/null; then
+      warn "  빌드 커밋이 현재 브랜치 이력에 없다(다른 브랜치에서 빌드?) — 대조 생략"
+    else
+      # HEAD 와의 단순 일치가 아니라 "빌드 이후 제품 소스가 바뀌었는가"를 본다.
+      # 하네스 스크립트/문서만 고친 커밋은 패키지를 낡게 만들지 않으므로 통과시킨다.
+      changed="$(git -C "$REPO_ROOT" log --oneline "${pkg_commit}..HEAD" -- "${PRODUCT_PATHS[@]}" 2>/dev/null || true)"
+      if [[ -n "$changed" ]]; then
+        die "$os 제품 패키지 빌드 이후 제품 소스가 변경됐다.
     패키지 빌드 커밋 : $pkg_commit
-    현재 저장소 HEAD : $head_commit
+    이후 제품 커밋   :
+$(printf '%s\n' "$changed" | sed 's/^/      /')
   build/${os}.sh 로 다시 빌드해 $dir 에 배치한 뒤 build-images.sh 부터 다시 실행하라.
   (의도한 것이라면 --skip-package-check)"
-    else
-      log "  빌드 커밋 일치: ${pkg_commit:0:10}"
+      else
+        log "  빌드 이후 제품 소스 변경 없음 (빌드 커밋 ${pkg_commit:0:10})"
+      fi
     fi
     case "$describe" in
       *-dirty) warn "  커밋되지 않은 변경이 있는 트리에서 빌드됨 (describe=$describe)" ;;
