@@ -89,11 +89,44 @@
         dpkg -i --force-confdef --force-confold \
           /opt/namuvirt/packages/{{ _common_pkg.files[0].path | basename }} \
           /opt/namuvirt/packages/{{ _agent_pkg.files[0].path | basename }} 2>&1
-        dpkg --configure -a --force-confdef --force-confold
+        dpkg --configure -a --force-confdef --force-confold 2>&1
       args:
         executable: /bin/bash
+      register: _cs_dpkg
       changed_when: true
       failed_when: false
+
+    # dpkg -i 는 패키지 순서/의존성 때문에 1차에서 non-zero 로 끝날 수 있어 위는 관대하게 두고,
+    # 최종 설치 상태로 판정한다. 미충족 의존성이 있으면 iU(unpacked, 미설정) 로 남는데, 이때
+    # 파일은 풀려 있고 서비스도 뜨기 때문에 UI 에는 호스트가 Up 으로 보인다. 조용히 넘기면
+    # 반쯤 설치된 상태가 그대로 운영에 들어가므로 여기서 잡는다.
+    - name: cloudstack-common/agent 설치 상태 확인
+      ansible.builtin.command: dpkg-query -W -f=${Status} {{ item }}
+      loop:
+        - cloudstack-common
+        - cloudstack-agent
+      register: _cs_status
+      changed_when: false
+      failed_when: false
+
+    - name: 설치가 완료되지 않은 패키지 판정
+      ansible.builtin.set_fact:
+        _cs_bad: "{{ _cs_status.results | selectattr('stdout', 'ne', 'install ok installed') | map(attribute='item') | list }}"
+
+    - name: DEB 설치 미완료 시 중단
+      ansible.builtin.fail:
+        msg: |
+          cloudstack 패키지 설치가 완료되지 않았다: {{ _cs_bad | join(', ') }}
+          {% for r in _cs_status.results %}
+            {{ r.item }} = {{ r.stdout | default('(조회 실패)') }}
+          {% endfor %}
+          미충족 의존성이 원인이면 packages/os-packages/ubuntu/ 의 해당 deb 를 먼저 배포해야 한다.
+          --tags agent 는 os-packages 를 배포하지 않으므로, 의존성이 늘어난 업그레이드에서는
+          --tags kvm_hosts 로 실행하거나 해당 deb 를 수동 설치한 뒤 재실행할 것.
+
+          dpkg 출력(마지막 부분):
+          {{ (_cs_dpkg.stdout | default('') | trim)[-1200:] }}
+      when: _cs_bad | length > 0
 
     - name: agent.properties 기본 키 설정
       ansible.builtin.lineinfile:
