@@ -1,0 +1,12 @@
+[Unit]
+Description=Prometheus Process Exporter
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/process-exporter --web.listen-address=0.0.0.0:9256 --config.path /etc/process-exporter.yml
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

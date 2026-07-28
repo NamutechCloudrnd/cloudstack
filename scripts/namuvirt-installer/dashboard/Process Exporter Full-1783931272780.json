@@ -1,0 +1,968 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "panels": [],
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "count(count by (groupname) (namedprocess_namegroup_num_procs{role=\"kvm-host\", instance=\"$host\"}))",
+          "format": "time_series",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Process groups",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum(namedprocess_namegroup_num_procs{role=\"kvm-host\", instance=\"$host\"})",
+          "format": "time_series",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Total processes",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 1
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "topk(1, sum by (groupname) (rate(namedprocess_namegroup_cpu_seconds_total{role=\"kvm-host\", instance=\"$host\"}[$__rate_interval])))",
+          "format": "time_series",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Top CPU group",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 1
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "topk(1, namedprocess_namegroup_memory_bytes{role=\"kvm-host\", instance=\"$host\", memtype=\"resident\"})",
+          "format": "time_series",
+          "instant": true,
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Top RSS group",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "lineInterpolation": "smooth",
+            "showPoints": "never",
+            "spanNulls": true
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 5
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by (groupname) (rate(namedprocess_namegroup_cpu_seconds_total{role=\"kvm-host\", instance=\"$host\", groupname=~\"$group\"}[$__rate_interval]))",
+          "format": "time_series",
+          "instant": false,
+          "legendFormat": "{{groupname}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "CPU usage by process group (cores)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "lineInterpolation": "smooth",
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 5
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "namedprocess_namegroup_memory_bytes{role=\"kvm-host\", instance=\"$host\", memtype=\"resident\", groupname=~\"$group\"}",
+          "format": "time_series",
+          "instant": false,
+          "legendFormat": "{{groupname}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Resident memory (RSS) by group",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 8,
+      "panels": [],
+      "title": "Process count & I/O",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "lineInterpolation": "smooth",
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 14
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "namedprocess_namegroup_num_procs{role=\"kvm-host\", instance=\"$host\", groupname=~\"$group\"}",
+          "format": "time_series",
+          "instant": false,
+          "legendFormat": "{{groupname}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Process count by group",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "lineInterpolation": "smooth",
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 14
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by (groupname) (rate(namedprocess_namegroup_read_bytes_total{role=\"kvm-host\", instance=\"$host\", groupname=~\"$group\"}[$__rate_interval]))",
+          "format": "time_series",
+          "instant": false,
+          "legendFormat": "{{groupname}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Disk read throughput",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 12,
+            "lineInterpolation": "smooth",
+            "showPoints": "never",
+            "spanNulls": true
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 14
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by (groupname) (rate(namedprocess_namegroup_write_bytes_total{role=\"kvm-host\", instance=\"$host\", groupname=~\"$group\"}[$__rate_interval]))",
+          "format": "time_series",
+          "instant": false,
+          "legendFormat": "{{groupname}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Disk write throughput",
+      "type": "timeseries"
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allowCustomValue": true,
+        "current": {
+          "text": "Prometheus",
+          "value": "prometheus"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": "Datasource",
+        "multi": false,
+        "name": "ds_prometheus",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allowCustomValue": true,
+        "current": {
+          "text": "10.10.14.129",
+          "value": "10.10.14.129"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(process_exporter_build_info{role=\"kvm-host\"}, instance)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Host",
+        "multi": false,
+        "name": "host",
+        "options": [
+          {
+            "text": "10.10.13.129",
+            "value": "10.10.13.129"
+          },
+          {
+            "selected": true,
+            "text": "10.10.14.129",
+            "value": "10.10.14.129"
+          },
+          {
+            "text": "10.10.14.193",
+            "value": "10.10.14.193"
+          }
+        ],
+        "query": "label_values(process_exporter_build_info{role=\"kvm-host\"}, instance)",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "allowCustomValue": true,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(namedprocess_namegroup_num_procs{role=\"kvm-host\", instance=\"$host\"}, groupname)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Process group",
+        "multi": false,
+        "name": "group",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "text": "(sd-pam)",
+            "value": "(sd-pam)"
+          },
+          {
+            "text": "50-dracut.insta",
+            "value": "50-dracut.insta"
+          },
+          {
+            "text": "MainThread",
+            "value": "MainThread"
+          },
+          {
+            "text": "NetworkManager",
+            "value": "NetworkManager"
+          },
+          {
+            "text": "agetty",
+            "value": "agetty"
+          },
+          {
+            "text": "anacron",
+            "value": "anacron"
+          },
+          {
+            "text": "at-spi-bus-laun",
+            "value": "at-spi-bus-laun"
+          },
+          {
+            "text": "atd",
+            "value": "atd"
+          },
+          {
+            "text": "auditd",
+            "value": "auditd"
+          },
+          {
+            "text": "awk",
+            "value": "awk"
+          },
+          {
+            "text": "bash",
+            "value": "bash"
+          },
+          {
+            "text": "cat",
+            "value": "cat"
+          },
+          {
+            "text": "chrome_crashpad",
+            "value": "chrome_crashpad"
+          },
+          {
+            "text": "chromedriver",
+            "value": "chromedriver"
+          },
+          {
+            "text": "chromium-browse",
+            "value": "chromium-browse"
+          },
+          {
+            "text": "chronyd",
+            "value": "chronyd"
+          },
+          {
+            "text": "crond",
+            "value": "crond"
+          },
+          {
+            "text": "curl",
+            "value": "curl"
+          },
+          {
+            "text": "dbus-daemon",
+            "value": "dbus-daemon"
+          },
+          {
+            "text": "dnf",
+            "value": "dnf"
+          },
+          {
+            "text": "dracut",
+            "value": "dracut"
+          },
+          {
+            "text": "grep",
+            "value": "grep"
+          },
+          {
+            "text": "gssproxy",
+            "value": "gssproxy"
+          },
+          {
+            "text": "headless_shell",
+            "value": "headless_shell"
+          },
+          {
+            "text": "iostat",
+            "value": "iostat"
+          },
+          {
+            "text": "irqbalance",
+            "value": "irqbalance"
+          },
+          {
+            "text": "java",
+            "value": "java"
+          },
+          {
+            "text": "kernel-install",
+            "value": "kernel-install"
+          },
+          {
+            "text": "libvirtd",
+            "value": "libvirtd"
+          },
+          {
+            "text": "lsinitrd",
+            "value": "lsinitrd"
+          },
+          {
+            "text": "lsmd",
+            "value": "lsmd"
+          },
+          {
+            "text": "mandb",
+            "value": "mandb"
+          },
+          {
+            "text": "mcelog",
+            "value": "mcelog"
+          },
+          {
+            "text": "nbdcopy",
+            "value": "nbdcopy"
+          },
+          {
+            "text": "nfsdcld",
+            "value": "nfsdcld"
+          },
+          {
+            "text": "nm-dispatcher",
+            "value": "nm-dispatcher"
+          },
+          {
+            "text": "node_exporter",
+            "value": "node_exporter"
+          },
+          {
+            "text": "polkitd",
+            "value": "polkitd"
+          },
+          {
+            "text": "process-exporte",
+            "value": "process-exporte"
+          },
+          {
+            "text": "prometheus-libv",
+            "value": "prometheus-libv"
+          },
+          {
+            "text": "python3",
+            "value": "python3"
+          },
+          {
+            "text": "qemu-img",
+            "value": "qemu-img"
+          },
+          {
+            "text": "qemu-kvm",
+            "value": "qemu-kvm"
+          },
+          {
+            "text": "qemu-nbd",
+            "value": "qemu-nbd"
+          },
+          {
+            "text": "rngd",
+            "value": "rngd"
+          },
+          {
+            "text": "router_proxy.sh",
+            "value": "router_proxy.sh"
+          },
+          {
+            "text": "rpc.idmapd",
+            "value": "rpc.idmapd"
+          },
+          {
+            "text": "rpc.mountd",
+            "value": "rpc.mountd"
+          },
+          {
+            "text": "rpc.statd",
+            "value": "rpc.statd"
+          },
+          {
+            "text": "rpcbind",
+            "value": "rpcbind"
+          },
+          {
+            "text": "sedispatch",
+            "value": "sedispatch"
+          },
+          {
+            "text": "semodule",
+            "value": "semodule"
+          },
+          {
+            "text": "sh",
+            "value": "sh"
+          },
+          {
+            "text": "sleep",
+            "value": "sleep"
+          },
+          {
+            "text": "smartd",
+            "value": "smartd"
+          },
+          {
+            "text": "sort",
+            "value": "sort"
+          },
+          {
+            "text": "ssh",
+            "value": "ssh"
+          },
+          {
+            "text": "sshd",
+            "value": "sshd"
+          },
+          {
+            "text": "sshpass",
+            "value": "sshpass"
+          },
+          {
+            "text": "sssd_kcm",
+            "value": "sssd_kcm"
+          },
+          {
+            "text": "systemctl",
+            "value": "systemctl"
+          },
+          {
+            "text": "systemd",
+            "value": "systemd"
+          },
+          {
+            "text": "systemd-journal",
+            "value": "systemd-journal"
+          },
+          {
+            "text": "systemd-logind",
+            "value": "systemd-logind"
+          },
+          {
+            "text": "systemd-machine",
+            "value": "systemd-machine"
+          },
+          {
+            "text": "systemd-udevd",
+            "value": "systemd-udevd"
+          },
+          {
+            "text": "tail",
+            "value": "tail"
+          },
+          {
+            "text": "tee",
+            "value": "tee"
+          },
+          {
+            "text": "tmux: client",
+            "value": "tmux: client"
+          },
+          {
+            "text": "tmux: server",
+            "value": "tmux: server"
+          },
+          {
+            "text": "tr",
+            "value": "tr"
+          },
+          {
+            "text": "tuned",
+            "value": "tuned"
+          },
+          {
+            "text": "virt-v2v",
+            "value": "virt-v2v"
+          },
+          {
+            "text": "virtlogd",
+            "value": "virtlogd"
+          },
+          {
+            "text": "yum",
+            "value": "yum"
+          }
+        ],
+        "query": "label_values(namedprocess_namegroup_num_procs{role=\"kvm-host\", instance=\"$host\"}, groupname)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "browser",
+  "title": "Process Exporter Full",
+  "weekStart": "",
+  "version": 1,
+  "uid": "process-exporter-full",
+  "id": 3884427599831040
+}

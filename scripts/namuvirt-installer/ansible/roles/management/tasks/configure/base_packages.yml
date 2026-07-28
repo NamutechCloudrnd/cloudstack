@@ -1,0 +1,173 @@
+---
+# install_vm_base_packages() — Java 17, MariaDB, NFS 클라이언트 등 VM 기본 패키지.
+# 관리 VM에 필요한 그룹만 읽는다: _base(공용 베이스 풀), nfs(클라이언트), java, mariadb, utils
+# qemu-kvm/libvirt 그룹은 읽지 않음 — remove_kvm_traces.yml 가 불필요하게 제거하지 않도록.
+
+# ── Rocky: 로컬 offline repo + 이름으로 설치 ─────────────────────────────────
+# 관리 VM(cloud image)엔 KVM 호스트용 _base 그룹을 쓰지 않는다: grub2/dracut/openssh 등
+# 이미 설치된 base 패키지와 부분 업그레이드 충돌을 일으킨다. 대신 download-management-packages.sh 가
+# 받은 mgmt closure(+repodata)를 로컬 yum repo 로 얹고, 필요한 패키지만 "이름으로" 설치한다.
+# 그러면 dnf 가 실제 필요한 것(java/mariadb + 누락 의존성)만 설치하고 base 는 건드리지 않는다.
+- name: mgmt offline repo 존재 확인 (Rocky, controller)
+  ansible.builtin.stat:
+    path: "{{ packages_root }}/os-packages/rocky/mgmt/repodata/repomd.xml"
+  delegate_to: localhost
+  run_once: true
+  become: false
+  register: _mgmt_repo
+  when: ansible_distribution != 'Ubuntu'
+  tags: [management, configure]
+
+- name: mgmt offline repo 없음 → 조기 실패 (엉뚱한 java 에러 방지)
+  ansible.builtin.fail:
+    msg: >-
+      관리 VM offline repo 가 비어 있다: {{ packages_root }}/os-packages/rocky/mgmt/repodata 없음.
+      java-17/mariadb 등을 설치할 수 없다. 빌드 머신에서 './scripts/download-management-packages.sh' 로
+      mgmt closure(+repodata)를 만든 뒤 관리 이미지를 다시 빌드/배포하라.
+  when:
+    - ansible_distribution != 'Ubuntu'
+    - not _mgmt_repo.stat.exists
+  tags: [management, configure]
+
+- name: VM 기본 패키지 설치 (Rocky, 로컬 offline repo)
+  when:
+    - ansible_distribution != 'Ubuntu'
+    - _mgmt_repo.stat.exists
+  tags: [management, configure]
+  block:
+    - name: offline 디렉터리 준비
+      ansible.builtin.file:
+        path: /opt/namuvirt/offline
+        state: directory
+        mode: "0755"
+
+    # 재실행 최적화: 이미 VM 에 repo 가 전개돼 있으면 tar/전송/해제를 통째로 건너뛴다(112MB 재전송 방지).
+    - name: mgmt repo 가 이미 VM 에 전개됐는지 확인
+      ansible.builtin.stat:
+        path: /opt/namuvirt/offline/mgmt/repodata/repomd.xml
+      register: _vm_mgmt_repo
+
+    # 성능: repo(수백 rpm+repodata)를 tar 로 한 번에 전송한다(파일별 copy 회피).
+    - name: mgmt repo 를 controller 에서 tar 로 묶기 (repodata 포함)
+      ansible.builtin.command:
+        cmd: tar czf /tmp/nv-mgmt-repo.tar.gz -C {{ packages_root }}/os-packages/rocky mgmt
+      delegate_to: localhost
+      run_once: true
+      changed_when: true
+      when: not _vm_mgmt_repo.stat.exists
+
+    - name: mgmt repo tarball 전송 (1회 SSH copy)
+      ansible.builtin.copy:
+        src: /tmp/nv-mgmt-repo.tar.gz
+        dest: /opt/namuvirt/offline/nv-mgmt-repo.tar.gz
+        mode: "0644"
+      when: not _vm_mgmt_repo.stat.exists
+
+    - name: mgmt repo 압축 해제 (/opt/namuvirt/offline/mgmt)
+      ansible.builtin.unarchive:
+        src: /opt/namuvirt/offline/nv-mgmt-repo.tar.gz
+        dest: /opt/namuvirt/offline/
+        remote_src: true
+      when: not _vm_mgmt_repo.stat.exists
+
+    - name: 로컬 offline yum repo 등록 (nvoffline)
+      ansible.builtin.yum_repository:
+        name: nvoffline
+        description: namuVIRT offline packages
+        baseurl: "file:///opt/namuvirt/offline/mgmt"
+        gpgcheck: false
+        enabled: false
+        module_hotfixes: true      # 모듈(mariadb 등)을 비모듈처럼 취급 — 오프라인 설치 안정화
+
+    - name: VM 기본 패키지 설치 (top-level 이름으로, nvoffline 만)
+      ansible.builtin.dnf:
+        name:
+          - java-17-openjdk-headless
+          - mariadb-server
+          - mariadb
+          - chrony
+        state: present
+        disablerepo: "*"
+        enablerepo: nvoffline
+        disable_gpg_check: true
+
+    - name: NFS 클라이언트 설치 (충돌/이미있음 시 비치명적)
+      ansible.builtin.dnf:
+        name: nfs-utils
+        state: present
+        disablerepo: "*"
+        enablerepo: nvoffline
+        disable_gpg_check: true
+      register: _nfs_install
+      failed_when: false
+
+    - name: NFS 클라이언트 설치 경고
+      ansible.builtin.debug:
+        msg: "WARN: nfs-utils 설치 skip/실패 — cloud image 에 이미 있거나 selinux-policy 버전 충돌일 수 있음. 필요 시 개별 조치."
+      when: _nfs_install.failed | default(false) or (_nfs_install.rc | default(0)) != 0
+      tags: [management, configure]
+
+# ── Ubuntu: deb/dpkg ─────────────────────────────────────────────────────────
+- name: 관리 VM 패키지 그룹 탐색 (Ubuntu, controller)
+  ansible.builtin.find:
+    paths:
+      - "{{ packages_root }}/os-packages/ubuntu/nfs"
+      - "{{ packages_root }}/os-packages/ubuntu/java"
+      - "{{ packages_root }}/os-packages/ubuntu/mariadb"
+      - "{{ packages_root }}/os-packages/ubuntu/utils"
+    patterns: "*.deb"
+  delegate_to: localhost
+  become: false
+  register: _os_deb_find
+  when: ansible_distribution == 'Ubuntu'
+  tags: [management, configure]
+
+- name: VM 기본 패키지 deb 없음 경고
+  ansible.builtin.debug:
+    msg: >-
+      WARN: {{ packages_root }}/os-packages/ubuntu/<그룹>/ 에 deb 파일이 없다.
+      scripts/download-host-packages.sh --os ubuntu 를 실행해서 그룹별 디렉터리를 채울 것.
+      필요 그룹: nfs java mariadb utils
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - _os_deb_find.files | length == 0
+  tags: [management, configure]
+
+- name: VM 기본 패키지 설치 (Ubuntu)
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - _os_deb_find.files | length > 0
+  tags: [management, configure]
+  block:
+    - name: 대상 VM에 deb 전송 디렉터리 생성
+      ansible.builtin.file:
+        path: /opt/namuvirt/offline/os-packages
+        state: directory
+        mode: "0755"
+
+    - name: VM 기본 패키지(.deb) 전송
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: /opt/namuvirt/offline/os-packages/
+        mode: "0644"
+      loop: "{{ _os_deb_find.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    - name: VM 기본 패키지(.deb) 설치 (dpkg)
+      ansible.builtin.shell: >
+        dpkg -i /opt/namuvirt/offline/os-packages/*.deb 2>&1; dpkg --configure -a
+      args:
+        executable: /bin/bash
+      changed_when: true
+      failed_when: false
+
+# ── 공통 ─────────────────────────────────────────────────────────────────────
+# java -version 은 3줄을 출력하는데 grep -q 가 1줄째에서 조기종료하면 java 가 SIGPIPE(rc=141)로
+# 죽어 pipefail 오탐이 난다. 전체 입력을 읽는 형태(>/dev/null)로 바꿔 방지.
+- name: Java 17 버전 확인
+  ansible.builtin.shell: "set -o pipefail; java -version 2>&1 | grep -E 'version \"17\\.|openjdk version \"17\\.' >/dev/null"
+  args:
+    executable: /bin/bash
+  changed_when: false
+  tags: [management, configure]

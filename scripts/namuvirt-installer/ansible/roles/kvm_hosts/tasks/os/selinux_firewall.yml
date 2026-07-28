@@ -1,0 +1,47 @@
+---
+# CloudStack 가이드: SELinux permissive(Rocky) 또는 AppArmor 비영향(Ubuntu) + 방화벽 비활성화.
+# ansible.posix 컬렉션(selinux 모듈) 없이 ansible.builtin만 사용.
+
+# ── Rocky: SELinux ────────────────────────────────────────────────────────────
+- name: setenforce 0 (실행 중 SELinux를 permissive로)
+  ansible.builtin.command: setenforce 0
+  register: _setenforce
+  changed_when: _setenforce.rc == 0
+  failed_when: false
+  when: ansible_distribution != 'Ubuntu'
+  tags: [kvm_hosts, selinux]
+
+- name: /etc/selinux/config SELINUX=permissive 영구 설정
+  ansible.builtin.lineinfile:
+    path: /etc/selinux/config
+    regexp: '^SELINUX='
+    line: "SELINUX=permissive"
+    create: true
+    mode: "0644"
+  when: ansible_distribution != 'Ubuntu'
+  tags: [kvm_hosts, selinux]
+
+# ── Rocky: firewalld 비활성화 ────────────────────────────────────────────────
+- name: firewalld 중지
+  ansible.builtin.systemd:
+    name: firewalld
+    state: stopped
+  failed_when: false
+  when: ansible_distribution != 'Ubuntu'
+  tags: [kvm_hosts, firewall]
+
+- name: firewalld 비활성화
+  ansible.builtin.systemd:
+    name: firewalld
+    enabled: false
+  failed_when: false
+  when: ansible_distribution != 'Ubuntu'
+  tags: [kvm_hosts, firewall]
+
+# ── Ubuntu: ufw 비활성화 ─────────────────────────────────────────────────────
+- name: Ubuntu — ufw 비활성화 (CloudStack KVM은 iptables 직접 관리)
+  ansible.builtin.command: ufw disable
+  failed_when: false
+  changed_when: false
+  when: ansible_distribution == 'Ubuntu'
+  tags: [kvm_hosts, firewall]

@@ -1,0 +1,20 @@
+---
+# wait_ssh() — 관리 VM SSH 응답 대기 (cloud-init 부팅 포함, 최대 20분).
+# controller(컨테이너=localhost)에서 대기한다: SSH 키(/mnt/namuvirt/ssh/...)가 컨테이너에만
+# 있고, 컨테이너는 --network host 라 관리 VM(ansible_host)에 도달 가능하다. kvm_master 에서
+# 실행하면 그 키 파일이 없어 접속이 영원히 실패(20분 타임아웃)한다.
+- name: 관리 VM SSH 응답 대기
+  ansible.builtin.command: >
+    ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -o BatchMode=yes
+    -i {{ namuvirt_ssh_private_key_path }}
+    {{ hostvars[groups['management_vm'][0]].ansible_user }}@{{ hostvars[groups['management_vm'][0]].ansible_host }} true
+  delegate_to: localhost
+  run_once: true
+  become: false
+  register: _wait_ssh
+  changed_when: false
+  failed_when: false
+  until: _wait_ssh.rc == 0
+  retries: 120
+  delay: 10
+  tags: [management, provision]

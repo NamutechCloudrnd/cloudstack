@@ -1,0 +1,10 @@
+os-images/*
+!os-images/.gitkeep
+!os-images/README.md
+release/
+
+packages/**/*.rpm
+packages/**/*.deb
+packages/**/*.tar.gz
+# createrepo_c / repodata 생성물 (download-*.sh 산출물 — 소스에 커밋하지 않음)
+packages/**/repodata/

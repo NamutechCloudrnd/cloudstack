@@ -1,0 +1,22 @@
+---
+- name: restart mariadb
+  ansible.builtin.systemd:
+    name: mariadb
+    state: restarted
+
+- name: restart cloudstack-management
+  ansible.builtin.systemd:
+    name: cloudstack-management
+    state: restarted
+
+- name: restart prometheus and grafana
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: restarted
+  loop:
+    - prometheus
+    - grafana-server
+
+- name: reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true

@@ -1,0 +1,224 @@
+---
+# 체크리스트 3-4) configure_monitoring() — Prometheus/Grafana 설치 및 프로비저닝.
+# 폐쇄망: 레포 없이 packages_root/monitoring/{common,rocky,ubuntu} 의 사전 적재 산출물을 직접 설치.
+# common/ — prometheus (OS 무관)  rocky/ — grafana RPM  ubuntu/ — grafana DEB
+
+- name: prometheus 바이너리 설치 여부 확인
+  ansible.builtin.stat:
+    path: /usr/local/bin/prometheus
+  register: _prometheus_installed
+  tags: [management, monitoring]
+
+- name: Prometheus 설치 (없을 때만)
+  when: not _prometheus_installed.stat.exists
+  tags: [management, monitoring]
+  block:
+    - name: prometheus tar.gz 탐색 (controller)
+      ansible.builtin.find:
+        paths: "{{ packages_root }}/monitoring/common"
+        patterns: "prometheus-*linux-amd64.tar.gz"
+      delegate_to: localhost
+      become: false
+      register: _prometheus_tarball
+
+    - name: prometheus 빌드 디렉터리 생성 (unarchive dest — 미리 있어야 함)
+      ansible.builtin.file:
+        path: /opt/namuvirt/build/prometheus
+        state: directory
+        mode: "0755"
+      when: _prometheus_tarball.files | length > 0
+
+    - name: prometheus 압축 해제
+      ansible.builtin.unarchive:
+        src: "{{ (_prometheus_tarball.files | sort(attribute='path') | last).path }}"
+        dest: /opt/namuvirt/build/prometheus
+        remote_src: false
+      when: _prometheus_tarball.files | length > 0
+
+    - name: prometheus/promtool 바이너리 탐색
+      ansible.builtin.find:
+        paths: /opt/namuvirt/build/prometheus
+        patterns: ["prometheus", "promtool"]
+        recurse: true
+        file_type: file
+      register: _prometheus_binaries
+      when: _prometheus_tarball.files | length > 0
+
+    - name: prometheus/promtool 설치
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: "/usr/local/bin/{{ item.path | basename }}"
+        mode: "0755"
+        remote_src: true
+      loop: "{{ _prometheus_binaries.files | default([]) }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    - name: prometheus 시스템 사용자 생성
+      ansible.builtin.user:
+        name: prometheus
+        system: true
+        create_home: false
+        shell: /sbin/nologin
+
+    - name: prometheus 디렉터리 생성
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: "{{ item.owner | default('root') }}"
+        group: "{{ item.owner | default('root') }}"
+        mode: "0755"
+      loop:
+        - { path: /etc/prometheus }
+        - { path: /var/lib/prometheus, owner: prometheus }
+
+- name: prometheus.yml 배포 (KVM_HOSTS scrape — kvm_hosts 그룹 기준)
+  ansible.builtin.template:
+    src: configure/prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    mode: "0644"
+  notify: restart prometheus and grafana
+  tags: [management, monitoring]
+
+- name: prometheus.service 배포
+  ansible.builtin.template:
+    src: configure/prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+    mode: "0644"
+  notify: reload systemd
+  tags: [management, monitoring]
+
+- name: grafana RPM 탐색 (Rocky, controller)
+  ansible.builtin.find:
+    paths: "{{ packages_root }}/monitoring/rocky"
+    patterns: "grafana-*.rpm"
+  delegate_to: localhost
+  become: false
+  register: _grafana_rpm_find
+  when: ansible_distribution != 'Ubuntu'
+  tags: [management, monitoring]
+
+- name: grafana RPM 전송 및 설치 (Rocky)
+  when:
+    - ansible_distribution != 'Ubuntu'
+    - _grafana_rpm_find.files | length > 0
+  tags: [management, monitoring]
+  block:
+    - name: grafana RPM 전송
+      ansible.builtin.copy:
+        src: "{{ (_grafana_rpm_find.files | sort(attribute='path') | last).path }}"
+        dest: "{{ management_server_work_dir }}/grafana.rpm"
+        mode: "0644"
+
+    - name: grafana RPM 설치 (오프라인)
+      ansible.builtin.dnf:
+        name: "{{ management_server_work_dir }}/grafana.rpm"
+        state: present
+        disable_gpg_check: true
+        disablerepo: "*"          # 폐쇄망: 온라인 미러 차단
+        enablerepo: nvoffline     # grafana 폰트 의존성은 로컬 repo 에서 해결
+
+- name: grafana DEB 탐색 (Ubuntu, controller)
+  ansible.builtin.find:
+    paths: "{{ packages_root }}/monitoring/ubuntu"
+    patterns: "grafana_*.deb"
+  delegate_to: localhost
+  become: false
+  register: _grafana_deb_find
+  when: ansible_distribution == 'Ubuntu'
+  tags: [management, monitoring]
+
+- name: grafana DEB 전송 및 설치 (Ubuntu)
+  when:
+    - ansible_distribution == 'Ubuntu'
+    - _grafana_deb_find.files | length > 0
+  tags: [management, monitoring]
+  block:
+    - name: grafana DEB 전송
+      ansible.builtin.copy:
+        src: "{{ (_grafana_deb_find.files | sort(attribute='path') | last).path }}"
+        dest: "{{ management_server_work_dir }}/grafana.deb"
+        mode: "0644"
+
+    - name: grafana DEB 설치
+      ansible.builtin.shell: >
+        dpkg -i {{ management_server_work_dir }}/grafana.deb || true
+      args:
+        executable: /bin/bash
+      changed_when: true
+
+- name: grafana datasource 프로비저닝 디렉터리 생성
+  ansible.builtin.file:
+    path: /etc/grafana/provisioning/datasources
+    state: directory
+    mode: "0755"
+  tags: [management, monitoring]
+
+- name: grafana Prometheus datasource 배포
+  ansible.builtin.template:
+    src: configure/datasource.yml.j2
+    dest: /etc/grafana/provisioning/datasources/prometheus.yaml
+    mode: "0644"
+  tags: [management, monitoring]
+
+- name: grafana 성능 설정(override) 디렉터리 생성
+  ansible.builtin.file:
+    path: /etc/systemd/system/grafana-server.service.d
+    state: directory
+    mode: "0755"
+  tags: [management, monitoring]
+
+- name: grafana 성능 설정 배포
+  ansible.builtin.template:
+    src: configure/grafana-performance.conf.j2
+    dest: /etc/systemd/system/grafana-server.service.d/performance.conf
+    mode: "0644"
+  notify: reload systemd
+  tags: [management, monitoring]
+
+- name: prometheus / grafana-server 활성화
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+    daemon_reload: true
+  loop:
+    - prometheus
+    - grafana-server
+  tags: [management, monitoring]
+
+- name: grafana admin 자격증명 파일 존재 확인
+  ansible.builtin.stat:
+    path: "{{ grafana_admin_cred_file }}"
+  register: _grafana_cred_file
+  tags: [management, monitoring]
+
+- name: grafana admin 비밀번호 설정 (자격증명 파일이 없을 때만)
+  when: not _grafana_cred_file.stat.exists
+  tags: [management, monitoring]
+  block:
+    # Grafana 11.x: PATH 에 있는 건 grafana-cli(/usr/sbin/grafana-cli). `grafana`(단일 바이너리)는
+    # /usr/share/grafana/bin 이라 PATH 에 없어 `grafana cli` 는 실패한다. grafana-cli + homepath 사용.
+    - name: grafana-cli 로 admin 비밀번호 설정
+      ansible.builtin.command: >
+        grafana-cli --homepath /usr/share/grafana
+        admin reset-admin-password {{ grafana_admin_password | quote }}
+      changed_when: true
+
+    # 주의: /etc/cloudstack 는 CloudStack 공용 config 디렉터리다. cloudstack-management 는
+    # 'cloud' 유저로 돌며 여기서 server.properties/db.properties 를 읽으므로 진입 가능해야 한다(0755).
+    # 0700 으로 잠그면 cloud 가 진입 못 해 server.properties 를 못 읽고 maxThreads=0 → Jetty 크래시한다.
+    # 비밀은 부모 mode 가 아니라 cred 파일 자체(0600 root:root, 아래)로 보호한다.
+    - name: /etc/cloudstack 디렉터리 보장 (cloud 유저 진입 가능 → 0755)
+      ansible.builtin.file:
+        path: /etc/cloudstack
+        state: directory
+        mode: "0755"
+
+    - name: grafana admin 자격증명 파일 기록
+      ansible.builtin.copy:
+        dest: "{{ grafana_admin_cred_file }}"
+        content: |
+          GRAFANA_ADMIN_USER={{ grafana_admin_user }}
+          GRAFANA_ADMIN_PASSWORD={{ grafana_admin_password }}
+        mode: "0600"

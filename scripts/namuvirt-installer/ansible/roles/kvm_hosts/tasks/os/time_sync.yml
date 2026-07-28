@@ -1,0 +1,33 @@
+---
+# configure_time_sync() — chrony 서비스 유닛명이 배포판/버전마다 다르다:
+#   Rocky: chronyd  /  Ubuntu 22.04: chrony  /  Ubuntu 24.04: chronyd
+# 또한 폐쇄망에서 chrony deb/rpm 이 오프라인 번들에서 설치되지 않았을 수 있다
+# (packages_ubuntu.yml 의 dpkg 설치는 failed_when:false 라 조용히 누락됨).
+# 따라서 "실제로 존재하는 유닛"을 탐지해, 있을 때만 활성화하고 없으면 (설치를 막지 않도록)
+# 경고만 남긴다. 시간 동기화는 CloudStack 에 중요하므로 경고로 반드시 드러낸다.
+- name: chrony 서비스 유닛 탐지 (chronyd/chrony 중 실제 설치된 것, 없으면 none)
+  ansible.builtin.shell: >-
+    if systemctl list-unit-files chronyd.service --no-legend 2>/dev/null | grep -q chronyd; then echo chronyd;
+    elif systemctl list-unit-files chrony.service --no-legend 2>/dev/null | grep -q '^chrony'; then echo chrony;
+    else echo none; fi
+  register: _chrony_unit
+  changed_when: false
+  tags: [kvm_hosts]
+
+- name: chrony 미설치 경고 (오프라인 번들에 chrony 패키지 누락 → 시간 동기화 건너뜀)
+  ansible.builtin.debug:
+    msg: >-
+      WARN: {{ inventory_hostname }} 에 chrony 서비스 유닛이 없다(=chrony 미설치).
+      오프라인 os-packages 의 chrony 그룹이 비었거나 의존성이 누락됐을 수 있다.
+      시간 동기화를 건너뛴다 — 설치 후 chrony(또는 다른 NTP)를 반드시 구성할 것
+      (CloudStack 은 관리서버/호스트 시간 동기가 필요).
+  when: _chrony_unit.stdout | trim == 'none'
+  tags: [kvm_hosts]
+
+- name: chrony 서비스 활성화 (유닛이 있을 때만)
+  ansible.builtin.systemd:
+    name: "{{ _chrony_unit.stdout | trim }}"
+    state: started
+    enabled: true
+  when: _chrony_unit.stdout | trim != 'none'
+  tags: [kvm_hosts]

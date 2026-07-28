@@ -1,0 +1,22 @@
+global:
+  scrape_interval: {{ prometheus_scrape_interval }}
+  evaluation_interval: {{ prometheus_scrape_interval }}
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['127.0.0.1:{{ prometheus_http_port }}']
+{% for kvm_host in groups['kvm_hosts'] %}
+  - job_name: 'node-exporter-{{ hostvars[kvm_host].host_ip }}'
+    static_configs:
+      - targets: ['{{ hostvars[kvm_host].host_ip }}:9100']
+        labels: { instance: '{{ hostvars[kvm_host].host_ip }}', role: 'kvm-host' }
+  - job_name: 'libvirt-exporter-{{ hostvars[kvm_host].host_ip }}'
+    static_configs:
+      - targets: ['{{ hostvars[kvm_host].host_ip }}:9177']
+        labels: { instance: '{{ hostvars[kvm_host].host_ip }}', role: 'kvm-host' }
+  - job_name: 'process-exporter-{{ hostvars[kvm_host].host_ip }}'
+    static_configs:
+      - targets: ['{{ hostvars[kvm_host].host_ip }}:9256']
+        labels: { instance: '{{ hostvars[kvm_host].host_ip }}', role: 'kvm-host' }
+{% endfor %}

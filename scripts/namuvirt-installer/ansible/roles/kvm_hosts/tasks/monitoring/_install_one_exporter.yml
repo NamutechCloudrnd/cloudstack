@@ -1,0 +1,38 @@
+---
+# monitoring.yml에서 exporter 1개씩 include_tasks로 호출 (block에는 loop를 직접 못 걸기 때문).
+- name: "{{ exp.bin }} tar.gz 탐색 (controller)"
+  ansible.builtin.find:
+    paths: "{{ packages_root }}/exporters"
+    patterns: "{{ exp.pattern }}"
+  delegate_to: localhost
+  become: false
+  register: _exporter_tarball
+
+- name: "{{ exp.bin }} tar.gz 없음 — 경고"
+  ansible.builtin.debug:
+    msg: "WARN: {{ exp.pattern }} not found in {{ packages_root }}/exporters — skip {{ exp.bin }}"
+  when: _exporter_tarball.files | length == 0
+
+- name: "{{ exp.bin }} 압축 해제"
+  ansible.builtin.unarchive:
+    src: "{{ (_exporter_tarball.files | sort(attribute='path') | last).path }}"
+    dest: "/opt/namuvirt/build/{{ exp.bin }}"
+    remote_src: false
+  when: _exporter_tarball.files | length > 0
+
+- name: "{{ exp.bin }} 바이너리 탐색 (대상 호스트, 압축 해제 결과)"
+  ansible.builtin.find:
+    paths: "/opt/namuvirt/build/{{ exp.bin }}"
+    patterns: "{{ exp.bin }}"
+    recurse: true
+    file_type: file
+  register: _exporter_binary
+  when: _exporter_tarball.files | length > 0
+
+- name: "{{ exp.bin }} 을 /usr/local/bin 으로 설치"
+  ansible.builtin.copy:
+    src: "{{ _exporter_binary.files[0].path }}"
+    dest: "/usr/local/bin/{{ exp.bin }}"
+    mode: "0755"
+    remote_src: true
+  when: _exporter_tarball.files | length > 0 and _exporter_binary.files | length > 0

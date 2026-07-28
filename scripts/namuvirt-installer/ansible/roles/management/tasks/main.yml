@@ -1,0 +1,9 @@
+---
+# management_stage 변수로 두 단계를 구분한다 (site.yml의 두 개의 play에서 각각 호출):
+#   provision  — hosts: kvm_master — install-management-vm.sh의 create_vm()/wait_ssh() (VM 생성)
+#   configure  — hosts: management_vm — VM 내부에 namuvirt-management/usage + 모니터링 설치
+- ansible.builtin.import_tasks: provision/main.yml
+  when: management_stage == 'provision'
+
+- ansible.builtin.import_tasks: configure/main.yml
+  when: management_stage == 'configure'

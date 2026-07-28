@@ -1,0 +1,16 @@
+---
+# write_mariadb_cloudstack_cnf() + mariadb 활성화
+- name: CloudStack MariaDB 설정 배포
+  ansible.builtin.template:
+    src: configure/namuvirt.cnf.j2
+    dest: /etc/my.cnf.d/namuvirt.cnf
+    mode: "0644"
+  notify: restart mariadb
+  tags: [management, configure]
+
+- name: mariadb 활성화
+  ansible.builtin.systemd:
+    name: mariadb
+    state: started
+    enabled: true
+  tags: [management, configure]

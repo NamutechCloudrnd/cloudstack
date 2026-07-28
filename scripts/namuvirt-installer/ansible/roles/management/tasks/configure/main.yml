@@ -1,0 +1,26 @@
+---
+# install-management-vm.sh 의 VM 내부 설치 흐름과 동일한 순서.
+# (이 파일 자체가 configure/ 안에 있으므로, 같은 디렉터리의 파일은 접두사 없이 참조한다.)
+- ansible.builtin.import_tasks: base_packages.yml
+- ansible.builtin.import_tasks: time_sync.yml
+- ansible.builtin.import_tasks: selinux_firewall.yml
+- ansible.builtin.import_tasks: nfs_mount.yml
+- ansible.builtin.import_tasks: mariadb.yml
+- ansible.builtin.import_tasks: namuvirt_install.yml
+- ansible.builtin.import_tasks: remove_kvm_traces.yml
+- ansible.builtin.import_tasks: database_init.yml
+# config.json(grafanaBase 등)은 cloudstack-management 가 기동 시 읽으므로 start_management 앞에서 배포한다.
+# (뒤에 두면 restart handler 에 의존하게 되어 첫 기동 시 UI 에 반영이 안 될 수 있다.)
+- ansible.builtin.import_tasks: config_json.yml
+- ansible.builtin.import_tasks: start_management.yml
+# SystemVM 템플릿 시드 — 설치 흐름에 포함한다.
+# cloud-install-sys-tmplt 로 로컬(폐쇄망 번들) SystemVM 템플릿을 secondary storage 에 직접 시드하고
+# cloud DB 에 등록한다(SSVM/인터넷 불필요). Zone 등록 시 CloudStack 이 이 템플릿으로 SSVM/CPVM 을 부팅한다.
+# 전제: nfs_mount(secondary 준비)·namuvirt_install(cloudstack-common)·database_init(DB)·start_management 이후.
+# 멱등: {{ secondary_storage.path }}/.namuvirt-systemvm-seeded 마커로 재실행 시 skip.
+#   ※ 최초엔 반드시 이 시드(cloud-install-sys-tmplt 직접)를 써야 한다.
+#     register-systemvm(SSVM 경유)은 SSVM 이 있어야 하므로 순환이다.
+# (게스트 OS 이미지 등록은 별도: `./upload-os-image.sh register ...` — SSVM 경유, 로컬 http.)
+- ansible.builtin.import_tasks: systemvm_template.yml
+- ansible.builtin.import_tasks: monitoring.yml
+- ansible.builtin.import_tasks: verify.yml

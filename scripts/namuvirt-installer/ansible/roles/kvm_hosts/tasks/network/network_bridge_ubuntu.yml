@@ -1,0 +1,90 @@
+---
+# Ubuntu: netplan으로 cloudbr0 브리지 설정. networkd renderer.
+#
+# ★ 물리 NIC({{ nic }})은 cloudbr0 의 멤버로만 넣고 IP 는 cloudbr0 에만 둔다.
+#   기존 netplan(cloud-init/installer 기본)이 그 NIC 에 IP 를 얹은 채 남아 있으면, netplan 은
+#   /etc/netplan/*.yaml 을 전부 병합하므로 NIC 와 cloudbr0 에 같은 IP 가 "중복"되어 호스트↔VM
+#   통신이 깨진다(설치가 관리 VM SSH 대기에서 hang). 예전엔 원본을 .bak 로 "복사만" 하고 원본을
+#   그대로 둬서 이 버그가 있었다 → 아래처럼 (1) cloud-init netplan 재생성을 끄고 (2) 그 NIC 을
+#   참조하는 기존 netplan 을 .bak 로 "비활성화(제거)"한다.
+
+- name: netplan 디렉터리 확인
+  ansible.builtin.file:
+    path: /etc/netplan
+    state: directory
+    mode: "0755"
+  tags: [kvm_hosts, network]
+
+- name: cloud-init 네트워크(netplan) 재생성 비활성화 (재부팅 후 중복 IP 재발 방지)
+  ansible.builtin.copy:
+    dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+    content: "network: {config: disabled}\n"
+    mode: "0644"
+  failed_when: false          # cloud-init 미설치(디렉터리 없음)면 무시
+  tags: [kvm_hosts, network]
+
+- name: cloudbr0 netplan 설정 배포
+  ansible.builtin.template:
+    src: cloudbr0-netplan.yaml.j2
+    dest: /etc/netplan/01-cloudbr0.yaml
+    mode: "0600"
+  register: _netplan_changed
+  tags: [kvm_hosts, network]
+
+# 물리 NIC 을 참조하는 기존 netplan 만 비활성화한다(다른 NIC 용 파일은 건드리지 않음).
+# .bak 은 처음 한 번만 백업(이후 재실행 시 원본은 이미 없으므로 idempotent).
+- name: 기존 netplan(물리 NIC 참조) 백업 후 비활성화
+  ansible.builtin.shell: |
+    set -o pipefail
+    changed=0
+    for f in /etc/netplan/*.yaml /etc/netplan/*.yml; do
+      [ -f "$f" ] || continue
+      bn=$(basename "$f")
+      [ "$bn" = "01-cloudbr0.yaml" ] && continue
+      grep -qw "{{ nic }}" "$f" || continue
+      [ -f "/etc/netplan/${bn}.bak" ] || cp "$f" "/etc/netplan/${bn}.bak"
+      rm -f "$f"; changed=1
+    done
+    [ "$changed" = 1 ] && echo CHANGED || true
+  args:
+    executable: /bin/bash
+  register: _netplan_disable
+  changed_when: "'CHANGED' in _netplan_disable.stdout"
+  tags: [kvm_hosts, network]
+
+# netplan apply 는 관리 IP 를 물리 NIC 에서 cloudbr0 로 옮기며 SSH 를 순단시킨다. 동기 실행 시
+# 응답을 나르던 채널이 끊겨 hang/UNREACHABLE 이 될 수 있으므로 async(fire-and-forget)로 띄워
+# 백그라운드에서 완주시키고 wait_for_connection 으로 재연결한다.
+- name: netplan apply (설정 변경 시, 순단 대비 fire-and-forget)
+  ansible.builtin.command: netplan apply
+  async: 60
+  poll: 0
+  register: _netplan_apply
+  changed_when: true
+  when: _netplan_changed.changed or _netplan_disable.changed
+  tags: [kvm_hosts, network]
+
+- name: netplan apply 후 SSH 재연결 대기 (순단 복구)
+  ansible.builtin.wait_for_connection:
+    delay: 15
+    timeout: 180
+  when: _netplan_apply.changed
+  tags: [kvm_hosts, network]
+
+- name: netplan apply 작업 완료 확인
+  ansible.builtin.async_status:
+    jid: "{{ _netplan_apply.ansible_job_id }}"
+  register: _netplan_apply_result
+  until: _netplan_apply_result.finished
+  retries: 20
+  delay: 3
+  when: _netplan_apply.changed
+  tags: [kvm_hosts, network]
+
+- name: 브리지에 관리 IP 가 올라왔는지 확인 ({{ host_ip }})
+  ansible.builtin.command: ip -br addr show {{ bridge_name }}
+  register: _bridge_addr_ubuntu
+  changed_when: false
+  failed_when: host_ip not in _bridge_addr_ubuntu.stdout
+  when: _netplan_apply.changed
+  tags: [kvm_hosts, network]

@@ -1,0 +1,16 @@
+---
+# rocky/setup-kvm-host.sh 의 main 흐름과 동일한 순서.
+- ansible.builtin.import_tasks: os/packages.yml
+- ansible.builtin.import_tasks: os/time_sync.yml
+- ansible.builtin.import_tasks: os/hostname_warn.yml
+- ansible.builtin.import_tasks: network/network_bridge.yml
+- ansible.builtin.import_tasks: storage/storage.yml
+- ansible.builtin.import_tasks: virt/libvirt.yml
+- ansible.builtin.import_tasks: os/selinux_firewall.yml
+- ansible.builtin.import_tasks: network/bridge_forwarding.yml
+- ansible.builtin.import_tasks: virt/warn_existing_domains.yml
+- ansible.builtin.import_tasks: agent/agent.yml
+- ansible.builtin.import_tasks: agent/vmware_conversion.yml
+  when: kvm_enable_vmware_conversion | default(false) | bool
+- ansible.builtin.import_tasks: monitoring/monitoring.yml
+- ansible.builtin.import_tasks: verify/verify.yml

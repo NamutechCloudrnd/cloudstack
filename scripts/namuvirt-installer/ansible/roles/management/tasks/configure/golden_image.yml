@@ -1,0 +1,10 @@
+---
+# 체크리스트 3-5) 골든 이미지 업로드 — 실제 업로드 명령이 아직 확정되지 않았다.
+# config.yaml의 management.golden_image_path 에 경로를 넣으면 알림만 출력한다.
+# 명령이 확정되면 이 파일에 실제 업로드 task를 추가할 것.
+
+- name: 골든 이미지 업로드 알림 (placeholder)
+  ansible.builtin.command: >
+    echo "golden image upload: {{ golden_image_path | default('TBD', true) }}"
+  changed_when: false
+  tags: [management, configure, golden_image]

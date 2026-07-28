@@ -1,0 +1,68 @@
+---
+# Storage 구성 디스패처 (v2) — primary/secondary 를 protocol 별 task 파일로 분기한다.
+#   storage_nfs.yml   : 디렉터리 + idmapd + /etc/exports (공유 NFS)
+#   storage_local.yml : 디렉터리만 (호스트 로컬, export 없음)
+#   storage_ceph.yml  : 스텁(미구현)
+# 호스트별 override(cfg.hosts[host_ip].path)가 있으면 그 경로를, 없으면 공통 path 를 쓴다.
+# 확장: 새 스토리지 종류는 storage_<protocol>.yml 파일만 추가하면 된다(이 파일 무수정).
+# protocol 값 검증은 preflight/load_config 에서 이미 수행한다(nfs|local|ceph).
+
+- name: 호스트별 유효 스토리지 경로 계산
+  ansible.builtin.set_fact:
+    _primary_path: "{{ (primary_storage.hosts[host_ip].path) | default(primary_storage.path, true) }}"
+    _secondary_path: "{{ (secondary_storage.hosts[host_ip].path) | default(secondary_storage.path, true) }}"
+  tags: [kvm_hosts, storage]
+
+- name: >-
+    NFS 허용 CIDR 계산 (kvm_hosts 그룹의 모든 host_ip 에서 고유 /{{ network_prefix }} 목록)
+  ansible.builtin.set_fact:
+    nfs_allow_cidrs: >-
+      {{
+        groups['kvm_hosts']
+        | map('extract', hostvars, 'host_ip')
+        | map('regex_replace', '^(\d+\.\d+\.\d+)\.\d+$', '\1.0/' ~ network_prefix)
+        | unique
+        | list
+      }}
+  tags: [kvm_hosts, storage]
+
+- name: primary storage 구성 (protocol={{ primary_storage.protocol }})
+  ansible.builtin.include_tasks: "storage_{{ primary_storage.protocol }}.yml"
+  vars:
+    _stor_role: primary
+    _stor_cfg: "{{ primary_storage }}"
+    _stor_path: "{{ _primary_path }}"
+  tags: [kvm_hosts, storage]
+
+- name: secondary storage 구성 (protocol={{ secondary_storage.protocol }})
+  ansible.builtin.include_tasks: "storage_{{ secondary_storage.protocol }}.yml"
+  vars:
+    _stor_role: secondary
+    _stor_cfg: "{{ secondary_storage }}"
+    _stor_path: "{{ _secondary_path }}"
+  tags: [kvm_hosts, storage]
+
+# ── NFS 마무리: primary/secondary 중 하나라도 nfs 면 export 반영 + 서비스 기동(1회) ──
+- name: NFS 사용 여부 판정
+  ansible.builtin.set_fact:
+    _any_nfs: "{{ (primary_storage.protocol == 'nfs') or (secondary_storage.protocol == 'nfs') }}"
+  tags: [kvm_hosts, storage]
+
+- name: exportfs -ra 적용 (nfs 사용 시)
+  ansible.builtin.command: exportfs -ra
+  changed_when: true
+  when: _any_nfs | bool
+  tags: [kvm_hosts, storage]
+
+- name: rpcbind / nfs 서비스 활성화 (nfs 사용 시)
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop: "{{ _nfs_services }}"
+  vars:
+    _nfs_services: >-
+      {{ ['rpcbind', 'nfs-kernel-server'] if ansible_distribution == 'Ubuntu'
+         else ['rpcbind', 'nfs-server'] }}
+  when: _any_nfs | bool
+  tags: [kvm_hosts, storage]

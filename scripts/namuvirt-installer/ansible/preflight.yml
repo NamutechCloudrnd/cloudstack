@@ -1,0 +1,37 @@
+---
+# preflight 전용 playbook — 실제 설치(mutation) 없이 검증만 수행한다.
+#   1) config.yaml 로드 + 동적 인벤토리 구성 + 스키마/규칙 assert (load_config)
+#   2) 모든 KVM Host SSH/sudo/OS/동일OS/dev-kvm 검증 (validate_hosts)
+#
+# 하나의 Host 라도 실패하면 (any_errors_fatal) 전체 preflight 를 중단한다.
+
+- name: config.yaml 로드 및 동적 인벤토리 구성
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  vars:
+    preflight_stage: load_config
+  roles:
+    - preflight
+
+- name: 원격 사전 검증 (SSH/sudo/OS/동일 OS/dev-kvm)
+  hosts: kvm_hosts
+  gather_facts: true
+  any_errors_fatal: true
+  vars:
+    preflight_stage: validate_hosts
+  roles:
+    - preflight
+
+- name: 관리 VM 도달성은 아직 확인하지 않음 (VM 미생성) — 안내만
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+  tasks:
+    - name: preflight 통과 안내
+      ansible.builtin.debug:
+        msg: >-
+          preflight 통과. 관리 VM({{ hostvars['mgmt-vm'].ansible_host }}) 은 install 단계에서
+          kvm.master 에 생성된다.

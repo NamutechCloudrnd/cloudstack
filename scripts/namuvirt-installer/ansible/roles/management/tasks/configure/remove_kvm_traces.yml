@@ -1,0 +1,37 @@
+---
+# remove_kvm_agent_from_vm() — management VM에서 agent/KVM/libvirt 흔적을 제거한다.
+# base_packages.yml이 os-packages 풀 전체를 설치하면서 qemu-kvm/libvirt도 같이 들어왔을 수
+# 있으므로, 여기서 명시적으로 다시 제거해 management-only VM 상태를 보장한다.
+
+- name: cloudstack-agent / libvirtd 정지
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  loop:
+    - cloudstack-agent
+    - libvirtd
+  failed_when: false
+  tags: [management, configure]
+
+- name: cloudstack-agent / qemu-kvm / libvirt 패키지 제거
+  ansible.builtin.dnf:
+    name:
+      - cloudstack-agent
+      - qemu-kvm
+      - libvirt
+    state: absent
+  failed_when: false
+  tags: [management, configure]
+
+- name: agent/libvirt 잔존 디렉터리 제거
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/cloudstack/agent
+    - /var/lib/cloudstack/agent
+    - /usr/share/cloudstack-agent
+    - /etc/libvirt
+    - /var/lib/libvirt
+    - /var/log/libvirt
+  tags: [management, configure]

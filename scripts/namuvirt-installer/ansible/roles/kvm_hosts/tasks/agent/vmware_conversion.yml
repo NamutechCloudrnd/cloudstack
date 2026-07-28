@@ -1,0 +1,201 @@
+---
+# 체크리스트 4-3, 옵션) VMware → KVM 변환 도구 — namuvirt_install_vmware_conversion() 포팅.
+# kvm_enable_vmware_conversion=true (--tags vmware_conversion) 일 때만 실행.
+# 폐쇄망: 레포 없이 packages_root/vmware-conversion 에 사전 적재된 rpm 파일을 직접 설치한다.
+
+- name: nbdkit/virt-v2v 관련 rpm 탐색 (controller)
+  ansible.builtin.find:
+    paths: "{{ packages_root }}/vmware-conversion/base-packages"
+    patterns: "*.rpm"
+  delegate_to: localhost
+  become: false
+  register: _vmware_base_rpm
+  tags: [kvm_hosts, vmware_conversion]
+
+- name: nbdkit/virt-v2v rpm 설치
+  when: _vmware_base_rpm.files | length > 0
+  tags: [kvm_hosts, vmware_conversion]
+  block:
+    - name: rpm 전송 디렉터리 생성
+      ansible.builtin.file:
+        path: /opt/namuvirt/offline/vmware-base
+        state: directory
+        mode: "0755"
+
+    - name: rpm 전송
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: /opt/namuvirt/offline/vmware-base/
+        mode: "0644"
+      loop: "{{ _vmware_base_rpm.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    - name: rpm 설치 (nbdkit, nbdkit-vddk-plugin, libnbd, libguestfs-tools, unzip 등)
+      ansible.builtin.dnf:
+        name: "{{ _vmware_base_rpm.files | map(attribute='path') | map('basename') | map('regex_replace', '^(.*)$', '/opt/namuvirt/offline/vmware-base/\\1') | list }}"
+        state: present
+        disable_gpg_check: true
+
+- name: Rocky 9 chroot에 virt-v2v 2.x 설치 여부 확인
+  ansible.builtin.command: rpm -q --root=/opt/virt-v2v-r9 virt-v2v
+  register: _r9_virtv2v
+  changed_when: false
+  failed_when: false
+  tags: [kvm_hosts, vmware_conversion]
+
+- name: Rocky 9 chroot rpm 세트 탐색 (controller)
+  ansible.builtin.find:
+    paths: "{{ packages_root }}/vmware-conversion/rocky9-rpms"
+    patterns: "*.rpm"
+  delegate_to: localhost
+  become: false
+  register: _r9_rpm_find
+  when: _r9_virtv2v.rc != 0
+  tags: [kvm_hosts, vmware_conversion]
+
+- name: Rocky 9 rpm 세트 없음 경고
+  ansible.builtin.debug:
+    msg: >-
+      WARN: {{ packages_root }}/vmware-conversion/rocky9-rpms 에 rpm이 없다 —
+      virt-v2v 2.x 및 의존 패키지(+base OS 패키지 전체)를 사전에 받아둘 것.
+  when:
+    - _r9_virtv2v.rc != 0
+    - _r9_rpm_find.files | default([]) | length == 0
+  tags: [kvm_hosts, vmware_conversion]
+
+- name: Rocky 9 chroot 구성 (virt-v2v 2.x 미발견 + rpm 세트 있을 때)
+  when:
+    - _r9_virtv2v.rc != 0
+    - _r9_rpm_find.files | default([]) | length > 0
+  tags: [kvm_hosts, vmware_conversion]
+  block:
+    - name: 기존 chroot 제거
+      ansible.builtin.file:
+        path: /opt/virt-v2v-r9
+        state: absent
+
+    - name: chroot 디렉터리 생성
+      ansible.builtin.file:
+        path: /opt/virt-v2v-r9
+        state: directory
+        mode: "0755"
+
+    - name: Rocky 9 rpm 세트 전송 디렉터리 생성
+      ansible.builtin.file:
+        path: /opt/namuvirt/offline/rocky9-rpms
+        state: directory
+        mode: "0755"
+
+    - name: Rocky 9 rpm 세트 전송
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: /opt/namuvirt/offline/rocky9-rpms/
+        mode: "0644"
+      loop: "{{ _r9_rpm_find.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    - name: Rocky 9 chroot에 rpm 파일들 직접 설치 (레포 없음 — --installroot + 로컬 파일 glob)
+      ansible.builtin.shell: >
+        dnf install -y --installroot=/opt/virt-v2v-r9 --releasever=9 --nogpgcheck
+        --setopt=install_weak_deps=False
+        /opt/namuvirt/offline/rocky9-rpms/*.rpm
+      args:
+        executable: /bin/bash
+      changed_when: true
+
+- name: virt-v2v 래퍼 스크립트 배포
+  ansible.builtin.template:
+    src: virt-v2v-wrapper.sh.j2
+    dest: /usr/local/bin/virt-v2v
+    mode: "0755"
+  tags: [kvm_hosts, vmware_conversion]
+
+- name: 기존 /usr/bin/virt-v2v 백업
+  ansible.builtin.command: mv /usr/bin/virt-v2v /usr/bin/virt-v2v.real
+  args:
+    creates: /usr/bin/virt-v2v.real
+  register: _v2v_backup
+  failed_when: false
+  tags: [kvm_hosts, vmware_conversion]
+
+- name: /usr/bin/virt-v2v -> 래퍼 심볼릭 링크
+  ansible.builtin.file:
+    src: /usr/local/bin/virt-v2v
+    dest: /usr/bin/virt-v2v
+    state: link
+    force: true
+  tags: [kvm_hosts, vmware_conversion]
+
+- name: VDDK tarball 탐색 (controller, 지정된 경우만)
+  ansible.builtin.find:
+    paths: "{{ packages_root }}/vmware-conversion"
+    patterns: "vddk*.{{ item }}"
+  loop: ["zip", "tar.gz", "tgz", "tar"]
+  delegate_to: localhost
+  become: false
+  register: _vddk_search
+  when: vddk_tarball | length == 0
+  tags: [kvm_hosts, vmware_conversion]
+
+- name: VDDK 압축 해제 및 설치
+  when: >-
+    (vddk_tarball | length > 0)
+    or (_vddk_search.results | default([]) | sum(attribute='matched', start=0) > 0)
+  tags: [kvm_hosts, vmware_conversion]
+  block:
+    - name: VDDK 압축 해제
+      ansible.builtin.unarchive:
+        src: >-
+          {{ vddk_tarball if vddk_tarball | length > 0 else
+             (_vddk_search.results | selectattr('matched', 'gt', 0) | map(attribute='files') | flatten | first).path }}
+        dest: /opt/namuvirt/build/vddk
+        remote_src: false
+
+    - name: libvixDiskLib.so 탐색
+      ansible.builtin.find:
+        paths: /opt/namuvirt/build/vddk
+        patterns: "libvixDiskLib.so"
+        recurse: true
+      register: _vddk_lib
+
+    - name: VDDK 라이브러리 디렉터리 설치
+      ansible.builtin.copy:
+        src: "{{ (_vddk_lib.files[0].path | dirname | dirname) }}/"
+        dest: "{{ vddk_lib_dir }}/"
+        remote_src: true
+        mode: preserve
+      when: _vddk_lib.files | length > 0
+
+- name: VDDK lib 디렉터리 유효성 확인
+  ansible.builtin.stat:
+    path: "{{ vddk_lib_dir }}/lib64/libvixDiskLib.so"
+  register: _vddk_valid
+  tags: [kvm_hosts, vmware_conversion]
+
+- name: agent.properties VDDK 설정 (agent가 설치된 경우만)
+  when:
+    - not (skip_agent | default(true))
+    - _vddk_valid.stat.exists
+  tags: [kvm_hosts, vmware_conversion]
+  block:
+    - name: vddk.lib.dir / vddk.transports 설정
+      ansible.builtin.lineinfile:
+        path: /etc/cloudstack/agent/agent.properties
+        regexp: "^#?{{ item.key | regex_escape }}="
+        line: "{{ item.key }}={{ item.value }}"
+      loop:
+        - { key: "vddk.lib.dir", value: "{{ vddk_lib_dir }}" }
+        - { key: "vddk.transports", value: "nbd:nbdssl" }
+
+    - name: cloudstack-agent 재시작 (VDDK 설정 반영)
+      ansible.builtin.systemd:
+        name: cloudstack-agent
+        state: restarted
+
+- name: VDDK 라이브러리 없음 경고
+  ansible.builtin.debug:
+    msg: "WARN: VDDK library not found — OVF import may work; vCenter/VDDK import needs vddk_tarball"
+  when: not _vddk_valid.stat.exists
+  tags: [kvm_hosts, vmware_conversion]

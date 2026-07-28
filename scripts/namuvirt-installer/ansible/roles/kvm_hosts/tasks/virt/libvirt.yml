@@ -1,0 +1,51 @@
+---
+# configure_libvirt_qemu() — libvirt/qemu TCP·VNC listen 등 KVM 호스트용 설정.
+
+- name: qemu.conf vnc_listen 설정
+  ansible.builtin.lineinfile:
+    path: /etc/libvirt/qemu.conf
+    regexp: '^[#\s]*vnc_listen\s*='
+    line: 'vnc_listen = "0.0.0.0"'
+    create: true
+    mode: "0644"
+  tags: [kvm_hosts, libvirt]
+
+- name: libvirtd.conf 설정
+  ansible.builtin.lineinfile:
+    path: /etc/libvirt/libvirtd.conf
+    regexp: '^[#\s]*{{ item.key }}\s*='
+    line: "{{ item.key }} = {{ item.value }}"
+    create: true
+    mode: "0644"
+  loop:
+    - { key: listen_tls, value: "0" }
+    - { key: listen_tcp, value: "1" }
+    - { key: tcp_port, value: '"16509"' }
+    - { key: auth_tcp, value: '"none"' }
+    - { key: mdns_adv, value: "0" }
+  tags: [kvm_hosts, libvirt]
+
+- name: "LIBVIRTD_ARGS 설정 (Rocky: /etc/sysconfig/libvirtd, Ubuntu: /etc/default/libvirtd)"
+  ansible.builtin.lineinfile:
+    path: "{{ '/etc/default/libvirtd' if ansible_distribution == 'Ubuntu' else '/etc/sysconfig/libvirtd' }}"
+    regexp: '^#?LIBVIRTD_ARGS='
+    line: 'LIBVIRTD_ARGS="--listen"'
+    create: true
+    mode: "0644"
+  tags: [kvm_hosts, libvirt]
+
+- name: libvirtd 소켓 활성화 비활성화 (TCP 직접 listen 사용)
+  ansible.builtin.command: >
+    systemctl mask libvirtd.socket libvirtd-ro.socket libvirtd-admin.socket
+    libvirtd-tls.socket libvirtd-tcp.socket
+  register: _mask_sockets
+  changed_when: "'created symlink' in _mask_sockets.stderr | lower or 'created symlink' in _mask_sockets.stdout | lower"
+  failed_when: false
+  tags: [kvm_hosts, libvirt]
+
+- name: libvirtd 활성화 및 재시작
+  ansible.builtin.systemd:
+    name: libvirtd
+    state: restarted
+    enabled: true
+  tags: [kvm_hosts, libvirt]

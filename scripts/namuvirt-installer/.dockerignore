@@ -1,0 +1,11 @@
+# 이미지에 넣지 않고 빌드 컨텍스트에서도 제외한다 (전송량 절감 + 비밀/대용량 배제).
+# Dockerfile 은 ansible/, scripts/, packages/ 만 COPY 한다.
+os-images/
+images/
+ssh/
+logs/
+release/
+image-tar/
+config.yaml
+.git/
+*.log

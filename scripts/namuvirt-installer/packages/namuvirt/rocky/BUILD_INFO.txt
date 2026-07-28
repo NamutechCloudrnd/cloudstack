@@ -1,0 +1,11 @@
+build_id=20260702_134848
+branch=develop
+commit=f7015c6395ebe7008dfd845f72c17ae57e8b5aa2
+describe=f7015c6395
+mode=normal
+with_vmware=1
+package_format=rpm
+rpm_dist=el8
+package_pack=noredist
+repo_dir=/root/repo/namuVIRT
+built_at=2026-07-02T14:19:23+09:00

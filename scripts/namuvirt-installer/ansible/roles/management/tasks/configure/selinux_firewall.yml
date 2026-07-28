@@ -1,0 +1,33 @@
+---
+# remote_apply_cloudstack_guide_selinux_firewall() — kvm_hosts role의 selinux_firewall.yml과
+# 동일 로직 (관리 VM에도 동일하게 적용).
+
+- name: setenforce 0
+  ansible.builtin.command: setenforce 0
+  register: _setenforce
+  changed_when: _setenforce.rc == 0
+  failed_when: false
+  tags: [management, configure]
+
+- name: /etc/selinux/config SELINUX=permissive
+  ansible.builtin.lineinfile:
+    path: /etc/selinux/config
+    regexp: '^SELINUX='
+    line: "SELINUX=permissive"
+    create: true
+    mode: "0644"
+  tags: [management, configure]
+
+- name: firewalld 중지
+  ansible.builtin.systemd:
+    name: firewalld
+    state: stopped
+  failed_when: false
+  tags: [management, configure]
+
+- name: firewalld 비활성화
+  ansible.builtin.systemd:
+    name: firewalld
+    enabled: false
+  failed_when: false
+  tags: [management, configure]

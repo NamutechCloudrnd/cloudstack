@@ -1,0 +1,39 @@
+#cloud-config
+hostname: {{ vm_name }}
+manage_etc_hosts: true
+users:
+  - default
+  - name: {{ ansible_user }}
+    ssh_authorized_keys:
+      - {{ lookup('ansible.builtin.file', namuvirt_ssh_private_key_path + '.pub') }}
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+package_update: true
+packages:
+  - qemu-guest-agent
+  - curl
+  - wget
+  - nfs-utils
+write_files:
+  - path: /etc/NetworkManager/system-connections/eth0.nmconnection
+    content: |
+      [connection]
+      id=eth0
+      type=ethernet
+      autoconnect=true
+      interface-name=eth0
+
+      [ethernet]
+
+      [ipv4]
+      method=manual
+      address1={{ vm_ip }}/{{ network_prefix }},{{ vm_gateway }}
+      dns={{ dns_servers | join(';') }};
+
+      [ipv6]
+      method=disabled
+    permissions: '0600'
+runcmd:
+  - systemctl enable --now qemu-guest-agent
+  - nmcli con reload
+  - nmcli -w 30 con up eth0 || nmcli device connect eth0

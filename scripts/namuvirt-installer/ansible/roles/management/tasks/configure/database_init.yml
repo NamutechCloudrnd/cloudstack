@@ -1,0 +1,34 @@
+---
+# init_cloudstack_database() — cloud/cloud_usage DB 초기화 (이미 있으면 건너뜀).
+
+- name: cloud DB 테이블 수 확인
+  ansible.builtin.shell: >
+    set -o pipefail;
+    mysql -uroot -sN -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='cloud'"
+  args:
+    executable: /bin/bash
+  register: _cloud_db_tables
+  changed_when: false
+  failed_when: false
+  tags: [management, configure]
+
+- name: cloudstack-setup-databases 실행 (DB 미초기화 시)
+  when: (_cloud_db_tables.stdout | default('0') | trim | int) < 200
+  tags: [management, configure]
+  block:
+    - name: cloudstack-setup-databases
+      ansible.builtin.command: >
+        cloudstack-setup-databases cloud:cloud@localhost --deploy-as=root:
+        --force-recreate -i {{ ansible_host }}
+
+    - name: cloud DB 생성 확인
+      ansible.builtin.shell: "set -o pipefail; mysql -uroot -sN -e \"SHOW DATABASES LIKE 'cloud';\" | grep -qx cloud"
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    - name: cloud_usage DB 생성 확인
+      ansible.builtin.shell: "set -o pipefail; mysql -uroot -sN -e \"SHOW DATABASES LIKE 'cloud_usage';\" | grep -qx cloud_usage"
+      args:
+        executable: /bin/bash
+      changed_when: false

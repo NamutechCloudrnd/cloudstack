@@ -1,0 +1,5 @@
+---
+- ansible.builtin.import_tasks: ssh_key.yml
+- ansible.builtin.import_tasks: preflight_checks.yml
+- ansible.builtin.import_tasks: create_vm.yml
+- ansible.builtin.import_tasks: wait_ssh.yml

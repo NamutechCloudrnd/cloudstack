@@ -1,0 +1,20 @@
+---
+# warn_existing_domains() — 기존 libvirt VM이 있으면 compute Host 등록 전 경고한다 (die 아님).
+- name: 기존 libvirt domain 목록 조회
+  ansible.builtin.command: virsh list --all --name
+  register: _virsh_domains
+  changed_when: false
+  failed_when: false
+  tags: [kvm_hosts]
+
+# 협의내용2: 기존 VM 이 있으면 삭제하지 않는다. 설치는 계속 진행하되,
+# 해당 KVM 의 도메인은 namuVIRT UI 에서 import 하라는 안내를 남긴다(die 아님).
+- name: 기존 VM 존재 — namuVIRT import 안내
+  ansible.builtin.debug:
+    msg:
+      - "WARN: {{ inventory_hostname }} 에 기존 libvirt domain 이 존재한다:"
+      - "{{ _virsh_domains.stdout_lines | select('match', '.*\\S.*') | list }}"
+      - "이 도메인들은 설치 과정에서 삭제하지 않는다."
+      - "설치 완료 후 namuVIRT UI 에서 해당 VM 을 import 하여 관리 대상에 편입할 것."
+  when: _virsh_domains.stdout | default('') | trim != ''
+  tags: [kvm_hosts]
