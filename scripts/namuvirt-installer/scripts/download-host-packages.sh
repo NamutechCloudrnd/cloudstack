@@ -92,7 +92,12 @@ download_ubuntu() {
     export DEBIAN_FRONTEND=noninteractive
     apt-get update >/dev/null
     declare -A G=(
-      [qemu-kvm]="qemu-system-x86 qemu-utils"
+      # qemu-block-extra: qemu 가 rbd:/iscsi: 이미지를 여는 블록 드라이버. Ubuntu 는 이걸 별도
+      # 패키지로 쪼개 놓았고 qemu-system-x86 의 Depends 도 아니라서, 명시하지 않으면 번들에서
+      # 빠진다. libvirt-daemon-driver-storage-rbd(=libvirt 측)만 있고 이게 없으면 Ceph 풀은
+      # 붙는데 VM 이 디스크를 못 열어 SystemVM 이 crash loop 에 빠진다.
+      # (Rocky 는 qemu-kvm 메타패키지가 qemu-kvm-block-rbd 를 끌어와 같은 문제가 없다.)
+      [qemu-kvm]="qemu-system-x86 qemu-utils qemu-block-extra"
       [libvirt]="libvirt-daemon-system libvirt-clients virtinst"
       [network]="bridge-utils ebtables iptables"
       [nfs]="nfs-common nfs-kernel-server rpcbind"

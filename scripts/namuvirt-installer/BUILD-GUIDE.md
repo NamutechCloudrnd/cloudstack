@@ -240,7 +240,31 @@ CentOS-5-5-64-bit-no-GUI-KVM.qcow2       # (선택)
 | `--with-os-image` | — | **os-images(골든/템플릿 qcow2·ova)를 번들에 포함** (기본은 제외) |
 | `--os-images-src <dir>` | 기본 `<하네스루트>/os-images` | `--with-os-image` 시 이미지 소스 경로 |
 | `--no-os-image` | — | os-images 제외 (기본과 동일 — 하위호환) |
+| `--skip-package-check` | — | 제품 패키지 정합성 검증 생략 (아래 참조, 권장하지 않음) |
 | `--help` | — | 도움말 |
+
+### 4.1 제품 패키지 정합성 검증 (export 시작 시 자동)
+
+`packages/namuvirt/<os>/` 의 cloudstack 패키지는 §2.1 대로 **수동 배치**라, 교체를 잊으면 낡은
+제품 패키지가 그대로 다시 포장된다. 실제로 `uefi.properties` 가 빠진 4.22.0.1 이 반출되어 UEFI
+게스트 이관이 전면 실패한 사례가 있다. export 는 이를 막기 위해 시작 시 아래를 대조하고,
+어긋나면 **번들을 만들지 않고 중단**한다.
+
+| # | 검사 | 실패 시 |
+|---|---|---|
+| 1 | `cloudstack-*.rpm/deb` 존재 | 중단 |
+| 2 | `BUILD_INFO.txt` 의 `commit` == 현재 저장소 HEAD | 중단 |
+| 3 | 패키지 파일명 버전 == `pom.xml` 제품 버전 | 중단 |
+| 4 | `cloudstack-agent` 안에 `uefi.properties` 포함 | 중단 |
+| — | dirty 트리에서 빌드됨 / `BUILD_INFO.txt` 없음 / rpm·dpkg-deb 도구 없음 | 경고만 |
+
+**검사 대상 OS**
+- **rocky — 항상.** 관리 VM 은 호스트 OS 와 무관하게 항상 Rocky 8 이라 management/ui 가 여기서 나온다.
+- **ubuntu — `--os all|ubuntu` 일 때만.** Ubuntu KVM 호스트용 agent.
+
+4번은 패키지를 열어야 하므로 빌드 머신에 `rpm`(deb 머신이면 `dpkg-deb`)이 필요하다. 없으면
+`bsdtar` 로 폴백하고, 둘 다 없으면 경고 후 그 검사만 건너뛴다. **양쪽 OS 를 한 머신에서
+번들할 때는 두 도구를 모두 깔아두는 것이 좋다** (`dnf install rpm dpkg` / `apt install rpm dpkg-dev`).
 
 > **os-images 는 기본적으로 번들에 넣지 않는다.** 수 GB 이미지가 릴리스 tar 마다 중복되어 용량이
 > 과도해지므로 이미지는 **별도 관리**한다. 번들의 `images/` 는 빈 채로 나가고 고객이 그 위치에 배치한다.
@@ -328,10 +352,15 @@ sha256sum -c SHA256SUMS        # 전 파일 무결성 확인 (반입 후 고객�
 
 | 증상 | 원인 / 조치 |
 |------|-------------|
+| export 시 `제품 패키지가 현재 소스와 다른 커밋에서 빌드됐다` | `packages/namuvirt/<os>/` 가 낡음. `build/<os>.sh` 로 다시 빌드해 배치 → `build-images.sh` 부터 재실행 (§4.1) |
+| export 시 `버전이 pom.xml과 다르다` | 4.22 트리 산출물과 4.23 트리가 섞였다. 빌드 브랜치와 배치 패키지를 일치시킬 것 (§4.1) |
+| export 시 `uefi.properties 가 없다` | 해당 패키징이 없는 소스로 빌드된 agent. UEFI 게스트 부팅이 실패하므로 반드시 재빌드 (§4.1) |
+| export 시 `rpm/dpkg-deb 이 없어 ... 검사 생략` 경고 | 빌드 머신에 상대 OS 패키지 도구 없음. `dnf install rpm dpkg` 또는 `apt install rpm dpkg-dev` |
 | 빌드 중 apt/dnf "No space left" | docker 빌드캐시 누적 → `./build-images.sh --prune-cache` |
 | `docker-packages 번들 없음` 경고 | `scripts/download-docker-packages.sh` 를 export 전에 실행 |
 | `bundle.list 항목이 없다` 경고 | `os-images/` 에 해당 파일 배치 또는 `bundle.list` 수정 |
 | Rocky rpm 다운로드 0개 | GPG 키 사전 import 필요 — 최신 스크립트가 처리함(구버전이면 스크립트 갱신) |
 | 폐쇄망 설치 시 `nothing provides tar`(등 base 도구) | minimal 타깃엔 tar 등이 없는데 빌더 컨테이너엔 미리 깔려 델타에서 누락. 최신 `download-docker-packages.sh`/`download-host-packages.sh`(tar 강제 확보)로 재다운로드 |
+| Ubuntu 호스트에서 Ceph 볼륨 VM 이 기동 실패 / SystemVM crash loop | `qemu-block-extra` 누락. Ubuntu 는 rbd 블록 드라이버가 별도 패키지이고 `qemu-system-x86` 의 Depends 도 아니라 closure 에 안 잡힌다. `download-host-packages.sh` 의 `qemu-kvm` 그룹에 포함돼 있으니 최신 스크립트로 재다운로드 (Rocky 는 `qemu-kvm` 메타패키지가 끌어와 해당 없음) |
 | 설치 시 `cannot install both X-v1 and X-v2 ... conflicting requests` | os-packages 에 같은 패키지가 두 버전 존재. `./scripts/dedupe-versions.sh` 로 구버전 제거 후 재빌드 (build-images.sh 가 스테이징 시 자동 수행) |
 | arm 머신에서 빌드 느림/실패 | `--platform linux/amd64` + buildx/qemu 확인. 가능하면 x86 빌드 머신 사용 |
